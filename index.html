@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Welcome - ClassMate</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #121212;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      text-align: center;
+      background-color: #1e1e1e;
+      padding: 2rem;
+      border-radius: 1rem;
+    }
+    input {
+      padding: 0.6rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 0.5rem;
+      width: 80%;
+      margin-top: 1rem;
+      background-color: #2c2c2c;
+      color: white;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.6rem 1.5rem;
+      border: none;
+      border-radius: 0.5rem;
+      background: linear-gradient(to right, #fcb045, #fd1d1d, #833ab4);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Welcome to ClassMate</h2>
+    <p>Please enter your name to continue:</p>
+    <input type="text" id="username" placeholder="Your name" />
+    <br />
+    <button onclick="saveName()">Continue</button>
+  </div>
+
+  <script>
+    // If name already saved, go directly to dashboard
+    if (localStorage.getItem("classmateUserName")) {
+      window.location.href = "dashboard.html";
+    }
+
+    function saveName() {
+      const name = document.getElementById("username").value.trim();
+      if (name) {
+        localStorage.setItem("classmateUserName", name);
+        window.location.href = "dashboard.html";
+      } else {
+        alert("Please enter your name.");
+      }
+    }
+  </script>
+</body>
+</html>

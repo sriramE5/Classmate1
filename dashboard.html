@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ClassMate Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #121212;
+      color: #fff;
+    }
+
+    .appbar {
+      background-color: #1f1f1f;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #fff;
+      border-bottom: 1px solid #2a2a2a;
+    }
+
+    .greeting {
+      padding: 1.5rem;
+      font-size: 1.2rem;
+      background: linear-gradient(to right, #833ab4, #fd1d1d, #fcb045);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 600;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      padding: 1rem;
+    }
+
+    .card {
+      background: linear-gradient(135deg, #3a3a3a, #2a2a2a);
+      padding: 1.2rem;
+      border-radius: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+    }
+
+    .card i {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .card span {
+      font-size: 1rem;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #1f1f1f;
+      display: flex;
+      justify-content: space-around;
+      padding: 0.8rem 0;
+      border-top: 1px solid #2a2a2a;
+    }
+
+    .bottom-nav i {
+      font-size: 1.4rem;
+      color: #ccc;
+    }
+
+    .bottom-nav i.active {
+      color: #fcb045;
+    }
+  </style>
+
+  <!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <div class="appbar">ClassMate</div>
+
+  <div class="greeting" id="greetName">Hi there, let’s get productive!</div>
+
+  <div class="dashboard">
+<a href="attendance.html" style="text-decoration: none; color: inherit;">
+  <div class="card"><i class="fas fa-calendar-check"></i><span>Attendance</span></div>
+</a>
+<a href="chatbot.html" style="text-decoration: none; color: inherit;">
+  <div class="card"><i class="fas fa-calendar-check"></i><span>AI Chatbot</span></div>
+</a>
+    <div class="card" onclick="navigate('pages/taskManager.html')"><i class="fas fa-tasks"></i><span>Task Manager</span></div>
+    <div class="card" onclick="navigate('pages/goalTracker.html')"><i class="fas fa-bullseye"></i><span>Goal Tracker</span></div>
+    <div class="card" onclick="navigate('pages/performance.html')"><i class="fas fa-chart-line"></i><span>Performance</span></div>
+    <div class="card" onclick="navigate('pages/settings.html')"><i class="fas fa-cog"></i><span>Settings</span></div>
+  </div>
+
+  <div class="bottom-nav">
+    <i class="fas fa-home active"></i>
+    <i class="fas fa-tasks"></i>
+    <i class="fas fa-bullseye"></i>
+    <i class="fas fa-robot"></i>
+    <i class="fas fa-user"></i>
+  </div>
+
+  <script>
+    const user = localStorage.getItem("classmate_username");
+    if (user) {
+      document.getElementById("greetName").innerText = `Hi ${user}, let’s get productive!`;
+    }
+
+    function navigate(path) {
+      window.location.href = path;
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClassMate - Home</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #fafafa;
+      color: #262626;
+    }
+    .container {
+      max-width: 400px;
+      margin: 50px auto;
+      padding: 2rem;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 20px;
+      background: linear-gradient(90deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    input[type="text"] {
+      width: 80%;
+      padding: 10px;
+      margin: 15px 0;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+    button {
+      background: linear-gradient(to right, #feda75, #fa7e1e, #d62976);
+      border: none;
+      color: white;
+      padding: 12px 20px;
+      margin-top: 10px;
+      border-radius: 30px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="nameSection">
+    <h1>Welcome to ClassMate</h1>
+    <input type="text" id="userName" placeholder="Enter your name">
+    <button onclick="goToMainPage()">Continue</button>
+  </div>
+
+  <div class="container" id="mainSection" style="display:none">
+    <h1 id="greeting"></h1>
+    <div class="options">
+      <button onclick="goTo('attendance')">Attendance</button>
+      <button onclick="goTo('goals')">Goals & To-do</button>
+      <button onclick="goTo('chatbot')">AI Chatbot</button>
+    </div>
+  </div>
+
+  <div class="container" id="attendanceSection" style="display:none">
+    <h1>Attendance Calculator</h1>
+    <input type="text" id="totalClasses" placeholder="Total Classes">
+    <input type="text" id="attendedClasses" placeholder="Attended Classes">
+    <input type="text" id="mandatoryPercent" placeholder="Mandatory % (e.g. 75)">
+    <button onclick="calculateAttendance()">Calculate</button>
+    <p id="attendanceResult"></p>
+    <button onclick="goHome()">Back</button>
+  </div>
+
+  <div class="container" id="goalSection" style="display:none">
+    <h1>Goal Tracker</h1>
+    <input type="text" id="newGoal" placeholder="Enter goal">
+    <button onclick="addGoal()">Add Goal</button>
+    <ul id="goalList"></ul>
+    <button onclick="goHome()">Back</button>
+  </div>
+
+  <div class="container" id="chatbotSection" style="display:none">
+    <h1>AI Chatbot</h1>
+    <input type="text" id="interestInput" placeholder="Enter your interests">
+    <button onclick="generateGoals()">Generate Goals</button>
+    <ul id="suggestedGoals"></ul>
+    <button onclick="goHome()">Back</button>
+  </div>
+
+  <script>
+    function goToMainPage() {
+      const name = document.getElementById("userName").value;
+      if (name.trim()) {
+        document.getElementById("nameSection").style.display = "none";
+        document.getElementById("mainSection").style.display = "block";
+        document.getElementById("greeting").innerText = `Hi ${name}! Choose an option:`;
+      }
+    }
+
+    function goTo(section) {
+      document.getElementById("mainSection").style.display = "none";
+      document.getElementById("attendanceSection").style.display = "none";
+      document.getElementById("goalSection").style.display = "none";
+      document.getElementById("chatbotSection").style.display = "none";
+      document.getElementById(section + "Section").style.display = "block";
+    }
+
+    function goHome() {
+      document.getElementById("mainSection").style.display = "block";
+      document.getElementById("attendanceSection").style.display = "none";
+      document.getElementById("goalSection").style.display = "none";
+      document.getElementById("chatbotSection").style.display = "none";
+    }
+
+    function calculateAttendance() {
+      let total = parseInt(document.getElementById("totalClasses").value);
+      let attended = parseInt(document.getElementById("attendedClasses").value);
+      let mandatory = parseInt(document.getElementById("mandatoryPercent").value);
+      let result = document.getElementById("attendanceResult");
+
+      if (isNaN(total) || isNaN(attended) || isNaN(mandatory)) {
+        result.innerText = "Please fill all fields with valid numbers.";
+        return;
+      }
+
+      let percentage = (attended / total) * 100;
+      if (percentage >= mandatory) {
+        result.innerText = `You're safe with ${percentage.toFixed(2)}% attendance.`;
+      } else {
+        let needToAttend = Math.ceil((mandatory * total - 100 * attended) / (100 - mandatory));
+        result.innerText = `You need to attend next ${needToAttend} classes to reach ${mandatory}%.`;
+      }
+    }
+
+    function addGoal() {
+      const goalText = document.getElementById("newGoal").value;
+      if (goalText.trim()) {
+        const li = document.createElement("li");
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        li.appendChild(checkbox);
+        li.appendChild(document.createTextNode(" " + goalText));
+        document.getElementById("goalList").appendChild(li);
+        document.getElementById("newGoal").value = "";
+      }
+    }
+
+    function generateGoals() {<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ClassMate Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #121212;
+      color: #fff;
+    }
+
+    .appbar {
+      background-color: #1f1f1f;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #fff;
+      border-bottom: 1px solid #2a2a2a;
+    }
+
+    .greeting {
+      padding: 1.5rem;
+      font-size: 1.2rem;
+      background: linear-gradient(to right, #833ab4, #fd1d1d, #fcb045);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 600;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      padding: 1rem;
+    }
+
+    .card {
+      background: linear-gradient(135deg, #3a3a3a, #2a2a2a);
+      padding: 1.2rem;
+      border-radius: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+    }
+
+    .card i {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .card span {
+      font-size: 1rem;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #1f1f1f;
+      display: flex;
+      justify-content: space-around;
+      padding: 0.8rem 0;
+      border-top: 1px solid #2a2a2a;
+    }
+
+    .bottom-nav i {
+      font-size: 1.4rem;
+      color: #ccc;
+    }
+
+    .bottom-nav i.active {
+      color: #fcb045;
+    }
+  </style>
+
+  <!-- Font Awesome for icons -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <div class="appbar">ClassMate</div>
+
+  <div class="greeting">Hi Sriram, let’s get productive!</div>
+
+  <div class="dashboard">
+    <div class="card" onclick="location.href='attendance.html'"><i class="fas fa-calendar-check"></i><span>Attendance</span></div>
+    <div class="card" onclick="location.href='task.html'"><i class="fas fa-tasks"></i><span>Task Manager</span></div>
+    <div class="card" onclick="location.href='goals.html'"><i class="fas fa-bullseye"></i><span>Goal Tracker</span></div>
+    <div class="card" onclick="location.href='chatbot.html'"><i class="fas fa-robot"></i><span>AI Chatbot</span></div>
+    <div class="card" onclick="location.href='performance.html'"><i class="fas fa-chart-line"></i><span>Performance</span></div>
+    <div class="card" onclick="location.href='settings.html'"><i class="fas fa-cog"></i><span>Settings</span></div>
+  </div>
+
+  <div class="bottom-nav">
+    <i class="fas fa-home active"></i>
+    <i class="fas fa-tasks"></i>
+    <i class="fas fa-bullseye"></i>
+    <i class="fas fa-robot"></i>
+    <i class="fas fa-user"></i>
+  </div>
+
+</body>
+</html>
+      const interest = document.getElementById("interestInput").value.toLowerCase();
+      const suggestions = document.getElementById("suggestedGoals");
+      suggestions.innerHTML = "";
+      const data = {
+        coding: ["Solve 2 DSA questions", "Build a mini project"],
+        ai: ["Watch a ML video", "Read a paper on neural networks"],
+        exams: ["Revise notes", "Attempt a mock test"]
+      };
+      for (let topic in data) {
+        if (interest.includes(topic)) {
+          data[topic].forEach(goal => {
+            const li = document.createElement("li");
+            li.textContent = goal;
+            suggestions.appendChild(li);
+          });
+        }
+      }
+    }
+  </script>
+</body>
+</html>
