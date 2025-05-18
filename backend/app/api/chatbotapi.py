@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import APIRouter,FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
@@ -14,10 +14,10 @@ api_key = os.getenv("GEMINI_API_KEY")
 client = genai.Client(api_key=api_key)
 
 # Initialize FastAPI
-app = FastAPI()
+router = APIRouter()
 
 # Allow frontend access
-app.add_middleware(
+router.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_methods=["*"],
@@ -34,7 +34,7 @@ class GoalItem(BaseModel):
     goal: str
     checked: bool
 
-@app.post("/api/chat")
+@router.post("/api/chat")
 async def chat(req: ChatRequest):
     try:
         response = client.models.generate_content(
@@ -45,17 +45,17 @@ async def chat(req: ChatRequest):
     except Exception as e:
         return {"reply": f"Error: {str(e)}"}
 
-@app.post("/api/goals")
+@router.post("/api/goals")
 async def save_goals(goals: list[GoalItem]):
     global goals_data
     goals_data = goals
     return {"message": "Goals saved successfully"}
 
-@app.get("/api/goals")
+@router.get("/api/goals")
 async def get_goals():
     return goals_data
 
-@app.get("/api/performance")
+@router.get("/api/performance")
 async def get_performance():
     total = len(goals_data)
     completed = sum(1 for g in goals_data if g.checked)
@@ -67,7 +67,7 @@ async def get_performance():
     }
 import markdown2
 
-@app.post("/api/chat")
+@router.post("/api/chat")
 async def chat(req: ChatRequest):
     try:
         response = client.models.generate_content(
