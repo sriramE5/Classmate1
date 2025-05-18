@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+python-dotenv
+pydantic
+passlib[bcrypt]
+python-jose
+pymongo
+certifi
+google-genai
+markdown2
