@@ -17,12 +17,12 @@ client = genai.Client(api_key=api_key)
 router = APIRouter()
 
 # Allow frontend access
-router.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["*"],
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 # In-memory storage (replace with DB or file in production)
 goals_data = []

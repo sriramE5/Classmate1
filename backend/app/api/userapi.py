@@ -22,13 +22,13 @@ ALGORITHM = "HS256"
 router = APIRouter()
 
 # CORS Middleware (Allow all for development)
-router.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["*"],
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 # ---------------- Security & Hashing Setup ----------------
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/login")
