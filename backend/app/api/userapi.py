@@ -19,10 +19,10 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 
 # ---------------- FastAPI Setup ----------------
-app = FastAPI()
+router = APIRouter()
 
 # CORS Middleware (Allow all for development)
-app.add_middleware(
+router.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
@@ -98,7 +98,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=401, detail="Invalid token")
 
 # ---------------- Routes ----------------
-@app.post("/api/register", response_model=UserResponse)
+@router.post("/api/register", response_model=UserResponse)
 async def register(user: RegisterModel):
     if users_collection is None:
         raise HTTPException(status_code=500, detail="Database not connected")
@@ -118,7 +118,7 @@ async def register(user: RegisterModel):
 
     return UserResponse(name=user.name, email=user.email, dob=user.dob)
 
-@app.post("/api/login")
+@router.post("/api/login")
 async def login(user: LoginModel):
     if users_collection is None:
         raise HTTPException(status_code=500, detail="Database not connected")
@@ -138,7 +138,7 @@ async def login(user: LoginModel):
         }
     }
 
-@app.get("/api/me", response_model=UserResponse)
+@router.get("/api/me", response_model=UserResponse)
 async def get_me(current_user: dict = Depends(get_current_user)):
     return UserResponse(
         name=current_user["name"],
@@ -146,7 +146,7 @@ async def get_me(current_user: dict = Depends(get_current_user)):
         dob=current_user["dob"]
     )
 
-@app.get("/")
+@router.get("/")
 async def health_check():
     return {
         "status": "OK",
