@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Multi-Goal Learning Plan Dashboard</title>
+<style>
+  /* Reset & basics */
+  body {
+    background-color: #f7fdfc;
+    color: #111;
+    font-family: system-ui, sans-serif;
+    margin: 0; padding: 24px;
+  }
+  h1 {
+    font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: #000;
+  }
+  textarea {
+    width: 100%; padding: 12px; border: 1px solid #d1d5db;
+    border-radius: 0.375rem; font-size: 1rem; font-family: inherit;
+    resize: vertical; box-sizing: border-box;
+  }
+  button {
+    cursor: pointer; font-family: inherit;
+  }
+
+  /* Container */
+  .container {
+    max-width: 1120px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 24px;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  /* Save button */
+  .goal-button {
+    background-color: #34d399;
+    color: #000;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.375rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+  }
+  .goal-button:hover {
+    background-color: #10b981;
+  }
+
+  /* Goal hyperlinks nav */
+  #goalLinks {
+    display: flex;
+    overflow-x: auto;
+    gap: 0.5rem;
+    border-bottom: 1px solid #d1d5db;
+    padding-bottom: 0.5rem;
+    white-space: nowrap;
+  }
+  .goal-link {
+    position: relative;
+    padding: 0.5rem 1.5rem 0.5rem 1rem;
+    background-color: #e5e7eb;
+    color: #4b5563;
+    border-radius: 0.375rem 0.375rem 0 0;
+    font-weight: 600;
+    border: none;
+    flex-shrink: 0;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    user-select: none;
+  }
+  .goal-link.selected {
+    background-color: #d1fae5;
+    color: #065f46;
+  }
+  .goal-link.pinned {
+    background-color: #34d399;
+    color: #000;
+  }
+  .goal-link.pinned:hover {
+    background-color: #10b981;
+    color: #000;
+  }
+  .goal-link.pinned.selected {
+    background-color: #6ee7b7;
+    color: #000;
+  }
+  .goal-link:hover:not(.selected) {
+    background-color: #d1fae5;
+    color: #065f46;
+  }
+
+  /* Delete button on goal link */
+  .goal-link .delete-btn {
+    position: absolute;
+    top: 3px;
+    right: 6px;
+    background: transparent;
+    border: none;
+    color: #dc2626;
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+    display: none;
+    padding: 0;
+    transition: color 0.3s ease;
+  }
+  .goal-link:hover .delete-btn {
+    display: inline;
+  }
+  .goal-link .delete-btn:hover {
+    color: #991b1b;
+  }
+
+  /* Goal cards container */
+  #output {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: flex-start;
+    min-height: 150px;
+  }
+
+  /* Goal card */
+  .goal-card {
+    background-color: #fff;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    box-sizing: border-box;
+    cursor: pointer;
+    min-width: 280px;
+    max-width: 350px;
+    flex-grow: 1;
+    flex-basis: calc(33.3% - 1.5rem);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: #111;
+    transition: box-shadow 0.3s ease;
+    user-select: none;
+  }
+  .goal-card:hover {
+    box-shadow: 0 4px 15px rgb(16 185 129 / 0.3);
+  }
+  .goal-card.pinned {
+    background-color: #34d399;
+    border-color: #10b981;
+    color: #000;
+  }
+
+  /* Goal card title row */
+  .goal-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .goal-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    user-select: text;
+  }
+
+  /* Pin button inside goal card */
+  .pin-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #065f46;
+    transition: color 0.3s ease;
+  }
+  .goal-card.pinned .pin-btn {
+    color: #000;
+  }
+  .pin-btn:hover {
+    color: #047857;
+  }
+
+  /* Goal card short summary (first 2 phases) */
+  .goal-summary {
+    font-size: 0.9rem;
+    line-height: 1.3;
+    max-height: 5.2rem; /* limit to about 3 lines */
+    overflow: hidden;
+    color: inherit;
+  }
+
+  /* Modal overlay for expanded checklist */
+  #modalOverlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0,0,0,0.4);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+
+  /* Modal content window */
+  #modalContent {
+    background-color: #fff;
+    border-radius: 0.5rem;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 25px rgb(16 185 129 / 0.5);
+    padding: 1.5rem 2rem 2rem;
+    position: relative;
+    color: #111;
+  }
+
+  #modalContent.pinned {
+    background-color: #ffffff;
+    color: #000;
+  }
+
+  /* Modal close button */
+  #modalCloseBtn {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: transparent;
+    border: none;
+    font-size: 2rem;
+    font-weight: 700;
+    cursor: pointer;
+    color: #888;
+    transition: color 0.3s ease;
+  }
+  #modalCloseBtn:hover {
+    color: #000;
+  }
+
+  /* Phase blocks in modal */
+  .phase-block {
+    background-color: #dbebff;
+    border: 1px solid #bfdbfe;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  #modalContent.pinned .phase-block {
+    background-color: #dbebff;
+    border-color: #bfdbfe;
+  }
+
+  /* Phase header */
+  .phase-header {
+    font-weight: 600;
+    color: #1e40af;
+    margin-bottom: 0.5rem;
+  }
+  #modalContent.pinned .phase-header {
+    color: #1e3a8a;
+  }
+
+  /* Task rows */
+  .task-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+  .task-row label {
+    cursor: pointer;
+    user-select: none;
+  }
+  .task-row input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+  }
+
+  /* Delete goal button in modal */
+  #modalDeleteBtn {
+    background: red;
+    border: red;
+    color: #ffffff;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 5px 10px 5px 10px;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    float: right;
+    transition: color 0.3s ease;
+    border-radius: 12px;
+    margin-right: 20px;
+  }
+  #modalDeleteBtn:hover {
+    color: #fff8f8;
+    background-color: rgb(208, 17, 17);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🎯 Multi-Goal Learning Plan Dashboard</h1>
+  <textarea id="inputText" rows="10" placeholder="Enter multiple goals in the format:
+Goal: Web Development
+Phase 1:
+- HTML Basics
+- CSS Layout
+Phase 2:
+- JavaScript DOM
+- React Basics"></textarea>
+  <button class="goal-button" onclick="saveGoal()">Save Goal</button>
+
+  <div id="goalLinks"></div>
+
+  <div id="output">
+    <p style="color:#6b7280;">Saved goals and checklists will appear here...</p>
+  </div>
+</div>
+
+<!-- Modal for detailed checklist -->
+<div id="modalOverlay" tabindex="-1" aria-hidden="true">
+  <div id="modalContent" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button id="modalCloseBtn" aria-label="Close modal">&times;</button>
+    <button id="modalDeleteBtn" title="Delete Goal">🗑 Delete Goal</button>
+    <h2 id="modalTitle" style="margin-top:0;">Goal Title</h2>
+    <div id="modalPhases"></div>
+  </div>
+</div>
+
+<script>
+  // Globals
+  let savedGoals = [];
+  let checkboxStates = {};
+  let selectedLinkIndex = -1;
+  let modalOpenIndex = -1;
+
+  // Load data from localStorage
+  function loadData() {
+    savedGoals = JSON.parse(localStorage.getItem("savedGoals")) || [];
+    checkboxStates = JSON.parse(localStorage.getItem("checkboxStates")) || {};
+  }
+  // Save goals to localStorage
+  function saveData() {
+    localStorage.setItem("savedGoals", JSON.stringify(savedGoals));
+  }
+  // Save checkbox states
+  function saveCheckboxStates() {
+    localStorage.setItem("checkboxStates", JSON.stringify(checkboxStates));
+  }
+
+  // Save new goal(s) from textarea input
+  function saveGoal() {
+    const input = document.getElementById("inputText").value.trim();
+    if (!input) return;
+    const goalBlocks = input.split(/Goal:\s*/).map(b => b.trim()).filter(Boolean);
+    goalBlocks.forEach(block => {
+      if (block) savedGoals.push({ text: block, pinned: false });
+    });
+    saveData();
+    document.getElementById("inputText").value = "";
+    renderGoalLinks();
+    renderGoals();
+  }
+
+  // Delete goal with confirmation
+  function deleteGoal(index) {
+    if (!confirm("Are you sure you want to delete this goal?")) return;
+    savedGoals.splice(index, 1);
+    saveData();
+    // Close modal if open on this goal
+    if(modalOpenIndex === index) closeModal();
+    // Reset selection if needed
+    if(selectedLinkIndex === index) selectedLinkIndex = -1;
+    renderGoalLinks();
+    renderGoals();
+  }
+
+  // Toggle pin/unpin a goal
+  function togglePin(index) {
+    savedGoals[index].pinned = !savedGoals[index].pinned;
+    saveData();
+    renderGoalLinks();
+    renderGoals();
+  }
+
+  // Render goal hyperlinks at top (pinned first)
+  function renderGoalLinks() {
+    // Sort pinned goals to top
+    const sortedGoals = [...savedGoals].map((g,i) => ({...g, originalIndex: i}));
+    sortedGoals.sort((a,b) => (b.pinned === a.pinned) ? 0 : (b.pinned ? 1 : -1));
+
+    const container = document.getElementById("goalLinks");
+    container.innerHTML = "";
+
+    sortedGoals.forEach((goal, sortedIndex) => {
+      const link = document.createElement("button");
+      link.textContent = goal.text.split('\n')[0].trim();
+      link.className = "goal-link";
+      if (goal.pinned) link.classList.add("pinned");
+      if (selectedLinkIndex === goal.originalIndex) link.classList.add("selected");
+      link.title = goal.text;
+      link.style.userSelect = "none";
+
+      // On click select highlight (no toggle card visibility)
+      link.onclick = () => {
+        selectedLinkIndex = goal.originalIndex;
+        renderGoalLinks();
+      };
+
+      // Delete button on link
+      const delBtn = document.createElement("button");
+      delBtn.className = "delete-btn";
+      delBtn.title = "Delete Goal";
+      delBtn.innerHTML = "🗑";
+      delBtn.onclick = (e) => {
+        e.stopPropagation();
+        deleteGoal(goal.originalIndex);
+      };
+      link.appendChild(delBtn);
+
+      container.appendChild(link);
+    });
+  }
+
+  // Render goal cards below
+  function renderGoals() {
+    const container = document.getElementById("output");
+    container.innerHTML = "";
+
+    if (savedGoals.length === 0) {
+      container.innerHTML = '<p style="color:#6b7280;">Saved goals and checklists will appear here...</p>';
+      return;
+    }
+
+    savedGoals.forEach((goal, index) => {
+      const wrapper = document.createElement("div");
+      wrapper.className = "goal-card";
+      if(goal.pinned) wrapper.classList.add("pinned");
+
+      // Title row with pin button
+      const titleRow = document.createElement("div");
+      titleRow.className = "goal-title-row";
+
+      const title = document.createElement("div");
+      title.className = "goal-title";
+      title.textContent = goal.text.split("\n")[0].trim();
+      titleRow.appendChild(title);
+
+      const pinBtn = document.createElement("button");
+      pinBtn.className = "pin-btn";
+      pinBtn.title = goal.pinned ? "Unpin Goal" : "Pin to Top";
+      pinBtn.textContent = "📌";
+      pinBtn.onclick = (e) => {
+        e.stopPropagation();
+        togglePin(index);
+      };
+      titleRow.appendChild(pinBtn);
+
+      wrapper.appendChild(titleRow);
+
+      // Show a short summary of first 2 phases and tasks
+      const phases = goal.text.split(/Phase\s*\d*:/i).slice(1);
+      let summaryText = "";
+      phases.slice(0,2).forEach((phaseBlock, i) => {
+        const lines = phaseBlock.trim().split("\n").map(l => l.trim()).filter(Boolean);
+        if(lines.length === 0) return;
+        summaryText += `Phase ${i+1}: ${lines.slice(1).map(t => t.replace(/^\-\s*/, "")).join(", ")}\n`;
+      });
+
+      const summary = document.createElement("pre");
+      summary.className = "goal-summary";
+      summary.textContent = summaryText || "(No checklist)";
+      wrapper.appendChild(summary);
+
+      // Clicking goal card opens modal with checklist
+      wrapper.onclick = () => openModal(index);
+
+      container.appendChild(wrapper);
+    });
+  }
+
+  // Modal open
+  const modalOverlay = document.getElementById("modalOverlay");
+  const modalContent = document.getElementById("modalContent");
+  const modalTitle = document.getElementById("modalTitle");
+  const modalPhases = document.getElementById("modalPhases");
+  const modalCloseBtn = document.getElementById("modalCloseBtn");
+  const modalDeleteBtn = document.getElementById("modalDeleteBtn");
+
+  function openModal(index) {
+    modalOpenIndex = index;
+    const goal = savedGoals[index];
+    modalTitle.textContent = goal.text.split("\n")[0].trim();
+    modalContent.classList.toggle("pinned", goal.pinned);
+
+    // Clear previous content
+    modalPhases.innerHTML = "";
+
+    // Split phases
+    const phases = goal.text.split(/Phase\s*\d*:/i).slice(1);
+    phases.forEach((phaseBlock, phaseIndex) => {
+      const lines = phaseBlock.trim().split("\n").map(l => l.trim()).filter(Boolean);
+      if(lines.length === 0) return;
+      const phaseName = lines[0];
+      const tasks = lines.slice(1);
+
+      const phaseDiv = document.createElement("div");
+      phaseDiv.className = "phase-block";
+
+      const header = document.createElement("h3");
+      header.className = "phase-header";
+      header.textContent = phaseName;
+      phaseDiv.appendChild(header);
+
+      tasks.forEach((task, taskIndex) => {
+        const taskId = `goal${index}_phase${phaseIndex}_task${taskIndex}`;
+        const taskRow = document.createElement("div");
+        taskRow.className = "task-row";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.id = taskId;
+        checkbox.checked = !!checkboxStates[taskId];
+
+        checkbox.addEventListener("change", () => {
+          checkboxStates[taskId] = checkbox.checked;
+          saveCheckboxStates();
+        });
+
+        const label = document.createElement("label");
+        label.htmlFor = taskId;
+        label.textContent = task.replace(/^\-\s*/, "");
+
+        taskRow.appendChild(checkbox);
+        taskRow.appendChild(label);
+        phaseDiv.appendChild(taskRow);
+      });
+
+      modalPhases.appendChild(phaseDiv);
+    });
+
+    modalDeleteBtn.onclick = () => {
+      deleteGoal(index);
+      closeModal();
+    };
+
+    // Show modal
+    modalOverlay.style.display = "flex";
+    modalOverlay.focus();
+  }
+
+  function closeModal() {
+    modalOpenIndex = -1;
+    modalOverlay.style.display = "none";
+  }
+
+  modalCloseBtn.onclick = closeModal;
+  modalOverlay.onclick = (e) => {
+    if(e.target === modalOverlay) closeModal();
+  };
+
+  // Initialize on load
+  window.onload = () => {
+    loadData();
+    renderGoalLinks();
+    renderGoals();
+  };
+</script>
+</body>
+</html>

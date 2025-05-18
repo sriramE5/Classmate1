@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login & Signup</title>
+    <link rel="stylesheet" href="Login page.css">
+  </head>
+  <body>
+    <div class="container">
+      <!-- Left side with illustration -->
+      <div class="left-panel">
+        <button class="back-button" onclick="window.location.href='ClassMateWeb.html'">Back</button>
+        <div class="illustration-container">
+          <div class="illustration">
+            <img src="Home.png" alt="a conversation illustration" style="max-width: 100%; height: auto;">
+          </div>
+        </div>
+        <div style="height: 3rem;"></div>
+      </div>
+      
+      <!-- Right side with form -->
+      <div class="right-panel">
+        <div class="form-container">
+          <h1 class="form-title" id="form-title">Login</h1>
+          <p class="form-subtitle" id="form-subtitle">Sign in to continue</p>
+          
+          <form id="auth-form">
+            <!-- Changed from name to email for login -->
+            <div class="form-group email-field">
+              <label for="email" class="form-label">EMAIL</label>
+              <input type="email" id="email" class="form-input" placeholder="hello@example.com" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="password" class="form-label">PASSWORD</label>
+              <input type="password" id="password" class="form-input" placeholder="••••••" required>
+            </div>
+            
+            <div class="form-group name-field" style="display: none;">
+              <label for="name" class="form-label">NAME</label>
+              <input type="text" id="name" class="form-input" placeholder="John" >
+            </div>
+            
+            <div class="form-group dob-field" style="display: none;">
+              <label for="dob" class="form-label">DATE OF BIRTH</label>
+              <input type="date" id="dob" class="form-input" s >
+            </div>
+            
+            <div id="error-message" class="error-message" style="display: none;"></div>
+            
+            <button type="submit" class="submit-button" id="submit-button">Log In</button>
+          </form>
+          
+          <div class="form-footer" id="login-footer">
+            <p>Forgot Password?</p>
+            <p><button class="toggle-form" id="toggle-signup">Signup!</button></p>
+          </div>
+          
+          <div class="form-footer" id="signup-footer" style="display: none;">
+            <p><button class="toggle-form" id="toggle-login">Back to Log in</button></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+  // Redirect if already logged in
+  if (localStorage.getItem('auth_token')) {
+    window.location.href = "Class Mate Func.html";
+  }
+  
+  // DOM elements
+  const formTitle = document.getElementById('form-title');
+  const formSubtitle = document.getElementById('form-subtitle');
+  const authForm = document.getElementById('auth-form');
+  const nameField = document.querySelector('.name-field');
+  const emailField = document.querySelector('.email-field');
+  const dobField = document.querySelector('.dob-field');
+  const submitButton = document.getElementById('submit-button');
+  const loginFooter = document.getElementById('login-footer');
+  const signupFooter = document.getElementById('signup-footer');
+  const toggleSignup = document.getElementById('toggle-signup');
+  const toggleLogin = document.getElementById('toggle-login');
+  const errorMessage = document.getElementById('error-message');
+  
+  // State
+  let isLogin = true;
+  
+  // Toggle between login and signup forms
+  function toggleForm() {
+    isLogin = !isLogin;
+
+    if (isLogin) {
+      formTitle.textContent = 'Login';
+      formSubtitle.textContent = 'Sign in to continue';
+      submitButton.textContent = 'Log In';
+      nameField.style.display = 'none';
+      dobField.style.display = 'none';
+      document.getElementById('name').removeAttribute('required');
+      document.getElementById('name').disabled = true;
+      document.getElementById('dob').removeAttribute('required');
+      document.getElementById('dob').disabled = true;
+      loginFooter.style.display = 'block';
+      signupFooter.style.display = 'none';
+    } else {
+      formTitle.textContent = 'Register';
+      formSubtitle.textContent = 'Register to continue';
+      submitButton.textContent = 'Sign up';
+      nameField.style.display = 'block';
+      dobField.style.display = 'block';
+      document.getElementById('name').setAttribute('required', '');
+      document.getElementById('name').disabled = false;
+      document.getElementById('dob').setAttribute('required', '');
+      document.getElementById('dob').disabled = false;
+      loginFooter.style.display = 'none';
+      signupFooter.style.display = 'block';
+    }
+
+    errorMessage.style.display = 'none';
+  }
+
+  
+  // Show error message
+  function showError(message) {
+    errorMessage.textContent = message;
+    errorMessage.style.display = 'block';
+  }
+  
+  // Handle successful auth
+  function handleAuthSuccess(token, userData) {
+    // Store the token and user data in localStorage
+    localStorage.setItem('auth_token', token);
+    if (userData && userData.name) {
+      localStorage.setItem('user_name', userData.name);
+    }
+    
+    // Redirect to the protected page
+    window.location.href = 'Class Mate Func.html';
+  }
+  
+  // Event listeners
+  toggleSignup.addEventListener('click', toggleForm);
+  toggleLogin.addEventListener('click', toggleForm);
+  
+  authForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    errorMessage.style.display = 'none';
+    
+    // Show loading state
+    const originalButtonText = submitButton.textContent;
+    submitButton.disabled = true;
+    submitButton.innerHTML = '<span class="spinner"></span><span class="spinner-text">Processing...</span>';
+    
+    try {
+      if (isLogin) {
+        // Login logic
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        
+        const response = await fetch('http://localhost:8000/api/login', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({ email, password })
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          // Handle specific error types
+          if (data.error_type === 'email_not_found') {
+            showError('Email not registered. Please sign up first.');
+          } else if (data.error_type === 'wrong_password') {
+            showError('Incorrect password. Please try again.');
+          } else {
+            showError(data.detail || 'Login failed');
+          }
+          return;
+        }
+        
+        handleAuthSuccess(data.token, data.user);
+        
+      } else {
+        // Registration logic
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const dob = document.getElementById('dob').value;
+        
+        const response = await fetch('http://localhost:8000/api/register', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({ 
+            name: name,
+            email: email,
+            password: password,
+            dob: dob
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          // Handle specific error types
+          if (data.error_type === 'email_exists') {
+            showError('Email already registered. Please log in.');
+          } else {
+            showError(data.detail || 'Registration failed');
+          }
+          return;
+        }
+        
+        // After successful registration, automatically log the user in
+        const loginResponse = await fetch('http://localhost:8000/api/login', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({ email, password })
+        });
+        
+        const loginData = await loginResponse.json();
+        
+        if (!loginResponse.ok) {
+          showError('Registration successful but automatic login failed. Please log in manually.');
+          toggleForm(); // Switch back to login form
+          return;
+        }
+        
+        handleAuthSuccess(loginData.token, loginData.user);
+      }
+    } catch (error) {
+      showError('Network error. Please try again.');
+      console.error('Error:', error);
+    } finally {
+      // Restore button state
+      submitButton.disabled = false;
+      submitButton.textContent = originalButtonText;
+    }
+  });
+  
+  // Check if user is already logged in
+  if (localStorage.getItem('auth_token')) {
+    // Redirect to protected page if token exists
+    window.location.href = 'Class Mate Func.html';
+  }
+</script>
+  </body>
+</html>

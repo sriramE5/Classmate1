@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Class Mate Dashboard</title>
+  <link rel="stylesheet" href="Class Mate Css.css">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #fff;
+    }
+    /* header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      background: white;
+      border-bottom: 1px solid #ccc;
+    }
+    header .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    header .logo img {
+      height: 30px;
+    }
+    nav {
+      display: flex;
+      gap: 2rem;
+      font-weight: bold;
+    }
+    .logout-btn {
+      background: #9f7;
+      padding: 0.5rem 1.5rem;
+      border-radius: 25px;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    } */
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 1.5rem;
+      padding: 2rem;
+      background: rgb(255, 255, 255);
+      min-height: 100vh;
+    }
+    .card {
+      background: #9f7;
+      border-radius: 30px;
+      padding: 1rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .profile {
+      grid-row: span 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .profile img {
+      max-width: 100%;
+      border-radius: 20px;
+    }
+    .name-list {
+      background: white;
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 20px;
+      width: 90%;
+    }
+    .name-list p {
+      margin: 0.5rem 0;
+      font-weight: bold;
+    }
+    .chart, .graph {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+    .big-card {
+      grid-column: span 2;
+      min-height: 200px;
+    }
+    
+  </style>
+</head>
+<body>
+
+  <!-- <header>
+    <div class="logo">
+      <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="cap icon" />
+      <span>CLASS MATE</span>
+    </div>
+    <nav>
+      <div>HOME</div>
+      <div>FEATURES</div>
+      <div>ABOUT</div>
+    </nav>
+    <button class="logout-btn">Log Out</button>
+  </header> -->
+  <header>
+    <nav>
+      <a href="#" class="logo">
+        <div class="logo-icon">
+          <svg width="20" height="15" viewBox="0 0 20 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 0L20 15H0L10 0Z" fill="white" />
+          </svg>
+        </div>
+        <span>CLASS MATE</span>
+      </a>
+      <div class="nav-links">
+        <a href="Class Mate Func.html">HOME</a>
+        <a href="#features">FEATURES</a>
+        <a href="Dashboard.html" id="dashboard">DASHBOARD</a>
+        <a href="#about">ABOUT</a>
+      </div>
+      <a href="ClassMateWeb.html" class="btn btn-primary">Log Out</a>
+    </nav>
+  </header>
+
+  <div class="dashboard">
+    <div class="card profile">
+      <img src="https://via.placeholder.com/250x250.png?text=Avatar" alt="Avatar"/>
+      <div class="name-list">
+        <p>Name</p>
+        <p>Name</p>
+        <p>Name</p>
+        <p>Name</p>
+      </div>
+    </div>
+
+    <div class="card chart">
+      <img src="https://via.placeholder.com/200x200.png?text=Pie+Chart" alt="Pie Chart"/>
+    </div>
+
+    <div class="card graph">
+      <img src="https://via.placeholder.com/200x200.png?text=Bar+Graph" alt="Bar Graph"/>
+    </div>
+
+    <div class="card big-card">
+      <!-- Additional content area -->
+    </div>
+  </div>
+
+</body>
+</html>
