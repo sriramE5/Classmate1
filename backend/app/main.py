@@ -14,8 +14,8 @@ app.add_middleware(
 )
 
 # Include routers
-app.include_router(userapi.router, prefix="/api")
-app.include_router(chatbotapi.router, prefix="/api")
+app.include_router(userapi.router )
+app.include_router(chatbotapi.router)
 
 @app.get("/")
 async def root():
