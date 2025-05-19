@@ -83,7 +83,7 @@
   const toggleSignup = document.getElementById('toggle-signup');
   const toggleLogin = document.getElementById('toggle-login');
   const errorMessage = document.getElementById('error-message');
-  const serverUrl = "https://8000-m-s-hgjztfmmts8a-c.us-west1-1.prod.colab.dev"; // Update with your server URL
+  const serverUrl = "https://classmate1-ffw7.onrender.com"; // Update with your server URL
   
   // State
   let isLogin = true;
@@ -159,7 +159,7 @@
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
         
-        const response = await fetch(serverUrl + 'api/login', {
+        const response = await fetch(serverUrl + '/api/login', {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
@@ -191,7 +191,7 @@
         const password = document.getElementById('password').value;
         const dob = document.getElementById('dob').value;
         
-        const response = await fetch(serverUrl + 'api/register', {
+        const response = await fetch(serverUrl + '/api/register', {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
@@ -218,7 +218,7 @@
         }
         
         // After successful registration, automatically log the user in
-        const loginResponse = await fetch(serverUrl + 'api/login', {
+        const loginResponse = await fetch(serverUrl + '/api/login', {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
