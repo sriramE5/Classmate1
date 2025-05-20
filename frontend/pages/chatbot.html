@@ -268,6 +268,11 @@
       padding: 1rem 1.5rem;
       background-color: var(--bg-secondary);
       border-top: 1px solid var(--border-color);
+      width: 100%;
+      position: relative;
+      bottom: 0;
+      left: 0;
+      right: 0;
     }
 
     /* Options bar moved above input */
@@ -380,8 +385,8 @@
     .loading-indicator span:nth-child(2) { animation-delay: -0.16s; }
     @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
 
-    .bot .chat-content table { width: 100%; border-collapse: collapse; margin: 1em 0; font-size: 0.9em; }
-    .bot .chat-content th, .bot .chat-content td { border: 1px solid var(--border-color); padding: 0.5rem 0.75rem; text-align: left; }
+    .bot .chat-content table { width: 100%; border-collapse: collapse; margin: 1em 0; font-size: 0.9em; display: block; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch}
+    .bot .chat-content th, .bot .chat-content td { border: 1px solid var(--border-color); padding: 0.5rem 0.75rem; text-align: left; min-width: 100px;}
     .bot .chat-content th { background-color: var(--bg-tertiary); font-weight: 600; }
     .bot .chat-content ul, .bot .chat-content ol { margin-left: 1.5rem; margin-top: 0.5rem; margin-bottom: 0.5rem; }
     .bot .chat-content strong { font-weight: 600; }
@@ -468,7 +473,12 @@
       }
       
       .chat-container, .input-container { 
-        padding: 1rem; 
+        padding: 1rem;
+        width: 100%; 
+      }
+
+      .chat-container { 
+        padding-bottom: 20px; /* Adjusted for input container */
       }
       
       .message { 
@@ -510,6 +520,21 @@
       /* Adjust logo size for mobile */
       .header-logo {
         height: 35px;
+      }
+
+      main {
+        height: calc(100vh - var(--header-height) - 120px);
+        margin-bottom: 160px; /* Adjusted for input container */
+      }
+
+      /* Fix for input container */
+      .input-container {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        padding-bottom: env(safe-area-inset-bottom, 1rem); /* iOS safe area support */
       }
     }
 
