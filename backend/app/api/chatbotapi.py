@@ -1,9 +1,10 @@
-from fastapi import APIRouter,FastAPI, Request
+from fastapi import APIRouter,FastAPI, Request,Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import os
 from google import genai
+import markdown2
 import json
 
 # Load environment variables
@@ -35,12 +36,16 @@ class GoalItem(BaseModel):
     checked: bool
 
 @router.post("/api/chat")
-async def chat(req: ChatRequest):
+async def chat(req: ChatRequest, as_markdown: bool = Query(False)):
     try:
         response = client.models.generate_content(
             model="gemini-2.0-flash",
             contents=req.prompt
         )
+        reply_text = response.text
+
+        if as_markdown:
+            reply_text = markdown2.markdown(reply_text)
         return {"reply": response.text}
     except Exception as e:
         return {"reply": f"Error: {str(e)}"}
@@ -65,16 +70,3 @@ async def get_performance():
         "completed": completed,
         "percent": percent
     }
-import markdown2
-
-@router.post("/api/chat")
-async def chat(req: ChatRequest):
-    try:
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=req.prompt
-        )
-        markdown_html = markdown2.markdown(response.text)
-        return {"reply": markdown_html}
-    except Exception as e:
-        return {"reply": f"Error: {str(e)}"}
