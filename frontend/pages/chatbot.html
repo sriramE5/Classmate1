@@ -664,7 +664,7 @@ Remember to break your goals into phases and tasks.`;
             
             fullPrompt += `\n\nConversation History:\n${conversationHistoryForAPI}`;
             
-            const response = await fetch(serverUrl + "api/chat", { 
+            const response = await fetch(serverUrl + "/api/chat", { 
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ prompt: fullPrompt })
