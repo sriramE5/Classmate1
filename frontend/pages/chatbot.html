@@ -56,6 +56,7 @@
       transition: width 0.3s ease, padding 0.3s ease, left 0.3s ease, opacity 0.3s ease;
       overflow-x: hidden; 
       opacity: 1;
+      z-index: 1010; /* Ensure sidebar is above other content */
     }
     .sidebar.collapsed {
         width: var(--sidebar-width-collapsed);
@@ -161,6 +162,8 @@
       overflow: hidden; 
       background-color: var(--bg-primary);
       transition: margin-left 0.3s ease;
+      position: relative; /* Ensure proper stacking context */
+      z-index: 1000; /* Lower than sidebar but higher than other elements */
     }
 
     .app-container.sidebar-hidden .main-content {
@@ -170,30 +173,57 @@
     header {
       height: var(--header-height);
       padding: 0 1.5rem;
-      background-color: var(--bg-secondary);
+      background-color: #000000; /* Changed to black as requested */
       border-bottom: 1px solid var(--border-color);
       display: flex;
       align-items: center;
-      gap: 1rem;
+      justify-content: space-between; /* Changed to space-between for better alignment */
       font-size: 1.2rem;
       font-weight: 600;
       color: var(--text-primary);
       flex-shrink: 0;
+      position: relative; /* For proper positioning of elements */
     }
+    
+    .header-left {
+      display: flex;
+      align-items: center;
+    }
+    
+    .header-center {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .header-logo {
+      height: 40px; /* Adjust based on your header height */
+      max-width: 100%;
+      display: block;
+    }
+    
+    .header-right {
+      display: flex;
+      align-items: center;
+    }
+    
     .header-sidebar-toggle-btn, .menu-toggle {
         background: none;
         border: none;
-        color: var(--text-primary);
+        color: #ffffff; /* Changed to white for better contrast with black background */
         font-size: 1.5rem;
         cursor: pointer;
         z-index: 1001;
     }
-    .menu-toggle {
-        display: none; 
-    }
+    
     #chat-title-static {
-        flex-grow: 1;
-        text-align: center; 
+        font-size: 1.2rem;
+        font-weight: 600;
+        display: none; /* Hide the text as we're using the logo instead */
     }
 
     main {
@@ -238,6 +268,45 @@
       padding: 1rem 1.5rem;
       background-color: var(--bg-secondary);
       border-top: 1px solid var(--border-color);
+    }
+
+    /* Options bar moved above input */
+    .options-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px; /* Changed from margin-top to margin-bottom */
+      overflow-x: auto;
+      padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    }
+
+    .option-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: white;
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 0.9rem;
+      color: var(--text-primary);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.2s;
+    }
+
+    .option-button:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .option-button i {
+      margin-right: 6px;
+    }
+
+    .option-button.active {
+      background-color: var(--accent-primary);
+      color: white;
+      border-color: var(--accent-primary);
     }
 
     .input-wrapper {
@@ -305,44 +374,6 @@
       cursor: not-allowed;
     }
 
-    /* Options bar below input */
-    .options-bar {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-    }
-
-    .option-button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: white;
-      border: 1px solid var(--border-color);
-      border-radius: 20px;
-      padding: 6px 12px;
-      font-size: 0.9rem;
-      color: var(--text-primary);
-      cursor: pointer;
-      white-space: nowrap;
-      transition: background-color 0.2s;
-    }
-
-    .option-button:hover {
-      background-color: rgba(0, 0, 0, 0.05);
-    }
-
-    .option-button i {
-      margin-right: 6px;
-    }
-
-    .option-button.active {
-      background-color: var(--accent-primary);
-      color: white;
-      border-color: var(--accent-primary);
-    }
-
     .loading-indicator { display: none; align-self: flex-start; margin-left: 1.5rem; margin-bottom: 1rem; }
     .loading-indicator span { display: inline-block; width: 8px; height: 8px; margin-right: 4px; border-radius: 50%; background-color: var(--text-secondary); animation: bounce 1.4s infinite ease-in-out both; }
     .loading-indicator span:nth-child(1) { animation-delay: -0.32s; }
@@ -357,37 +388,150 @@
     .bot .chat-content a { color: var(--accent-secondary); text-decoration: none; }
     .bot .chat-content a:hover { text-decoration: underline; }
 
-    @media (max-width: 768px) {
+    /* Mobile overlay for sidebar */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1005;
+    }
+
+    /* Responsive breakpoints - improved for all viewport sizes */
+    @media (min-width: 1025px) {
+      /* Large desktop */
+      .sidebar {
+        position: relative;
+        left: 0;
+      }
+      .menu-toggle {
+        display: none;
+      }
+      .header-sidebar-toggle-btn {
+        display: block;
+      }
+      .sidebar-overlay {
+        display: none !important;
+      }
+    }
+
+    @media (max-width: 1024px) {
+      /* Medium screens and below - treat like mobile */
       .sidebar {
         position: fixed;
         left: calc(-1 * var(--sidebar-width)); 
         top: 0;
         height: 100%;
-        z-index: 1000;
+        z-index: 1010;
         box-shadow: 2px 0 5px rgba(0,0,0,0.2);
         opacity: 1;
         pointer-events: auto;
+        width: 85%; /* Slightly narrower on mobile */
+        max-width: var(--sidebar-width);
       }
+      
       .sidebar.open {
         left: 0;
       }
+      
+      .sidebar.open + .sidebar-overlay {
+        display: block;
+      }
+      
       .sidebar.collapsed {
         left: calc(-1 * var(--sidebar-width)); 
         opacity: 0;
         pointer-events: none;
       }
+      
       .menu-toggle {
         display: block; 
       }
+      
       .header-sidebar-toggle-btn {
-          display: none; 
+        display: none; 
       }
-      header { padding: 0 1rem; }
-      .chat-container, .input-container { padding: 1rem; }
-      .message { max-width: 90%; }
-      .bot { padding-right: 30px; }
-      .message pre { padding-right: 50px; }
-      #user-input { font-size: 0.95rem; }
+      
+      .header-center {
+        position: static;
+        transform: none;
+        flex-grow: 1;
+        text-align: center;
+      }
+      
+      header { 
+        padding: 0 1rem; 
+        justify-content: space-between;
+      }
+      
+      .chat-container, .input-container { 
+        padding: 1rem; 
+      }
+      
+      .message { 
+        max-width: 90%; 
+      }
+      
+      .bot { 
+        padding-right: 30px; 
+      }
+      
+      .message pre { 
+        padding-right: 50px; 
+      }
+      
+      #user-input { 
+        font-size: 0.95rem; 
+      }
+      
+      /* Ensure options bar is visible */
+      .options-bar {
+        display: flex;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 8px; /* More padding for better touch */
+        margin-bottom: 10px;
+        scrollbar-width: none; /* Hide scrollbar for Firefox */
+      }
+      
+      .options-bar::-webkit-scrollbar {
+        display: none; /* Hide scrollbar for Chrome/Safari */
+      }
+      
+      /* Make option buttons more touch-friendly */
+      .option-button {
+        padding: 8px 14px;
+        font-size: 0.95rem;
+      }
+      
+      /* Adjust logo size for mobile */
+      .header-logo {
+        height: 35px;
+      }
+    }
+
+    /* Additional adjustments for very small screens */
+    @media (max-width: 480px) {
+      .header-center {
+        font-size: 1rem;
+      }
+      
+      .option-button {
+        padding: 6px 10px;
+        font-size: 0.85rem;
+      }
+      
+      .message {
+        max-width: 95%;
+      }
+      
+      /* Further reduce logo size for very small screens */
+      .header-logo {
+        height: 30px;
+      }
     }
   </style>
 </head>
@@ -402,12 +546,21 @@
       <ul class="chat-history-list" id="chat-history-list">
       </ul>
     </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
     <div class="main-content" id="main-content">
       <header>
-        <button class="header-sidebar-toggle-btn" id="header-sidebar-toggle-btn" title="Toggle Sidebar"><i class="fas fa-bars"></i></button>
-        <button class="menu-toggle" id="menu-toggle" title="Open Chat History"><i class="fas fa-bars"></i></button>
-        <span id="chat-title-static">CLASSMATE AI</span>
+        <div class="header-left">
+          <button class="header-sidebar-toggle-btn" id="header-sidebar-toggle-btn" title="Toggle Sidebar"><i class="fas fa-bars"></i></button>
+          <button class="menu-toggle" id="menu-toggle" title="Open Chat History"><i class="fas fa-bars"></i></button>
+        </div>
+        <div class="header-center">
+          <img src="C:\Users\srira\Desktop\Projects\ClassMate\ClassMate\assets\logoheaderAi.png" alt="Classmate AI Logo" class="header-logo">
+          <span id="chat-title-static">CLASSMATE AI</span>
+        </div>
+        <div class="header-right">
+          <!-- Placeholder for future header elements like theme toggle -->
+        </div>
       </header>
       <main>
         <div class="chat-container" id="chat-container">
@@ -417,16 +570,17 @@
         </div>
       </main>
       <div class="input-container">
+        <!-- Options bar moved above input wrapper -->
+        <div class="options-bar">
+          <button id="todo-list-option" class="option-button"><i class="fas fa-list-check"></i> To-Do List</button>
+          <button id="interviewer-option" class="option-button"><i class="fas fa-user-tie"></i> Mock Interviewer</button>
+        </div>
         <div class="input-wrapper">
           <textarea id="user-input" placeholder="Ask ClassMate" rows="1"></textarea>
           <div class="input-buttons">
             <button id="mic-button" class="input-button" title="Speak"><i class="fas fa-microphone"></i></button>
             <button id="send-button" class="input-button" title="Send Message"><i class="fas fa-paper-plane"></i></button>
           </div>
-        </div>
-        <div class="options-bar">
-          <button id="todo-list-option" class="option-button"><i class="fas fa-list-check"></i> To-Do List</button>
-          <button id="interviewer-option" class="option-button"><i class="fas fa-user-tie"></i> Mock Interviewer</button>
         </div>
       </div>
     </div>
@@ -440,6 +594,7 @@
     const loadingIndicator = document.getElementById("loading-indicator");
     const appContainer = document.getElementById("app-container");
     const sidebar = document.getElementById("sidebar");
+    const sidebarOverlay = document.getElementById("sidebar-overlay");
     const menuToggle = document.getElementById("menu-toggle"); 
     const sidebarToggleBtn = document.getElementById("sidebar-toggle-btn");
     const headerSidebarToggleBtn = document.getElementById("header-sidebar-toggle-btn");
@@ -457,7 +612,7 @@
     let isToDoListModeActive = false;
 
     let promptBase = `You are ClassMate, a smart academic assistant for students.
-    You help them explaining concepts with code and tables, and reply in an organized, friendly format.
+    You help them manage goals, generate to-do lists, explain concepts with code and tables, and reply in an organized, friendly format.
     
     For all queries, respond as a helpful academic assistant.`;
 
@@ -478,36 +633,66 @@ Phase 2: [e.g., Data Structures and Control Flow]
 
 Remember to break your goals into phases and tasks.`;
 
-    // Sidebar toggle functionality (Desktop)
+    // Function to check if we're in mobile/tablet view
+    function isMobileView() {
+        return window.innerWidth <= 1024;
+    }
+
+    // Sidebar toggle functionality
     function toggleSidebar() {
-        sidebar.classList.toggle('collapsed');
-        appContainer.classList.toggle('sidebar-hidden');
-        localStorage.setItem('sidebarState_ClassMate', sidebar.classList.contains('collapsed') ? 'collapsed' : 'open');
+        if (isMobileView()) {
+            // In mobile view, toggle the open class
+            sidebar.classList.toggle('open');
+            if (sidebar.classList.contains('open')) {
+                sidebarOverlay.style.display = 'block';
+            } else {
+                sidebarOverlay.style.display = 'none';
+            }
+        } else {
+            // In desktop view, toggle the collapsed class
+            sidebar.classList.toggle('collapsed');
+            appContainer.classList.toggle('sidebar-hidden');
+            localStorage.setItem('sidebarState_ClassMate', sidebar.classList.contains('collapsed') ? 'collapsed' : 'open');
+        }
         
         // Update toggle button visibility
         updateToggleButtonVisibility();
     }
     
+    // Attach click handlers to both toggle buttons
     sidebarToggleBtn.addEventListener('click', toggleSidebar);
     headerSidebarToggleBtn.addEventListener('click', toggleSidebar);
+    menuToggle.addEventListener('click', toggleSidebar);
 
-    // Update toggle button visibility based on sidebar state
+    // Update toggle button visibility based on sidebar state and viewport
     function updateToggleButtonVisibility() {
-        if (window.innerWidth > 768) { // Desktop
+        if (isMobileView()) {
+            // Mobile view
+            menuToggle.style.display = 'block';
+            headerSidebarToggleBtn.style.display = 'none';
+        } else {
+            // Desktop view
+            menuToggle.style.display = 'none';
             headerSidebarToggleBtn.style.display = sidebar.classList.contains('collapsed') ? 'block' : 'none';
         }
     }
 
-    // Mobile menu toggle for sidebar
-    menuToggle.addEventListener('click', () => {
-        sidebar.classList.toggle('open');
+    // Close mobile sidebar when clicking overlay
+    sidebarOverlay.addEventListener('click', () => {
+        if (sidebar.classList.contains('open')) {
+            sidebar.classList.remove('open');
+            sidebarOverlay.style.display = 'none';
+        }
     });
 
     // Close mobile sidebar when clicking outside
     document.addEventListener('click', (event) => {
-        if (window.innerWidth <= 768 && sidebar.classList.contains('open') && 
-            !sidebar.contains(event.target) && !menuToggle.contains(event.target)) {
+        if (isMobileView() && 
+            sidebar.classList.contains('open') && 
+            !sidebar.contains(event.target) && 
+            !menuToggle.contains(event.target)) {
             sidebar.classList.remove('open');
+            sidebarOverlay.style.display = 'none';
         }
     });
 
@@ -528,7 +713,7 @@ Remember to break your goals into phases and tasks.`;
 
     // Mock Interviewer navigation
     interviewerOption.addEventListener('click', () => {
-        window.location.href = 'interviewer.html';
+        window.location.href = 'mock_interviewer_speech.html';
     });
 
     function copyTextToClipboard(text, buttonElement, successIconClass = 'fa-check', originalIconClass = 'fa-copy') {
@@ -645,6 +830,7 @@ Remember to break your goals into phases and tasks.`;
             appendMessage("Error: No active chat. Please start a new chat.", "bot", true);
             return;
         }
+        
         allChats[currentChatId].messages.push({ role: "user", parts: userMessageContent });
         updateChatTitleIfNeeded(currentChatId, userMessageContent);
         saveChatsToLocalStorage();
@@ -699,58 +885,140 @@ Remember to break your goals into phases and tasks.`;
     }
 
     sendButton.addEventListener('click', handleSendMessage);
-    userInput.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" && !event.shiftKey) {
-        event.preventDefault();
-        handleSendMessage();
-      }
+    userInput.addEventListener("keydown", (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSendMessage();
+        }
     });
 
-    function generateChatId() { return `chat_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`; }
-    
-    function updateChatTitleIfNeeded(chatId, firstUserMessage) {
-        if (allChats[chatId] && (!allChats[chatId].title || allChats[chatId].title === "New Chat") && allChats[chatId].messages.filter(m => m.role === 'user').length === 1) {
-            const newTitle = firstUserMessage.substring(0, 25).trim() + (firstUserMessage.length > 25 ? "..." : "");
-            allChats[chatId].title = newTitle || "Chat";
-            renderChatHistoryList(); 
+    // Initialize Web Speech API for voice input if available
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'en-US';
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            userInput.value = transcript;
+            userInput.dispatchEvent(new Event('input'));
+        };
+
+        recognition.onend = () => {
+            isRecording = false;
+            micButton.classList.remove('recording');
+        };
+
+        recognition.onerror = (event) => {
+            console.error('Speech recognition error:', event.error);
+            isRecording = false;
+            micButton.classList.remove('recording');
+        };
+
+        micButton.addEventListener('click', () => {
+            if (isRecording) {
+                recognition.stop();
+                isRecording = false;
+                micButton.classList.remove('recording');
+            } else {
+                recognition.start();
+                isRecording = true;
+                micButton.classList.add('recording');
+            }
+        });
+    } else {
+        micButton.style.display = 'none';
+    }
+
+    // Chat history management
+    function createNewChat() {
+        const chatId = Date.now().toString();
+        allChats[chatId] = {
+            id: chatId,
+            title: "New Chat",
+            messages: []
+        };
+        currentChatId = chatId;
+        saveChatsToLocalStorage();
+        updateChatHistoryUI();
+        chatContainer.innerHTML = '';
+        if (isMobileView()) {
+            toggleSidebar(); // Close sidebar on mobile after creating new chat
+        }
+    }
+
+    function updateChatTitleIfNeeded(chatId, userMessage) {
+        const chat = allChats[chatId];
+        if (chat && chat.title === "New Chat" && chat.messages.length === 0) {
+            // This is the first message in a new chat, use it to generate a title
+            const titlePreview = userMessage.substring(0, 30) + (userMessage.length > 30 ? "..." : "");
+            chat.title = titlePreview;
+            updateChatHistoryUI();
         }
     }
 
     function saveChatsToLocalStorage() {
-        localStorage.setItem('aiChatbotChats_ClassMate', JSON.stringify(allChats));
+        localStorage.setItem('chats_ClassMate', JSON.stringify(allChats));
+        localStorage.setItem('currentChatId_ClassMate', currentChatId);
     }
 
     function loadChatsFromLocalStorage() {
-        const storedChats = localStorage.getItem('aiChatbotChats_ClassMate');
-        if (storedChats) {
-            try {
-                allChats = JSON.parse(storedChats);
-            } catch (e) {
-                console.error("Error parsing chats from localStorage:", e);
-                allChats = {};
-            }
+        const savedChats = localStorage.getItem('chats_ClassMate');
+        const savedCurrentChatId = localStorage.getItem('currentChatId_ClassMate');
+        
+        if (savedChats) {
+            allChats = JSON.parse(savedChats);
+        }
+        
+        if (savedCurrentChatId && allChats[savedCurrentChatId]) {
+            currentChatId = savedCurrentChatId;
+            loadChat(currentChatId);
+        } else if (Object.keys(allChats).length > 0) {
+            // Load the most recent chat if current chat is not found
+            currentChatId = Object.keys(allChats).sort().reverse()[0];
+            loadChat(currentChatId);
         } else {
-            allChats = {};
+            // No chats found, create a new one
+            createNewChat();
         }
     }
 
-    function renderChatHistoryList() {
-        chatHistoryList.innerHTML = ''; 
-        Object.keys(allChats).sort((a,b) => {
-            const timeA = parseInt(a.split('_')[1]);
-            const timeB = parseInt(b.split('_')[1]);
-            return timeB - timeA; // Sort descending by timestamp
-        }).forEach(chatIdKey => {
-            const chat = allChats[chatIdKey];
-            if (!chat) return;
-            const listItem = document.createElement('li');
-            listItem.dataset.chatId = chatIdKey;
+    function loadChat(chatId) {
+        if (!allChats[chatId]) return;
+        
+        currentChatId = chatId;
+        chatContainer.innerHTML = '';
+        
+        // Load messages
+        const messages = allChats[chatId].messages;
+        messages.forEach(msg => {
+            appendMessage(msg.parts, msg.role === "user" ? "user" : "bot");
+        });
+        
+        // Update UI to show active chat
+        updateChatHistoryUI();
+        
+        // Save current chat ID to localStorage
+        localStorage.setItem('currentChatId_ClassMate', currentChatId);
+    }
+
+    function updateChatHistoryUI() {
+        chatHistoryList.innerHTML = '';
+        
+        // Sort chats by ID (timestamp) in descending order
+        const sortedChatIds = Object.keys(allChats).sort((a, b) => parseInt(b) - parseInt(a));
+        
+        sortedChatIds.forEach(chatId => {
+            const chat = allChats[chatId];
+            const li = document.createElement('li');
+            li.className = chatId === currentChatId ? 'active' : '';
             
             const titleSpan = document.createElement('span');
             titleSpan.className = 'chat-item-title';
-            titleSpan.textContent = chat.title || `Chat`;
-            listItem.appendChild(titleSpan);
-
+            titleSpan.textContent = chat.title;
+            
             const actionsDiv = document.createElement('div');
             actionsDiv.className = 'chat-item-actions';
             
@@ -759,220 +1027,101 @@ Remember to break your goals into phases and tasks.`;
             renameBtn.innerHTML = '<i class="fas fa-edit"></i>';
             renameBtn.title = 'Rename chat';
             renameBtn.onclick = (e) => {
-                e.stopPropagation(); 
-                renameChat(chatIdKey);
+                e.stopPropagation();
+                const newTitle = prompt('Enter new chat title:', chat.title);
+                if (newTitle && newTitle.trim()) {
+                    chat.title = newTitle.trim();
+                    saveChatsToLocalStorage();
+                    updateChatHistoryUI();
+                }
             };
-            actionsDiv.appendChild(renameBtn);
-
+            
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'delete-chat-btn';
-            deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+            deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
             deleteBtn.title = 'Delete chat';
             deleteBtn.onclick = (e) => {
-                e.stopPropagation(); 
-                deleteChat(chatIdKey);
+                e.stopPropagation();
+                if (confirm('Are you sure you want to delete this chat?')) {
+                    delete allChats[chatId];
+                    saveChatsToLocalStorage();
+                    
+                    if (chatId === currentChatId) {
+                        // If we deleted the current chat, load another one or create new
+                        const remainingChatIds = Object.keys(allChats);
+                        if (remainingChatIds.length > 0) {
+                            loadChat(remainingChatIds[0]);
+                        } else {
+                            createNewChat();
+                        }
+                    } else {
+                        updateChatHistoryUI();
+                    }
+                }
             };
+            
+            actionsDiv.appendChild(renameBtn);
             actionsDiv.appendChild(deleteBtn);
-            listItem.appendChild(actionsDiv);
-
-            if (chatIdKey === currentChatId) {
-                listItem.classList.add('active');
-            }
-            listItem.onclick = () => {
-                switchChat(chatIdKey);
-            };
-            chatHistoryList.appendChild(listItem);
+            
+            li.appendChild(titleSpan);
+            li.appendChild(actionsDiv);
+            
+            li.addEventListener('click', () => {
+                if (chatId !== currentChatId) {
+                    loadChat(chatId);
+                }
+                if (isMobileView()) {
+                    toggleSidebar(); // Close sidebar on mobile after selecting chat
+                }
+            });
+            
+            chatHistoryList.appendChild(li);
         });
-    }
-    
-    function renameChat(chatIdToRename) {
-        if (!allChats[chatIdToRename]) {
-            console.error("Rename error: Chat ID not found", chatIdToRename);
-            return;
-        }
-        const currentTitle = allChats[chatIdToRename].title;
-        const newTitle = prompt("Enter new name for this chat:", currentTitle);
-        if (newTitle && newTitle.trim() !== "") {
-            allChats[chatIdToRename].title = newTitle.trim();
-            saveChatsToLocalStorage();
-            renderChatHistoryList();
-        } else if (newTitle !== null) { // User didn't cancel, but entered empty string
-            alert("Chat name cannot be empty.");
-        }
-    }
-
-    function createNewChat() {
-        const newId = generateChatId();
-        allChats[newId] = { title: "New Chat", messages: [] }; 
-        saveChatsToLocalStorage(); 
-        switchChat(newId); 
     }
 
     newChatBtn.addEventListener('click', createNewChat);
 
-    function switchChat(chatIdToSwitch) {
-        if (!allChats[chatIdToSwitch]) {
-            console.warn("Switch error: Chat ID not found:", chatIdToSwitch, "Falling back.");
-            const chatKeys = Object.keys(allChats).sort((a,b) => parseInt(b.split('_')[1]) - parseInt(a.split('_')[1]));
-            if (chatKeys.length > 0) {
-                currentChatId = chatKeys[0];
-            } else {
-                createNewChat(); 
-                return; 
-            }
-        } else {
-             currentChatId = chatIdToSwitch;
-        }
-        localStorage.setItem('lastActiveChatId_ClassMate', currentChatId);
-        chatContainer.innerHTML = ''; 
-        allChats[currentChatId].messages.forEach(msg => {
-            const senderClass = msg.role === 'ai' ? 'bot' : msg.role;
-            appendMessage(msg.parts, senderClass, (senderClass === 'bot' && msg.parts.startsWith("Error:")));
-        });
-        renderChatHistoryList(); 
-        userInput.focus();
-        if (window.innerWidth <= 768 && sidebar.classList.contains('open')) {
-            sidebar.classList.remove('open');
-        }
-    }
-
-    function deleteChat(chatIdToDelete) {
-        if (!allChats[chatIdToDelete]) {
-            console.error("Delete error: Chat ID not found", chatIdToDelete);
-            appendMessage("Error: Could not find chat to delete.", "bot", true);
-            return;
-        }
-        const chatToDeleteTitle = allChats[chatIdToDelete].title || `Chat (ID: ...${chatIdToDelete.slice(-6)})`;
-
-        if (confirm(`Are you sure you want to delete "${chatToDeleteTitle}"?`)) {
-            const wasCurrentChat = currentChatId === chatIdToDelete;
-            delete allChats[chatIdToDelete];
-            saveChatsToLocalStorage();
-            
-            if (localStorage.getItem('lastActiveChatId_ClassMate') === chatIdToDelete) {
-                localStorage.removeItem('lastActiveChatId_ClassMate');
-            }
-
-            if (wasCurrentChat) {
-                currentChatId = null; 
-                const remainingChatIds = Object.keys(allChats).sort((a,b) => parseInt(b.split('_')[1]) - parseInt(a.split('_')[1]));
-                if (remainingChatIds.length > 0) {
-                    switchChat(remainingChatIds[0]); 
-                } else {
-                    createNewChat();
-                }
-            } else {
-                renderChatHistoryList(); 
-            }
-        } 
-    }
-
-    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        recognition = new SpeechRecognition();
-        recognition.continuous = false;
-        recognition.lang = 'en-US';
-        recognition.interimResults = false;
-        recognition.maxAlternatives = 1;
-
-        recognition.onstart = () => { userInput.placeholder = "Listening..."; };
-        recognition.onresult = (event) => {
-            const speechResult = event.results[event.results.length - 1][0].transcript;
-            userInput.value = speechResult;
-            userInput.dispatchEvent(new Event('input'));
-        };
-        recognition.onerror = (event) => {
-            console.error('Speech recognition error:', event.error, event.message);
-            let errorMessage = "An unknown speech recognition error occurred.";
-            if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-                errorMessage = "Microphone access denied. Please enable microphone permissions.";
-            } else if (event.error === 'no-speech') {
-                errorMessage = "No speech detected.";
-            } else if (event.error === 'audio-capture') {
-                errorMessage = "Microphone not found or not working.";
-            } else if (event.error === 'network') {
-                errorMessage = "Network error during speech recognition.";
-            }
-            appendMessage(errorMessage, 'bot', true);
-            if(isRecording) stopRecording(false);
-        };
-        recognition.onend = () => {
-            userInput.placeholder = "Ask ClassMate";
-            if (isRecording) stopRecording(true);
-        };
-    } else {
-        console.warn("Speech Recognition not supported.");
-        micButton.style.display = 'none'; 
-    }
-    function startRecording() {
-        if (recognition && !isRecording) {
-            try {
-                userInput.disabled = true; micButton.disabled = true; 
-                recognition.start(); isRecording = true;
-                micButton.classList.add('recording'); 
-                sendButton.disabled = true; micButton.disabled = false; 
-            } catch (e) {
-                console.error("Error starting recognition: ", e);
-                appendMessage("Could not start voice recognition.", "bot", true);
-                userInput.disabled = false; micButton.disabled = false;
-                if (isRecording) stopRecording(false); else {
-                     micButton.classList.remove('recording');
-                     sendButton.disabled = userInput.value.trim() === '';
-                }
-            }
-        }
-    }
-    function stopRecording(shouldRefocus = true) {
-        if (recognition && isRecording) recognition.stop(); 
-        isRecording = false;
-        micButton.classList.remove('recording');
-        sendButton.disabled = userInput.value.trim() === '';
-        userInput.disabled = false; micButton.disabled = false; 
-        if(shouldRefocus) userInput.focus();
-        userInput.placeholder = "Ask ClassMate";
-    }
-    micButton.addEventListener('click', () => {
-        if (!recognition) {
-            appendMessage("Speech recognition not supported.", "bot", true);
-            return;
-        }
-        if (isRecording) stopRecording(); else startRecording(); 
-    });
-
-    function initializeApp() {
+    // Initialize the app
+    window.addEventListener('load', () => {
         loadChatsFromLocalStorage();
         
+        // Check if we should start with collapsed sidebar (desktop only)
         const savedSidebarState = localStorage.getItem('sidebarState_ClassMate');
-        if (savedSidebarState === 'collapsed') {
+        if (!isMobileView() && savedSidebarState === 'collapsed') {
             sidebar.classList.add('collapsed');
             appContainer.classList.add('sidebar-hidden');
-        } else {
-            sidebar.classList.remove('collapsed');
-            appContainer.classList.remove('sidebar-hidden');
         }
         
         // Update toggle button visibility
         updateToggleButtonVisibility();
-
-        const chatIds = Object.keys(allChats).sort((a,b) => parseInt(b.split('_')[1]) - parseInt(a.split('_')[1]));
-        let lastActiveChatId = localStorage.getItem('lastActiveChatId_ClassMate');
         
-        if (lastActiveChatId && allChats[lastActiveChatId]) {
-            switchChat(lastActiveChatId);
-        } else if (chatIds.length > 0) {
-            switchChat(chatIds[0]);
-        } else {
-            createNewChat();
+        // Set initial button state
+        sendButton.disabled = true;
+        
+        // Set initial input height
+        userInput.dispatchEvent(new Event('input'));
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        updateToggleButtonVisibility();
+        
+        // If transitioning from mobile to desktop view, ensure proper sidebar state
+        if (!isMobileView()) {
+            sidebar.classList.remove('open');
+            sidebarOverlay.style.display = 'none';
+            
+            // Restore saved desktop sidebar state
+            const savedSidebarState = localStorage.getItem('sidebarState_ClassMate');
+            if (savedSidebarState === 'collapsed') {
+                sidebar.classList.add('collapsed');
+                appContainer.classList.add('sidebar-hidden');
+            } else {
+                sidebar.classList.remove('collapsed');
+                appContainer.classList.remove('sidebar-hidden');
+            }
         }
-        sendButton.disabled = userInput.value.trim() === '';
-        userInput.dispatchEvent(new Event('input')); 
-        userInput.placeholder = "Ask ClassMate...";
-    }
-
-    // Handle window resize for toggle button visibility
-    window.addEventListener('resize', updateToggleButtonVisibility);
-
-    initializeApp();
+    });
   </script>
 </body>
 </html>
