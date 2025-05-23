@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CLASSMATE AI - Chatbot Interface</title>
+  <title>CLASSMATE AI</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
@@ -15,7 +15,7 @@
       --bg-tertiary: #eaeaea;           /* Chat bubbles or tertiary areas */
       --text-primary: #1a1a1a;          /* Main text color */
       --text-secondary: #555555;        /* Secondary text */
-      --accent-primary: #005ad7;        /* Primary accent (e.g., buttons) */
+      --accent-primary: #000000;        /* Primary accent (e.g., buttons) */
       --accent-secondary: #008cba;      /* Secondary accent (e.g., hover or action) */
       --border-color: #cccccc;          /* Border and outlines */
       --font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -105,7 +105,7 @@
         white-space: nowrap;
     }
     .new-chat-btn:hover {
-        background-color: #6A40D8;
+        background-color: #313030;
     }
     .chat-history-list {
         flex-grow: 1;
@@ -260,11 +260,27 @@
     .copy-btn:hover { background-color: var(--accent-primary); color: #FFFFFF; }
     .copy-btn:active { transform: scale(0.95); }
     .bot-reply-copy-btn { padding: 0.2rem 0.4rem; font-size: 0.7em; }
+    
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #333;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 4px;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .toast.show {
+      opacity: 1;
+    }
 
-    /* Input bar styling to match the screenshot */
+    /* Input container */
     .input-container {
-      display: flex;
-      flex-direction: column;
       padding: 1rem 1.5rem;
       background-color: var(--bg-secondary);
       border-top: 1px solid var(--border-color);
@@ -275,55 +291,19 @@
       right: 0;
     }
 
-    /* Options bar moved above input */
-    .options-bar {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 12px; /* Changed from margin-top to margin-bottom */
-      overflow-x: auto;
-      padding-bottom: 4px;
-      -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-    }
-
-    .option-button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: white;
-      border: 1px solid var(--border-color);
-      border-radius: 20px;
-      padding: 6px 12px;
-      font-size: 0.9rem;
-      color: var(--text-primary);
-      cursor: pointer;
-      white-space: nowrap;
-      transition: background-color 0.2s;
-    }
-
-    .option-button:hover {
-      background-color: rgba(0, 0, 0, 0.05);
-    }
-
-    .option-button i {
-      margin-right: 6px;
-    }
-
-    .option-button.active {
-      background-color: var(--accent-primary);
-      color: white;
-      border-color: var(--accent-primary);
-    }
-
+    /* Input wrapper with position relative for absolute positioning of icons */
     .input-wrapper {
-      display: flex;
-      align-items: center;
+      position: relative;
       background-color: white;
       border-radius: 24px;
       border: 1px solid var(--border-color);
       padding: 8px 16px;
-      position: relative;
+      min-height: 50px; /* Ensure enough height for the input and bottom icons */
+      display: flex;
+      align-items: center;
     }
 
+    /* User input styling */
     #user-input {
       flex: 1;
       border: none;
@@ -335,8 +315,10 @@
       outline: none;
       max-height: calc(1.5em * 3);
       overflow-y: auto;
+      margin-bottom: 20px; /* Make space for the bottom icons */
     }
 
+    /* Right side buttons */
     .input-buttons {
       display: flex;
       align-items: center;
@@ -377,6 +359,40 @@
       color: var(--text-secondary);
       opacity: 0.5;
       cursor: not-allowed;
+    }
+
+    /* Bottom icons container */
+    .bottom-icons {
+      position: absolute;
+      bottom: 5px;
+      left: 16px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .bottom-icon {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 0.85rem; /* Small icon size */
+      padding: 4px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s, transform 0.2s;
+    }
+
+    .bottom-icon:hover {
+      color: var(--accent-primary);
+      transform: scale(1.1);
+    }
+
+    /* Active state for To-Do List toggle */
+    .bottom-icon.active {
+      color: #4CAF50; /* Green color for active state */
+      background-color: rgba(76, 175, 80, 0.1); /* Light green background */
     }
 
     .loading-indicator { display: none; align-self: flex-start; margin-left: 1.5rem; margin-bottom: 1rem; }
@@ -497,26 +513,6 @@
         font-size: 0.95rem; 
       }
       
-      /* Ensure options bar is visible */
-      .options-bar {
-        display: flex;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        padding-bottom: 8px; /* More padding for better touch */
-        margin-bottom: 10px;
-        scrollbar-width: none; /* Hide scrollbar for Firefox */
-      }
-      
-      .options-bar::-webkit-scrollbar {
-        display: none; /* Hide scrollbar for Chrome/Safari */
-      }
-      
-      /* Make option buttons more touch-friendly */
-      .option-button {
-        padding: 8px 14px;
-        font-size: 0.95rem;
-      }
-      
       /* Adjust logo size for mobile */
       .header-logo {
         height: 35px;
@@ -542,11 +538,6 @@
     @media (max-width: 480px) {
       .header-center {
         font-size: 1rem;
-      }
-      
-      .option-button {
-        padding: 6px 10px;
-        font-size: 0.85rem;
       }
       
       .message {
@@ -580,7 +571,7 @@
           <button class="menu-toggle" id="menu-toggle" title="Open Chat History"><i class="fas fa-bars"></i></button>
         </div>
         <div class="header-center">
-          <img src="../logos/logoheaderAi.png" alt="Classmate AI Logo" class="header-logo">
+          <img src="C:\Users\srira\Desktop\Projects\ClassMate\ClassMate\assets\logoheaderAi.png" alt="Classmate AI Logo" class="header-logo">
           <span id="chat-title-static">CLASSMATE AI</span>
         </div>
         <div class="header-right">
@@ -595,21 +586,24 @@
         </div>
       </main>
       <div class="input-container">
-        <!-- Options bar moved above input wrapper -->
-        <div class="options-bar">
-          <button id="todo-list-option" class="option-button"><i class="fas fa-list-check"></i> To-Do List</button>
-          <button id="interviewer-option" class="option-button"><i class="fas fa-user-tie"></i> Mock Interviewer</button>
-        </div>
         <div class="input-wrapper">
           <textarea id="user-input" placeholder="Ask ClassMate" rows="1"></textarea>
           <div class="input-buttons">
             <button id="mic-button" class="input-button" title="Speak"><i class="fas fa-microphone"></i></button>
             <button id="send-button" class="input-button" title="Send Message"><i class="fas fa-paper-plane"></i></button>
           </div>
+          <!-- Bottom icons inside input bar -->
+          <div class="bottom-icons">
+            <button id="todo-list-option" class="bottom-icon" title="To-Do List"><i class="fas fa-list-check"></i></button>
+            <button id="interviewer-option" class="bottom-icon" title="Mock Interviewer"><i class="fas fa-user-tie"></i></button>
+          </div>
         </div>
       </div>
     </div>
   </div>
+  
+  <!-- Toast notification element -->
+  <div id="toast" class="toast"></div>
 
   <script>
     const chatContainer = document.getElementById("chat-container");
@@ -628,7 +622,7 @@
     const mainContent = document.getElementById("main-content");
     const todoListOption = document.getElementById("todo-list-option");
     const interviewerOption = document.getElementById("interviewer-option");
-    const serverUrl = "https://classmate1-ffw7.onrender.com"; // Update with your server URL
+    const toast = document.getElementById("toast");
 
     let currentChatId = null;
     let allChats = {}; 
@@ -730,16 +724,88 @@ Remember to break your goals into phases and tasks.`;
         sendButton.disabled = userInput.value.trim() === '';
     });
 
-    // To-Do List mode toggle
+    // To-Do List mode toggle with visual feedback
     todoListOption.addEventListener('click', () => {
         isToDoListModeActive = !isToDoListModeActive;
         todoListOption.classList.toggle('active', isToDoListModeActive);
+        
+        // Show toast notification for mode change
+        if (isToDoListModeActive) {
+            showToast("To-Do List mode activated! Ask me to create a to-do list.");
+        } else {
+            showToast("To-Do List mode deactivated.");
+        }
     });
 
     // Mock Interviewer navigation
     interviewerOption.addEventListener('click', () => {
-        window.location.href = 'mock_interviewer_speech.html';
+        window.location.href = 'interviewer.html';
     });
+
+    // Show toast notification
+    function showToast(message, duration = 3000) {
+        toast.textContent = message;
+        toast.classList.add('show');
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, duration);
+    }
+
+    // Function to check if text contains a to-do list format
+    function isToDoListFormat(text) {
+        // Log for debugging
+        console.log("Checking if text is a to-do list format:", text.substring(0, 100) + "...");
+        
+        // More flexible detection for to-do list patterns
+        // 1. Check for Goal: pattern (case insensitive, allowing whitespace)
+        const goalPattern = /goal\s*:/i;
+        const hasGoal = goalPattern.test(text);
+        
+        // 2. Check for Phase pattern (various formats)
+        const phasePattern = /phase\s*\d+|phase\s*[a-z]+|step\s*\d+|part\s*\d+/i;
+        const hasPhase = phasePattern.test(text);
+        
+        // 3. Check for bullet points/tasks (various formats)
+        const taskPattern = /[-•*]\s+\w+|^\d+\.\s+\w+/m;
+        const hasTasks = taskPattern.test(text);
+        
+        // 4. Check for overall structure (more lenient)
+        // Looking for a pattern where we have something like "Goal:" followed by content,
+        // then eventually some kind of phase/step/part indicator
+        const structurePattern = /goal\s*:.*?(?:phase|step|part)\s*(?:\d+|[a-z]+)/is;
+        const hasStructure = structurePattern.test(text);
+        
+        // Log detection results for debugging
+        console.log("Detection results:", { 
+            hasGoal, 
+            hasPhase, 
+            hasTasks, 
+            hasStructure 
+        });
+        
+        // Return true if we have most of the expected elements
+        // More lenient approach: require goal and either phases or tasks
+        return hasGoal && (hasPhase || hasTasks) && hasStructure;
+    }
+
+    // Function to save to-do list to localStorage for todolist.html
+    function saveToToDoList(content) {
+        // Get existing saved goals or initialize empty array
+        const savedGoals = JSON.parse(localStorage.getItem("savedGoals")) || [];
+        
+        // Add the new goal
+        savedGoals.push({ 
+            text: content, 
+            pinned: false 
+        });
+        
+        // Save back to localStorage
+        localStorage.setItem("savedGoals", JSON.stringify(savedGoals));
+        
+        // Provide feedback to user
+        showToast("To-do list saved successfully! View it in the To-Do List Generator.");
+    }
 
     function copyTextToClipboard(text, buttonElement, successIconClass = 'fa-check', originalIconClass = 'fa-copy') {
         navigator.clipboard.writeText(text).then(() => {
@@ -830,6 +896,7 @@ Remember to break your goals into phases and tasks.`;
             if (botTextContent) {
                 const universalCopyBtnContainer = document.createElement('div');
                 universalCopyBtnContainer.className = 'reply-copy-btn-container';
+                
                 const universalCopyBtn = document.createElement('button');
                 universalCopyBtn.className = 'copy-btn bot-reply-copy-btn';
                 universalCopyBtn.innerHTML = '<i class="fas fa-clipboard"></i>';
@@ -839,6 +906,24 @@ Remember to break your goals into phases and tasks.`;
                     copyTextToClipboard(botTextContent, universalCopyBtn, 'fa-check', 'fa-clipboard');
                 };
                 universalCopyBtnContainer.appendChild(universalCopyBtn);
+                
+                // Check if the content appears to be a to-do list
+                if (isToDoListFormat(text)) {
+                    console.log("To-do list detected, adding save button");
+                    const saveToDoBtn = document.createElement('button');
+                    saveToDoBtn.className = 'copy-btn bot-reply-copy-btn';
+                    saveToDoBtn.innerHTML = '<i class="fas fa-save"></i>';
+                    saveToDoBtn.title = 'Save to To-do list';
+                    saveToDoBtn.style.marginLeft = '5px';
+                    saveToDoBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        saveToToDoList(text);
+                    };
+                    universalCopyBtnContainer.appendChild(saveToDoBtn);
+                } else {
+                    console.log("Not a to-do list format, save button not added");
+                }
+                
                 msgWrapper.appendChild(universalCopyBtnContainer);
             }
         }
@@ -875,7 +960,7 @@ Remember to break your goals into phases and tasks.`;
             
             fullPrompt += `\n\nConversation History:\n${conversationHistoryForAPI}`;
             
-            const response = await fetch(serverUrl + "/api/chat", { 
+            const response = await fetch("http://localhost:8000/api/chat", { 
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ prompt: fullPrompt })
@@ -892,121 +977,60 @@ Remember to break your goals into phases and tasks.`;
             appendMessage(`Error: ${err.message || "Failed to connect to the server."}`, "bot", true);
             console.error("API Error:", err);
         } finally {
-            sendButton.disabled = userInput.value.trim() === '';
+            sendButton.disabled = false;
             micButton.disabled = false;
             loadingIndicator.style.display = 'none';
-            userInput.focus();
         }
     }
 
-    function handleSendMessage() {
-        const userText = userInput.value.trim();
-        if (!userText) return;
-        appendMessage(userText, "user");
-        sendMessageAPI(userText);
+    function sendMessage() {
+        const message = userInput.value.trim();
+        if (!message) return;
+        
+        if (!currentChatId) {
+            createNewChat();
+        }
+        
+        appendMessage(message, "user");
         userInput.value = "";
         userInput.style.height = 'auto';
-        userInput.dispatchEvent(new Event('input')); 
+        sendButton.disabled = true;
+        
+        sendMessageAPI(message);
     }
 
-    sendButton.addEventListener('click', handleSendMessage);
+    sendButton.addEventListener("click", sendMessage);
     userInput.addEventListener("keydown", (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
+        if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
-            handleSendMessage();
+            if (!sendButton.disabled) {
+                sendMessage();
+            }
         }
     });
 
-    // Initialize Web Speech API for voice input if available
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        recognition = new SpeechRecognition();
-        recognition.continuous = false;
-        recognition.interimResults = false;
-        recognition.lang = 'en-US';
-
-        recognition.onresult = (event) => {
-            const transcript = event.results[0][0].transcript;
-            userInput.value = transcript;
-            userInput.dispatchEvent(new Event('input'));
-        };
-
-        recognition.onend = () => {
-            isRecording = false;
-            micButton.classList.remove('recording');
-        };
-
-        recognition.onerror = (event) => {
-            console.error('Speech recognition error:', event.error);
-            isRecording = false;
-            micButton.classList.remove('recording');
-        };
-
-        micButton.addEventListener('click', () => {
-            if (isRecording) {
-                recognition.stop();
-                isRecording = false;
-                micButton.classList.remove('recording');
-            } else {
-                recognition.start();
-                isRecording = true;
-                micButton.classList.add('recording');
-            }
-        });
-    } else {
-        micButton.style.display = 'none';
-    }
-
-    // Chat history management
     function createNewChat() {
-        const chatId = Date.now().toString();
-        allChats[chatId] = {
-            id: chatId,
+        const timestamp = Date.now();
+        currentChatId = timestamp.toString();
+        allChats[currentChatId] = {
+            id: currentChatId,
             title: "New Chat",
             messages: []
         };
-        currentChatId = chatId;
+        
+        chatContainer.innerHTML = "";
         saveChatsToLocalStorage();
         updateChatHistoryUI();
-        chatContainer.innerHTML = '';
-        if (isMobileView()) {
-            toggleSidebar(); // Close sidebar on mobile after creating new chat
-        }
+        
+        // Save current chat ID to localStorage
+        localStorage.setItem('currentChatId_ClassMate', currentChatId);
     }
 
     function updateChatTitleIfNeeded(chatId, userMessage) {
         const chat = allChats[chatId];
-        if (chat && chat.title === "New Chat" && chat.messages.length === 0) {
-            // This is the first message in a new chat, use it to generate a title
-            const titlePreview = userMessage.substring(0, 30) + (userMessage.length > 30 ? "..." : "");
-            chat.title = titlePreview;
-            updateChatHistoryUI();
-        }
-    }
-
-    function saveChatsToLocalStorage() {
-        localStorage.setItem('chats_ClassMate', JSON.stringify(allChats));
-        localStorage.setItem('currentChatId_ClassMate', currentChatId);
-    }
-
-    function loadChatsFromLocalStorage() {
-        const savedChats = localStorage.getItem('chats_ClassMate');
-        const savedCurrentChatId = localStorage.getItem('currentChatId_ClassMate');
-        
-        if (savedChats) {
-            allChats = JSON.parse(savedChats);
-        }
-        
-        if (savedCurrentChatId && allChats[savedCurrentChatId]) {
-            currentChatId = savedCurrentChatId;
-            loadChat(currentChatId);
-        } else if (Object.keys(allChats).length > 0) {
-            // Load the most recent chat if current chat is not found
-            currentChatId = Object.keys(allChats).sort().reverse()[0];
-            loadChat(currentChatId);
-        } else {
-            // No chats found, create a new one
-            createNewChat();
+        if (chat && chat.title === "New Chat" && userMessage.length > 0) {
+            // Use first 30 chars of user message as title, or full message if shorter
+            chat.title = userMessage.length > 30 ? userMessage.substring(0, 27) + "..." : userMessage;
         }
     }
 
@@ -1014,15 +1038,13 @@ Remember to break your goals into phases and tasks.`;
         if (!allChats[chatId]) return;
         
         currentChatId = chatId;
-        chatContainer.innerHTML = '';
+        chatContainer.innerHTML = "";
         
-        // Load messages
-        const messages = allChats[chatId].messages;
-        messages.forEach(msg => {
+        // Render all messages in the chat
+        allChats[chatId].messages.forEach(msg => {
             appendMessage(msg.parts, msg.role === "user" ? "user" : "bot");
         });
         
-        // Update UI to show active chat
         updateChatHistoryUI();
         
         // Save current chat ID to localStorage
@@ -1102,6 +1124,37 @@ Remember to break your goals into phases and tasks.`;
             
             chatHistoryList.appendChild(li);
         });
+    }
+
+    function saveChatsToLocalStorage() {
+        localStorage.setItem('chats_ClassMate', JSON.stringify(allChats));
+    }
+
+    function loadChatsFromLocalStorage() {
+        try {
+            const savedChats = localStorage.getItem('chats_ClassMate');
+            if (savedChats) {
+                allChats = JSON.parse(savedChats);
+                
+                // Load last active chat or create new one
+                const lastChatId = localStorage.getItem('currentChatId_ClassMate');
+                if (lastChatId && allChats[lastChatId]) {
+                    loadChat(lastChatId);
+                } else if (Object.keys(allChats).length > 0) {
+                    // Load most recent chat
+                    const mostRecentChatId = Object.keys(allChats)
+                        .sort((a, b) => parseInt(b) - parseInt(a))[0];
+                    loadChat(mostRecentChatId);
+                } else {
+                    createNewChat();
+                }
+            } else {
+                createNewChat();
+            }
+        } catch (err) {
+            console.error("Error loading chats:", err);
+            createNewChat();
+        }
     }
 
     newChatBtn.addEventListener('click', createNewChat);
