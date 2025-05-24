@@ -622,6 +622,7 @@
     const interviewerOption = document.getElementById("interviewer-option");
     const toast = document.getElementById("toast");
     const serverUrl = "https://classmate1-ffw7.onrender.com"; // Update with your server URL
+    const style = document.createElement('style'); // Add CSS for toast messages (can also be in your main CSS file)
 
     let currentChatId = null;
     let allChats = {}; 
@@ -1007,6 +1008,118 @@ Remember to break your goals into phases and tasks.`;
             }
         }
     });
+
+    // Toast notification function (defined globally)
+    function showToast(message, duration = 3000) {
+        const toast = document.createElement('div');
+        toast.className = 'toast-message';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.classList.add('show');
+        }, 10);
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, duration);
+    }
+
+    // Initialize Web Speech API for voice input if available
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'en-US';
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            userInput.value = transcript;
+            userInput.dispatchEvent(new Event('input'));
+        };
+
+        recognition.onstart = () => {
+            isRecording = true;
+            micButton.classList.add('recording');
+            micButton.innerHTML = '<i class="fas fa-microphone" style="color:red"></i>';
+            showToast("Listening... Speak now");
+        };
+
+        recognition.onend = () => {
+            isRecording = false;
+            micButton.classList.remove('recording');
+            micButton.innerHTML = '<i class="fas fa-microphone"></i>';
+        };
+
+        recognition.onerror = (event) => {
+            console.error('Speech recognition error:', event.error);
+            isRecording = false;
+            micButton.classList.remove('recording');
+            micButton.innerHTML = '<i class="fas fa-microphone"></i>';
+            
+            if (event.error === 'not-allowed') {
+                showToast("Please enable microphone permissions in browser settings");
+            } else if (event.error === 'audio-capture') {
+                showToast("Microphone not available or already in use");
+            } else {
+                showToast("Speech recognition error: " + event.error);
+            }
+        };
+
+        micButton.addEventListener('click', async () => {
+            try {
+                if (isRecording) {
+                    recognition.stop();
+                    return;
+                }
+                
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                stream.getTracks().forEach(track => track.stop());
+                setTimeout(() => {// 🔁 Delay before starting speech recognition (fixes Chrome mobile issue)
+                    recognition.start();
+                }, 300); // Small delay to ensure stream is ready
+                recognition.start();
+            } catch (err) {
+                console.error('Microphone error:', err);
+                if (err.name === 'NotAllowedError') {
+                    showToast("Microphone access was denied");
+                } else if (err.name === 'NotFoundError') {
+                    showToast("No microphone found");
+                } else {
+                    showToast("Cannot access microphone");
+                }
+            }
+        });
+    } else {
+        micButton.style.display = 'none';
+        showToast("Speech recognition not supported in this browser");
+    }
+
+    
+    style.textContent = `
+    .toast-message {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(0,0,0,0.7);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 4px;
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.3s;
+        pointer-events: none;
+        max-width: 80%;
+        text-align: center;
+    }
+    .toast-message.show {
+        opacity: 1;
+    }
+    `;
+    document.head.appendChild(style);
 
     function createNewChat() {
         const timestamp = Date.now();
