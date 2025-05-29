@@ -15,8 +15,8 @@
       --bg-tertiary: #eaeaea;           /* Chat bubbles or tertiary areas */
       --text-primary: #1a1a1a;          /* Main text color */
       --text-secondary: #555555;        /* Secondary text */
-      --accent-primary: #000000;        /* Primary accent (e.g., buttons) */
-      --accent-secondary: #008cba;      /* Secondary accent (e.g., hover or action) */
+      --accent-primary: #1543ce;        /* Primary accent (e.g., buttons) */
+      --accent-secondary: #350071;      /* Secondary accent (e.g., hover or action) */
       --border-color: #cccccc;          /* Border and outlines */
       --font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
       --border-radius: 8px;
@@ -154,6 +154,46 @@
     .chat-history-list .rename-chat-btn:hover {
         color: var(--accent-secondary);
     }
+    
+    /* Sidebar Navigation Links */
+    .sidebar-nav {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-color);
+    }
+    .sidebar-nav h3 {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .sidebar-nav ul {
+        list-style: none;
+    }
+    .sidebar-nav li a {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.6rem 0.5rem;
+        text-decoration: none;
+        color: var(--text-primary);
+        border-radius: calc(var(--border-radius) / 2);
+        transition: background-color 0.2s, color 0.2s;
+        font-size: 0.95rem;
+    }
+    .sidebar-nav li a:hover {
+        background-color: var(--bg-tertiary);
+        color: var(--accent-primary);
+    }
+    .sidebar-nav li a i {
+        width: 20px; /* Fixed width for icons */
+        text-align: center;
+        color: var(--text-secondary);
+    }
+    .sidebar-nav li a:hover i {
+        color: var(--accent-primary);
+    }
 
     .main-content {
       flex: 1;
@@ -173,7 +213,16 @@
     header {
       height: var(--header-height);
       padding: 0 1.5rem;
-      background-color: #000000; /* Changed to black as requested */
+            background: linear-gradient(
+                to right,
+                #0d2b8c 0%,    /* Darker Blue */
+                #1543ce 20%,   /* Base Blue #1543ce */
+                #000000 40%,   /* Black Center Start */
+                #000000 60%,   /* Black Center End */
+              #1543ce 80%,   /* Base Blue #1543ce */
+              #0d2b8c 100%   /* Darker Blue */
+            );
+            margin-bottom: 10px; /* Changed to black as requested */
       border-bottom: 1px solid var(--border-color);
       display: flex;
       align-items: center;
@@ -249,17 +298,80 @@
     .message { max-width: 75%; padding: 0.75rem 1rem; border-radius: var(--border-radius); line-height: 1.5; word-wrap: break-word; position: relative; }
     .user { align-self: flex-end; background-color: var(--accent-primary); color: #FFFFFF; border-bottom-right-radius: 0; }
     .user .chat-content { color: #FFFFFF; }
-    .bot { align-self: flex-start; background-color: var(--bg-tertiary); color: var(--text-primary); border-bottom-left-radius: 0; padding-right: 35px; }
+    .bot { align-self: flex-start; background-color: var(--bg-tertiary); color: var(--text-primary); border-bottom-left-radius: 0; padding-right: 40px; /* Increased padding for menu */ }
     .message .chat-content p:first-child { margin-top: 0; }
     .message .chat-content p:last-child { margin-bottom: 0; }
     .message pre { background-color: #282c34; padding: 1rem; border-radius: var(--border-radius); overflow-x: auto; margin: 0.5rem 0; position: relative; padding-right: 60px; }
     .message code { font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 0.9em; }
     .message .code-copy-btn-container { position: absolute; top: 8px; right: 8px; }
-    .bot > .reply-copy-btn-container { position: absolute; top: 5px; right: 5px; z-index: 10; }
-    .copy-btn { background-color: var(--bg-secondary); color: var(--text-secondary); border: 1px solid var(--border-color); padding: 0.3rem 0.6rem; border-radius: calc(var(--border-radius) / 2); cursor: pointer; font-size: 0.8em; transition: background-color 0.2s, color 0.2s; }
-    .copy-btn:hover { background-color: var(--accent-primary); color: #FFFFFF; }
-    .copy-btn:active { transform: scale(0.95); }
-    .bot-reply-copy-btn { padding: 0.2rem 0.4rem; font-size: 0.7em; }
+    /* .bot > .reply-actions-container { position: absolute; top: 5px; right: 5px; z-index: 10; display: flex; gap: 5px; } */ /* Removed old container */
+    /* .copy-btn, .save-note-btn { background-color: var(--bg-secondary); color: var(--text-secondary); border: 1px solid var(--border-color); padding: 0.3rem 0.6rem; border-radius: calc(var(--border-radius) / 2); cursor: pointer; font-size: 0.8em; transition: background-color 0.2s, color 0.2s; } */ /* Removed old button styles */
+    /* .copy-btn:hover, .save-note-btn:hover { background-color: var(--accent-primary); color: #FFFFFF; } */
+    /* .copy-btn:active, .save-note-btn:active { transform: scale(0.95); } */
+    /* .bot-reply-copy-btn, .bot-reply-save-btn { padding: 0.2rem 0.4rem; font-size: 0.7em; } */
+
+    /* New Reply Menu Styles */
+    .reply-menu-container {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      z-index: 10;
+    }
+    .reply-menu-btn {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 1rem; /* Adjust size as needed */
+      padding: 5px;
+      border-radius: 50%;
+      line-height: 1;
+      transition: background-color 0.2s;
+    }
+    .reply-menu-btn:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+    .reply-menu-dropdown {
+      position: absolute;
+      right: 0;
+      top: 100%; /* Position below the button */
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      z-index: 11;
+      display: none; /* Hidden by default */
+      overflow: hidden;
+      min-width: 180px; /* Adjust width as needed */
+      margin-top: 4px;
+      padding: 4px 0;
+    }
+    .reply-menu-dropdown.show {
+      display: block;
+      animation: fadeIn 0.1s ease-out;
+    }
+    .reply-menu-item {
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      font-size: 0.9em;
+      color: var(--text-primary);
+    }
+    .reply-menu-item:hover {
+      background-color: var(--bg-tertiary);
+    }
+    .reply-menu-item i {
+      width: 16px;
+      text-align: center;
+      color: var(--text-secondary);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    /* End New Reply Menu Styles */
     
     /* Toast notification */
     .toast {
@@ -305,7 +417,7 @@
       align-items: center;
     }
 
-    /* User input styling */
+    /* User input styling - UPDATED to support up to 10 lines */
     #user-input {
       flex: 1;
       border: none;
@@ -315,9 +427,11 @@
       font-size: 1rem;
       resize: none;
       outline: none;
-      max-height: calc(1.5em * 3);
+      max-height: calc(1.5em * 10); /* UPDATED: Now supports up to 10 lines */
+      min-height: calc(1.5em * 2); /* UPDATED: Minimum 2 lines */
       overflow-y: auto;
       margin-bottom: 20px; /* Make space for the bottom icons */
+      line-height: 1.5em; /* Explicit line height for calculations */
     }
 
     /* Right side buttons */
@@ -396,6 +510,56 @@
       color: #4CAF50; /* Green color for active state */
       background-color: rgba(76, 175, 80, 0.1); /* Light green background */
     }
+
+    /* Todo List Label Styling - NEW */
+    .todo-list-container {
+      margin-bottom: 20px;
+      font-family: var(--font-family);
+    }
+
+    .todo-list-label {
+      display: inline-block;
+      background-color: #4CAF50; /* Green background color */
+      color: white;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 16px;
+      margin-bottom: 8px;
+    }
+
+    .todo-list-content {
+      background-color: #f5f5f5;
+      border-radius: 8px;
+      padding: 16px 20px;
+    }
+
+    .todo-list-content h2 {
+      margin-top: 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .todo-list-content h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-top: 16px;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+
+    .todo-list-content ul {
+      margin-top: 8px;
+      margin-bottom: 16px;
+      padding-left: 20px;
+    }
+
+    .todo-list-content li {
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    /* End Todo List Label Styling */
 
     .loading-indicator { display: none; align-self: flex-start; margin-left: 1.5rem; margin-bottom: 1rem; }
     .loading-indicator span { display: inline-block; width: 8px; height: 8px; margin-right: 4px; border-radius: 50%; background-color: var(--text-secondary); animation: bounce 1.4s infinite ease-in-out both; }
@@ -493,9 +657,6 @@
       .chat-container, .input-container { 
         padding: 1rem; 
       }
-      .chat-container { 
-        padding-bottom: 20px; /* Adjusted for input container */
-      }
       
       .message { 
         max-width: 90%; 
@@ -522,6 +683,7 @@
         height: calc(100vh - var(--header-height) - 120px);
         margin-bottom: 160px; /* Adjusted for input container */
       }
+
       .input-container {
         position: fixed;
         bottom: 0;
@@ -547,6 +709,27 @@
         height: 30px;
       }
     }
+    
+    /* Drag and drop styles */
+    .drag-area {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      text-align: center;
+      margin: 10px 0;
+      background-color: var(--bg-secondary);
+      transition: background-color 0.3s;
+    }
+    
+    .drag-area.active {
+      background-color: rgba(21, 67, 206, 0.1);
+      border-color: var(--accent-primary);
+    }
+    
+    .drag-area p {
+      margin: 0;
+      color: var(--text-secondary);
+    }
   </style>
 </head>
 <body>
@@ -559,6 +742,15 @@
       <button class="new-chat-btn" id="new-chat-btn"><i class="fas fa-plus"></i> New Chat</button>
       <ul class="chat-history-list" id="chat-history-list">
       </ul>
+      <!-- Sidebar Navigation Links -->
+      <nav class="sidebar-nav">
+        <h3>Tools</h3>
+        <ul>
+          <li><a href="todolist.html"><i class="fas fa-list-check"></i> Todo List</a></li>
+          <li><a href="notes.html"><i class="fas fa-sticky-note"></i> My Notes</a></li>
+          <li><a href="interviewer.html"><i class="fas fa-user-tie"></i> Mock Interviewer</a></li>
+        </ul>
+      </nav>
     </aside>
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
@@ -593,7 +785,7 @@
           <!-- Bottom icons inside input bar -->
           <div class="bottom-icons">
             <button id="todo-list-option" class="bottom-icon" title="To-Do List"><i class="fas fa-list-check"></i></button>
-            <button id="interviewer-option" class="bottom-icon" title="Mock Interviewer"><i class="fas fa-user-tie"></i></button>
+            <!-- Mock Interviewer option removed -->
           </div>
         </div>
       </div>
@@ -619,16 +811,19 @@
     const chatHistoryList = document.getElementById("chat-history-list");
     const mainContent = document.getElementById("main-content");
     const todoListOption = document.getElementById("todo-list-option");
-    const interviewerOption = document.getElementById("interviewer-option");
-    const toast = document.getElementById("toast");
     const serverUrl = "https://classmate1-ffw7.onrender.com"; // Update with your server URL
     const style = document.createElement('style'); // Add CSS for toast messages (can also be in your main CSS file)
+    // interviewerOption removed
+    const toast = document.getElementById("toast");
 
     let currentChatId = null;
     let allChats = {}; 
     let recognition = null;
     let isRecording = false;
     let isToDoListModeActive = false;
+    let messageBeingSent = false; // Flag to prevent duplicate messages
+    let isInitialLoad = true; // Flag to track initial page load
+    let resizeTimeout; // For debouncing resize events
 
     let promptBase = `You are ClassMate, a smart academic assistant for students.
     You help them manage goals, generate to-do lists, explain concepts with code and tables, and reply in an organized, friendly format.
@@ -654,45 +849,52 @@ Remember to break your goals into phases and tasks.`;
 
     // Function to check if we're in mobile/tablet view
     function isMobileView() {
-        return window.innerWidth <= 1024;
+        // Check if window width is below threshold OR if the window is likely minimized (very small height)
+        return window.innerWidth <= 1024 || window.innerHeight < 200; 
     }
 
     // Sidebar toggle functionality
     function toggleSidebar() {
-        if (isMobileView()) {
+        const mobileView = isMobileView();
+        if (mobileView) {
             // In mobile view, toggle the open class
             sidebar.classList.toggle('open');
-            if (sidebar.classList.contains('open')) {
-                sidebarOverlay.style.display = 'block';
-            } else {
-                sidebarOverlay.style.display = 'none';
-            }
+            sidebarOverlay.style.display = sidebar.classList.contains('open') ? 'block' : 'none';
+            // Ensure desktop classes are removed
+            sidebar.classList.remove('collapsed');
+            appContainer.classList.remove('sidebar-hidden');
         } else {
             // In desktop view, toggle the collapsed class
             sidebar.classList.toggle('collapsed');
             appContainer.classList.toggle('sidebar-hidden');
             localStorage.setItem('sidebarState_ClassMate', sidebar.classList.contains('collapsed') ? 'collapsed' : 'open');
+            // Ensure mobile classes are removed
+            sidebar.classList.remove('open');
+            sidebarOverlay.style.display = 'none';
         }
         
         // Update toggle button visibility
         updateToggleButtonVisibility();
     }
     
-    // Attach click handlers to both toggle buttons
+    // Attach click handlers to all toggle buttons
     sidebarToggleBtn.addEventListener('click', toggleSidebar);
     headerSidebarToggleBtn.addEventListener('click', toggleSidebar);
     menuToggle.addEventListener('click', toggleSidebar);
 
     // Update toggle button visibility based on sidebar state and viewport
     function updateToggleButtonVisibility() {
-        if (isMobileView()) {
+        const mobileView = isMobileView();
+        if (mobileView) {
             // Mobile view
             menuToggle.style.display = 'block';
             headerSidebarToggleBtn.style.display = 'none';
+            sidebarToggleBtn.style.display = 'block'; // Ensure internal toggle is visible on mobile
         } else {
             // Desktop view
             menuToggle.style.display = 'none';
             headerSidebarToggleBtn.style.display = sidebar.classList.contains('collapsed') ? 'block' : 'none';
+            sidebarToggleBtn.style.display = 'block'; // Ensure internal toggle is visible on desktop
         }
     }
 
@@ -701,6 +903,7 @@ Remember to break your goals into phases and tasks.`;
         if (sidebar.classList.contains('open')) {
             sidebar.classList.remove('open');
             sidebarOverlay.style.display = 'none';
+            updateToggleButtonVisibility();
         }
     });
 
@@ -712,15 +915,27 @@ Remember to break your goals into phases and tasks.`;
             !menuToggle.contains(event.target)) {
             sidebar.classList.remove('open');
             sidebarOverlay.style.display = 'none';
+            updateToggleButtonVisibility();
         }
     });
 
-    userInput.addEventListener('input', () => {
+    // UPDATED: Dynamic input bar expansion (2 lines default, up to 10 lines, then scroll)
+    userInput.addEventListener('input', function() {
+        // Reset height to calculate proper scrollHeight
         userInput.style.height = 'auto';
-        const lineHeight = parseFloat(getComputedStyle(userInput).lineHeight);
-        const maxHeight = lineHeight * 3;
-        const scrollHeight = userInput.scrollHeight;
-        userInput.style.height = Math.min(scrollHeight, maxHeight) + 'px';
+        
+        // Get line height from computed style
+        const lineHeight = parseFloat(getComputedStyle(userInput).lineHeight) || 24;
+        
+        // Calculate number of lines (minimum 2, maximum 10)
+        const minHeight = lineHeight * 2; // 2 lines minimum
+        const maxHeight = lineHeight * 10; // 10 lines maximum
+        
+        // Set new height based on content
+        const newHeight = Math.min(Math.max(userInput.scrollHeight, minHeight), maxHeight);
+        userInput.style.height = newHeight + 'px';
+        
+        // Enable/disable send button based on content
         sendButton.disabled = userInput.value.trim() === '';
     });
 
@@ -737,11 +952,6 @@ Remember to break your goals into phases and tasks.`;
         }
     });
 
-    // Mock Interviewer navigation
-    interviewerOption.addEventListener('click', () => {
-        window.location.href = 'interviewer.html';
-    });
-
     // Show toast notification
     function showToast(message, duration = 3000) {
         toast.textContent = message;
@@ -754,184 +964,255 @@ Remember to break your goals into phases and tasks.`;
 
     // Function to check if text contains a to-do list format
     function isToDoListFormat(text) {
-        // Log for debugging
-        console.log("Checking if text is a to-do list format:", text.substring(0, 100) + "...");
-        
-        // More flexible detection for to-do list patterns
-        // 1. Check for Goal: pattern (case insensitive, allowing whitespace)
         const goalPattern = /goal\s*:/i;
         const hasGoal = goalPattern.test(text);
-        
-        // 2. Check for Phase pattern (various formats)
         const phasePattern = /phase\s*\d+|phase\s*[a-z]+|step\s*\d+|part\s*\d+/i;
         const hasPhase = phasePattern.test(text);
-        
-        // 3. Check for bullet points/tasks (various formats)
         const taskPattern = /[-•*]\s+\w+|^\d+\.\s+\w+/m;
         const hasTasks = taskPattern.test(text);
-        
-        // 4. Check for overall structure (more lenient)
-        // Looking for a pattern where we have something like "Goal:" followed by content,
-        // then eventually some kind of phase/step/part indicator
         const structurePattern = /goal\s*:.*?(?:phase|step|part)\s*(?:\d+|[a-z]+)/is;
         const hasStructure = structurePattern.test(text);
-        
-        // Log detection results for debugging
-        console.log("Detection results:", { 
-            hasGoal, 
-            hasPhase, 
-            hasTasks, 
-            hasStructure 
-        });
-        
-        // Return true if we have most of the expected elements
-        // More lenient approach: require goal and either phases or tasks
         return hasGoal && (hasPhase || hasTasks) && hasStructure;
     }
 
     // Function to save to-do list to localStorage for todolist.html
-    function saveToToDoList(content) {
-        // Get existing saved goals or initialize empty array
-        const savedGoals = JSON.parse(localStorage.getItem("savedGoals")) || [];
-        
-        // Add the new goal
-        savedGoals.push({ 
+    function saveToTaskMaster(content) {
+        const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+        tasks.push({ 
             text: content, 
-            pinned: false 
+            pinned: false,
+            highlighted: false
         });
-        
-        // Save back to localStorage
-        localStorage.setItem("savedGoals", JSON.stringify(savedGoals));
-        
-        // Provide feedback to user
-        showToast("To-do list saved successfully! View it in the To-Do List Generator.");
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+        showToast("To-do list saved successfully!");
     }
 
-    function copyTextToClipboard(text, buttonElement, successIconClass = 'fa-check', originalIconClass = 'fa-copy') {
+    // Script to handle incoming task queries from Task Master
+    document.addEventListener('DOMContentLoaded', function() {
+        const taskMasterQuery = localStorage.getItem('taskMasterQuery');
+        if (taskMasterQuery) {
+            userInput.value = taskMasterQuery;
+            userInput.dispatchEvent(new Event('input'));
+            userInput.focus();
+            if (localStorage.getItem('activateTodoMode') === 'true') {
+                const todoListOption = document.getElementById('todo-list-option');
+                if (todoListOption && !todoListOption.classList.contains('active')) {
+                    todoListOption.click();
+                }
+            }
+            localStorage.removeItem('taskMasterQuery');
+            localStorage.removeItem('activateTodoMode');
+        }
+    });
+
+    // Function to copy text to clipboard
+    function copyTextToClipboard(text, buttonElement, successIcon, originalIcon) {
         navigator.clipboard.writeText(text).then(() => {
-            const originalHTML = buttonElement.innerHTML;
-            buttonElement.innerHTML = `<i class="fas ${successIconClass}"></i> Copied!`;
-            setTimeout(() => {
-                buttonElement.innerHTML = originalHTML;
-            }, 2000);
+            // Show success feedback
+            if (buttonElement) {
+                const originalHTML = buttonElement.innerHTML;
+                buttonElement.innerHTML = `<i class="fas ${successIcon}"></i>`;
+                setTimeout(() => {
+                    buttonElement.innerHTML = originalHTML;
+                }, 1500);
+            }
+            showToast("Copied to clipboard!");
         }).catch(err => {
-            console.error("Failed to copy text:", err);
-            const originalHTML = buttonElement.innerHTML;
-            buttonElement.textContent = "Error";
-            setTimeout(() => {
-                buttonElement.innerHTML = originalHTML;
-            }, 2000);
+            console.error('Could not copy text: ', err);
+            showToast("Failed to copy to clipboard");
         });
     }
 
-    function appendMessage(text, sender, rawHtml = false) {
+    // FIXED: Function to save content to notes - now includes type property
+    function saveToNotes(title, content) {
+        const notes = JSON.parse(localStorage.getItem("notes")) || [];
+        const timestamp = new Date().toISOString();
+        notes.push({ 
+            id: Date.now().toString(),
+            title: title.substring(0, 50), // Limit title length
+            content: content,
+            created: timestamp,
+            updated: timestamp,
+            type: "text", // Add type property for compatibility with notes page
+            timestamp: timestamp // Add timestamp property for compatibility with notes page
+        });
+        localStorage.setItem("notes", JSON.stringify(notes));
+        showToast("Saved to notes!");
+    }
+
+    // Function to render a message in the chat UI
+    function renderMessage(text, sender, rawHtml = false) {
         const msgWrapper = document.createElement("div");
         msgWrapper.className = `message ${sender}`;
-        const chatContentDiv = document.createElement('div');
-        chatContentDiv.className = 'chat-content';
-
-        if (sender === 'user') {
-            const p = document.createElement('p');
-            p.textContent = text;
-            chatContentDiv.appendChild(p);
-        } else if (rawHtml) {
-             chatContentDiv.innerHTML = text;
+        
+        const chatContentDiv = document.createElement("div");
+        chatContentDiv.className = "chat-content";
+        
+        // UPDATED: Add "To-Do List" label for todo lists
+        if (sender === 'bot' && isToDoListFormat(text)) {
+            // Create a todo list container with label
+            const todoContainer = document.createElement('div');
+            todoContainer.className = 'todo-list-container';
+            
+            // Add the label
+            const labelDiv = document.createElement('div');
+            labelDiv.className = 'todo-list-label';
+            labelDiv.textContent = 'To-Do List';
+            todoContainer.appendChild(labelDiv);
+            
+            // Add the content
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'todo-list-content';
+            
+            if (rawHtml) {
+                contentDiv.innerHTML = text;
+            } else {
+                // Use marked.js to convert markdown to HTML
+                contentDiv.innerHTML = marked.parse(text);
+            }
+            
+            todoContainer.appendChild(contentDiv);
+            chatContentDiv.appendChild(todoContainer);
         } else {
-            const codeBlockRegex = /```([a-zA-Z0-9]*)\n?([\s\S]*?)```/g;
-            let lastIndex = 0;
-            let match;
-            let hasCodeBlock = false;
-
-            while ((match = codeBlockRegex.exec(text)) !== null) {
-                hasCodeBlock = true;
-                if (match.index > lastIndex) {
-                    const precedingText = text.substring(lastIndex, match.index).trim();
-                    if (precedingText) {
-                        const textDiv = document.createElement('div');
-                        textDiv.innerHTML = marked.parse(precedingText);
-                        chatContentDiv.appendChild(textDiv);
-                    }
-                }
-                const language = match[1] || 'plaintext';
-                const code = match[2].trim();
-                const pre = document.createElement('pre');
-                const codeEl = document.createElement('code');
-                codeEl.className = `language-${language}`;
-                codeEl.textContent = code;
-                pre.appendChild(codeEl);
-
-                const copyBtnContainer = document.createElement('div');
-                copyBtnContainer.className = 'code-copy-btn-container';
-                const codeCopyBtn = document.createElement('button');
-                codeCopyBtn.className = 'copy-btn';
-                codeCopyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy Code';
-                codeCopyBtn.title = 'Copy code block';
-                codeCopyBtn.onclick = () => copyTextToClipboard(code, codeCopyBtn);
-                copyBtnContainer.appendChild(codeCopyBtn);
-                pre.appendChild(copyBtnContainer);
-                chatContentDiv.appendChild(pre);
-                hljs.highlightElement(codeEl);
-                lastIndex = codeBlockRegex.lastIndex;
+            // Regular message without todo list formatting
+            if (rawHtml) {
+                chatContentDiv.innerHTML = text;
+            } else {
+                // Use marked.js to convert markdown to HTML
+                chatContentDiv.innerHTML = marked.parse(text);
             }
-
-            if (lastIndex < text.length) {
-                const remainingText = text.substring(lastIndex).trim();
-                if (remainingText) {
-                    const textDiv = document.createElement('div');
-                    textDiv.innerHTML = marked.parse(remainingText);
-                    chatContentDiv.appendChild(textDiv);
-                }
-            }
+        }
+        
+        // Add syntax highlighting to code blocks
+        chatContentDiv.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightElement(block);
             
-            if (!hasCodeBlock && lastIndex === 0) { 
-                 chatContentDiv.innerHTML = marked.parse(text);
+            // Add copy button to code blocks
+            const container = document.createElement('div');
+            container.className = 'code-copy-btn-container';
+            
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'input-button';
+            copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+            copyBtn.title = 'Copy code';
+            copyBtn.onclick = function() {
+                const code = block.textContent;
+                copyTextToClipboard(code, copyBtn, "fa-check", "fa-copy");
+            };
+            
+            container.appendChild(copyBtn);
+            block.parentNode.appendChild(container);
+        });
+        
+        // Add menu for bot messages
+        if (sender === 'bot') {
+            const menuContainer = document.createElement("div");
+            menuContainer.className = "reply-menu-container";
+            
+            const menuBtn = document.createElement("button");
+            menuBtn.className = "reply-menu-btn";
+            menuBtn.title = "Message options";
+            menuBtn.innerHTML = `<i class="fas fa-ellipsis-v"></i>`;
+
+            const menuDropdown = document.createElement("div");
+            menuDropdown.className = "reply-menu-dropdown";
+
+            // Add Copy option
+            const copyItem = document.createElement("div");
+            copyItem.className = "reply-menu-item";
+            copyItem.dataset.action = "copy";
+            copyItem.innerHTML = `<i class="fas fa-copy"></i> Copy`;
+            copyItem.addEventListener("click", () => {
+              copyTextToClipboard(text, menuBtn, "fa-check", "fa-ellipsis-v"); // Pass menuBtn for potential feedback icon change
+              menuDropdown.classList.remove("show");
+            });
+            menuDropdown.appendChild(copyItem);
+
+            // Add Save to Notes option
+            const saveNoteItem = document.createElement("div");
+            saveNoteItem.className = "reply-menu-item";
+            saveNoteItem.dataset.action = "save-note";
+            saveNoteItem.innerHTML = `<i class="fas fa-bookmark"></i> Save to Notes`;
+            saveNoteItem.addEventListener("click", () => {
+              let title = "Untitled Note";
+              if (currentChatId && allChats[currentChatId] && allChats[currentChatId].messages) {
+                const messages = allChats[currentChatId].messages;
+                // Find the last user message before this bot message
+                for (let i = messages.length - 1; i >= 0; i--) {
+                  if (messages[i].role === 'user') {
+                    title = messages[i].parts;
+                    break;
+                  }
+                }
+              }
+              saveToNotes(title, text);
+              menuDropdown.classList.remove("show");
+            });
+            menuDropdown.appendChild(saveNoteItem);
+
+            // Conditionally add Save to To-Do List option
+            if (isToDoListFormat(text)) {
+              const saveTodoItem = document.createElement("div");
+              saveTodoItem.className = "reply-menu-item";
+              saveTodoItem.dataset.action = "save-todo";
+              saveTodoItem.innerHTML = `<i class="fas fa-list-check"></i> Save to To-Do List`;
+              saveTodoItem.addEventListener("click", () => {
+                saveToTaskMaster(text); // Use existing function
+                menuDropdown.classList.remove("show");
+              });
+              menuDropdown.appendChild(saveTodoItem);
             }
 
-            const botTextContent = Array.from(chatContentDiv.childNodes)
-                .filter(node => node.nodeName !== 'PRE')
-                .map(node => (node.textContent || node.innerText || '').trim())
-                .filter(txt => txt.length > 0)
-                .join('\n').trim();
-            
-            if (botTextContent) {
-                const universalCopyBtnContainer = document.createElement('div');
-                universalCopyBtnContainer.className = 'reply-copy-btn-container';
-                
-                const universalCopyBtn = document.createElement('button');
-                universalCopyBtn.className = 'copy-btn bot-reply-copy-btn';
-                universalCopyBtn.innerHTML = '<i class="fas fa-clipboard"></i>';
-                universalCopyBtn.title = 'Copy AI reply text';
-                universalCopyBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    copyTextToClipboard(botTextContent, universalCopyBtn, 'fa-check', 'fa-clipboard');
-                };
-                universalCopyBtnContainer.appendChild(universalCopyBtn);
-                
-                // Check if the content appears to be a to-do list
-                if (isToDoListFormat(text)) {
-                    console.log("To-do list detected, adding save button");
-                    const saveToDoBtn = document.createElement('button');
-                    saveToDoBtn.className = 'copy-btn bot-reply-copy-btn';
-                    saveToDoBtn.innerHTML = '<i class="fas fa-save"></i>';
-                    saveToDoBtn.title = 'Save to To-do list';
-                    saveToDoBtn.style.marginLeft = '5px';
-                    saveToDoBtn.onclick = (e) => {
-                        e.stopPropagation();
-                        saveToToDoList(text);
-                    };
-                    universalCopyBtnContainer.appendChild(saveToDoBtn);
-                } else {
-                    console.log("Not a to-do list format, save button not added");
+            // Menu toggle logic
+            menuBtn.addEventListener("click", (e) => {
+              e.stopPropagation(); // Prevent click from closing menu immediately
+              // Close other open menus first
+              document.querySelectorAll(".reply-menu-dropdown.show").forEach(openMenu => {
+                if (openMenu !== menuDropdown) {
+                  openMenu.classList.remove("show");
                 }
-                
-                msgWrapper.appendChild(universalCopyBtnContainer);
-            }
+              });
+              menuDropdown.classList.toggle("show");
+            });
+
+            menuContainer.appendChild(menuBtn);
+            menuContainer.appendChild(menuDropdown);
+            msgWrapper.appendChild(menuContainer);
         }
 
         msgWrapper.appendChild(chatContentDiv);
         chatContainer.appendChild(msgWrapper);
         chatContainer.scrollTop = chatContainer.scrollHeight;
-        return msgWrapper;
+    }
+
+    // Function to append a message to the chat history and render it
+    function appendMessage(text, sender, rawHtml = false) {
+        // Render the message in the UI
+        renderMessage(text, sender, rawHtml);
+        
+        // Save message to current chat
+        if (currentChatId) {
+            if (!allChats[currentChatId]) {
+                allChats[currentChatId] = {
+                    id: currentChatId,
+                    title: "New Chat",
+                    messages: []
+                };
+            }
+            
+            allChats[currentChatId].messages.push({
+                role: sender === 'user' ? 'user' : 'bot',
+                parts: text
+            });
+            
+            // Update chat title if needed
+            if (sender === 'user') {
+                updateChatTitleIfNeeded(currentChatId, text);
+            }
+            
+            saveChatsToLocalStorage();
+            updateChatHistoryUI();
+        }
     }
 
     async function sendMessageAPI(userMessageContent) {
@@ -941,9 +1222,12 @@ Remember to break your goals into phases and tasks.`;
             return;
         }
         
-        allChats[currentChatId].messages.push({ role: "user", parts: userMessageContent });
-        updateChatTitleIfNeeded(currentChatId, userMessageContent);
-        saveChatsToLocalStorage();
+        // Don't add to chat history again if already added in sendMessage
+        if (!messageBeingSent) {
+            allChats[currentChatId].messages.push({ role: "user", parts: userMessageContent });
+            updateChatTitleIfNeeded(currentChatId, userMessageContent);
+            saveChatsToLocalStorage();
+        }
 
         sendButton.disabled = true;
         micButton.disabled = true;
@@ -971,7 +1255,6 @@ Remember to break your goals into phases and tasks.`;
             const reply = data.reply || "Sorry, I couldn't get a response.";
 
             appendMessage(reply, "bot");
-            allChats[currentChatId].messages.push({ role: "ai", parts: reply });
             saveChatsToLocalStorage();
         } catch (err) {
             appendMessage(`Error: ${err.message || "Failed to connect to the server."}`, "bot", true);
@@ -980,12 +1263,16 @@ Remember to break your goals into phases and tasks.`;
             sendButton.disabled = false;
             micButton.disabled = false;
             loadingIndicator.style.display = 'none';
+            messageBeingSent = false; // Reset the flag
         }
     }
 
     function sendMessage() {
         const message = userInput.value.trim();
-        if (!message) return;
+        if (!message || messageBeingSent) return;
+        
+        // Set flag to prevent duplicate messages
+        messageBeingSent = true;
         
         if (!currentChatId) {
             createNewChat();
@@ -1003,28 +1290,11 @@ Remember to break your goals into phases and tasks.`;
     userInput.addEventListener("keydown", (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
-            if (!sendButton.disabled) {
+            if (!sendButton.disabled && !messageBeingSent) {
                 sendMessage();
             }
         }
     });
-
-    // Toast notification function (defined globally)
-    function showToast(message, duration = 3000) {
-        const toast = document.createElement('div');
-        toast.className = 'toast-message';
-        toast.textContent = message;
-        document.body.appendChild(toast);
-        
-        setTimeout(() => {
-            toast.classList.add('show');
-        }, 10);
-        
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => toast.remove(), 300);
-        }, duration);
-    }
 
     // Initialize Web Speech API for voice input if available
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -1097,30 +1367,6 @@ Remember to break your goals into phases and tasks.`;
         showToast("Speech recognition not supported in this browser");
     }
 
-    
-    style.textContent = `
-    .toast-message {
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background-color: rgba(0,0,0,0.7);
-        color: white;
-        padding: 12px 24px;
-        border-radius: 4px;
-        z-index: 1000;
-        opacity: 0;
-        transition: opacity 0.3s;
-        pointer-events: none;
-        max-width: 80%;
-        text-align: center;
-    }
-    .toast-message.show {
-        opacity: 1;
-    }
-    `;
-    document.head.appendChild(style);
-
     function createNewChat() {
         const timestamp = Date.now();
         currentChatId = timestamp.toString();
@@ -1146,16 +1392,26 @@ Remember to break your goals into phases and tasks.`;
         }
     }
 
-    function loadChat(chatId) {
+    // Function to render all messages for a chat
+    function renderChatMessages(chatId) {
         if (!allChats[chatId]) return;
         
-        currentChatId = chatId;
+        // Clear the chat container
         chatContainer.innerHTML = "";
         
         // Render all messages in the chat
         allChats[chatId].messages.forEach(msg => {
-            appendMessage(msg.parts, msg.role === "user" ? "user" : "bot");
+            renderMessage(msg.parts, msg.role === "user" ? "user" : "bot");
         });
+    }
+
+    function loadChat(chatId) {
+        if (!allChats[chatId]) return;
+        
+        currentChatId = chatId;
+        
+        // Render the chat messages without saving them again
+        renderChatMessages(chatId);
         
         updateChatHistoryUI();
         
@@ -1242,11 +1498,44 @@ Remember to break your goals into phases and tasks.`;
         localStorage.setItem('chats_ClassMate', JSON.stringify(allChats));
     }
 
+    // Function to clean up duplicate messages in chat history
+    function cleanupChatHistory() {
+        // Process each chat
+        Object.keys(allChats).forEach(chatId => {
+            const chat = allChats[chatId];
+            if (!chat.messages || !Array.isArray(chat.messages)) return;
+            
+            // Create a new array with unique messages
+            const uniqueMessages = [];
+            const seenMessages = new Set();
+            
+            chat.messages.forEach(msg => {
+                // Create a unique key for each message
+                const msgKey = `${msg.role}:${msg.parts}`;
+                
+                // Only add if we haven't seen this exact message before
+                if (!seenMessages.has(msgKey)) {
+                    seenMessages.add(msgKey);
+                    uniqueMessages.push(msg);
+                }
+            });
+            
+            // Replace the messages array with the deduplicated one
+            chat.messages = uniqueMessages;
+        });
+        
+        // Save the cleaned up chats
+        saveChatsToLocalStorage();
+    }
+
     function loadChatsFromLocalStorage() {
         try {
             const savedChats = localStorage.getItem('chats_ClassMate');
             if (savedChats) {
                 allChats = JSON.parse(savedChats);
+                
+                // Clean up any duplicate messages
+                cleanupChatHistory();
                 
                 // Load last active chat or create new one
                 const lastChatId = localStorage.getItem('currentChatId_ClassMate');
@@ -1272,12 +1561,13 @@ Remember to break your goals into phases and tasks.`;
     newChatBtn.addEventListener('click', createNewChat);
 
     // Initialize the app
-    window.addEventListener('load', () => {
+    document.addEventListener('DOMContentLoaded', () => {
+        // Load chats from localStorage
         loadChatsFromLocalStorage();
         
-        // Check if we should start with collapsed sidebar (desktop only)
+        // Initialize sidebar state
         const savedSidebarState = localStorage.getItem('sidebarState_ClassMate');
-        if (!isMobileView() && savedSidebarState === 'collapsed') {
+        if (savedSidebarState === 'collapsed' && !isMobileView()) {
             sidebar.classList.add('collapsed');
             appContainer.classList.add('sidebar-hidden');
         }
@@ -1285,32 +1575,51 @@ Remember to break your goals into phases and tasks.`;
         // Update toggle button visibility
         updateToggleButtonVisibility();
         
-        // Set initial button state
-        sendButton.disabled = true;
+        // Close dropdown menus when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.reply-menu-container')) {
+                document.querySelectorAll('.reply-menu-dropdown.show').forEach(menu => {
+                    menu.classList.remove('show');
+                });
+            }
+        });
         
-        // Set initial input height
-        userInput.dispatchEvent(new Event('input'));
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            // Debounce resize events
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                updateToggleButtonVisibility();
+                
+                // Handle mobile/desktop transitions
+                if (isMobileView()) {
+                    sidebar.classList.remove('collapsed');
+                    appContainer.classList.remove('sidebar-hidden');
+                    if (sidebar.classList.contains('open')) {
+                        sidebarOverlay.style.display = 'block';
+                    }
+                } else {
+                    sidebar.classList.remove('open');
+                    sidebarOverlay.style.display = 'none';
+                    
+                    // Restore desktop sidebar state from localStorage
+                    const savedState = localStorage.getItem('sidebarState_ClassMate');
+                    if (savedState === 'collapsed') {
+                        sidebar.classList.add('collapsed');
+                        appContainer.classList.add('sidebar-hidden');
+                    }
+                }
+            }, 250);
+        });
+        
+        // Focus input field
+        userInput.focus();
     });
 
-    // Handle window resize
-    window.addEventListener('resize', () => {
-        updateToggleButtonVisibility();
-        
-        // If transitioning from mobile to desktop view, ensure proper sidebar state
-        if (!isMobileView()) {
-            sidebar.classList.remove('open');
-            sidebarOverlay.style.display = 'none';
-            
-            // Restore saved desktop sidebar state
-            const savedSidebarState = localStorage.getItem('sidebarState_ClassMate');
-            if (savedSidebarState === 'collapsed') {
-                sidebar.classList.add('collapsed');
-                appContainer.classList.add('sidebar-hidden');
-            } else {
-                sidebar.classList.remove('collapsed');
-                appContainer.classList.remove('sidebar-hidden');
-            }
-        }
+    // Trigger input event on load to initialize the input field height
+    window.addEventListener('load', () => {
+        userInput.dispatchEvent(new Event('input'));
+        isInitialLoad = false;
     });
   </script>
 </body>
