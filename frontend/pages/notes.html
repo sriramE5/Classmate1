@@ -909,7 +909,7 @@
             }
         }
         /* Responsive design */
-        @media (max-width: 550px) {
+        @media (min-width: 351px) and (max-width: 550px) {
             .notes-container {
                 column-count: 2; /* Ensure double column on mobile */
             }
@@ -930,19 +930,19 @@
             }
         }
 
-        @media (min-width: 601px) and (max-width: 900px) {
+        @media (min-width: 551px) and (max-width: 900px) {
             .notes-container {
                 column-count: 3; /* Three columns for medium screens */
             }
         }
 
-        @media (min-width: 901px) {
+        @media (min-width: 901px) and (max-width: 1500px) {
             .notes-container {
                 column-count: 4; /* Three columns for larger screens */
             }
         }
 
-        @media (min-width: 1500px) {
+        @media (min-width: 1501px) {
             .notes-container {
                 column-count: 5; /* Five columns for very large screens */
             }
