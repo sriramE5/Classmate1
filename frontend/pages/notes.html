@@ -4,122 +4,293 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Notes</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: sans-serif;
+        :root {
+            --primary-color: #4285f4;
+            --primary-dark: #3367d6;
+            --primary-light: #e8f0fe;
+            --accent-color: #fbbc05;
+            --text-primary: #202124;
+            --text-secondary: #5f6368;
+            --background-color: #f8f9fa;
+            --card-color: #ffffff;
+            --card-hover: #f1f3f4;
+            --card-pinned: #e6f4ea;
+            --shadow-light: 0 1px 2px rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+            --shadow-medium: 0 2px 6px rgba(60,64,67,0.3);
+            --font-primary: 'Roboto', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
-            background-color: #f0f0f0;
-            color: #333;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background-color: var(--background-color);
+            color: var(--text-primary);
             display: flex;
             flex-direction: column;
             height: 100vh;
+            transition: all 0.3s ease;
+            /* overflow: hidden; Prevent body scrolling */
+            overflow-y: auto;
+            overflow-x: hidden; /* Prevent horizontal scrolling */
         }
 
         .app-bar {
-            background-color: #2e7d32; /* Corresponds to Colors.green.shade700 */
+            background-color: var(--primary-color);
             color: white;
             padding: 16px;
             text-align: center;
-            font-size: 1.25em;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            font-size: 1.5em;
+            font-weight: 500;
+            box-shadow: var(--shadow-medium);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .notes-container {
             flex-grow: 1;
             padding: 16px;
             overflow-y: auto;
+            column-count: 3;
+            column-gap: 16px; /* Removed max-height to allow scrolling vertically*/
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-color) var(--background-color);
+        }
+
+
+
+        /* Custom scrollbar for webkit browsers */
+        .notes-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .notes-container::-webkit-scrollbar-track {
+            background: var(--background-color);
+        }
+
+        .notes-container::-webkit-scrollbar-thumb {
+            background-color: var(--primary-color);
+            border-radius: 4px;
         }
 
         .empty-notes {
             text-align: center;
-            color: #757575;
+            color: var(--text-secondary);
             margin-top: 50px;
             font-size: 1.1em;
+            grid-column: 1 / -1;
         }
 
         .note-card {
-            background-color: #e8f5e9; /* Corresponds to Colors.green.shade50 */
+            display: inline-block;
+            width: 100%;
+            margin-bottom: 16px;
+            break-inside: avoid;
+            background-color: var(--card-color);
             border-radius: 8px;
             padding: 16px;
-            margin-bottom: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow-light);
             cursor: pointer;
-            display: flex;
-            flex-direction: column;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.05);
+            height: fit-content;
+        }
+
+        
+        .note-card.highlighted {
+            background-color: #fff8e1; /* Light yellow background for highlighted notes */
+            border-left: 3px solid #ffc107; /* Yellow accent border */
+        }
+
+        .note-card:hover {
+            box-shadow: var(--shadow-medium);
+            background-color: var(--card-hover);
+        }
+
+        .note-card.pinned {
+            border-top: 3px solid var(--primary-dark);
+            background-color: var(--card-pinned);
         }
 
         .note-card-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start; /* Align title and delete button */
+            align-items: flex-start;
+            margin-bottom: 8px;
         }
 
         .note-card-title {
-            font-weight: bold;
+            font-weight: 500;
             font-size: 1.1em;
-            margin-bottom: 4px;
-            flex-grow: 1;
+            margin-right: 24px;
+            word-break: break-word;
         }
 
         .note-card-content-section {
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .note-card-content {
             font-size: 0.95em;
-            max-height: 60px; /* Approx 3 lines */
+            max-height: 60px;
             overflow: hidden;
             text-overflow: ellipsis;
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             word-break: break-word;
+            color: var(--text-secondary);
         }
+
         .note-card-list-preview {
             font-size: 0.9em;
         }
+
         .note-card-list-item {
             font-size: 0.9em;
             margin-left: 5px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            color: var(--text-secondary);
+        }
+        
+        .note-card-list-item.checked {
+            text-decoration: line-through;
+            color: var(--text-secondary);
+        }
+        
+        .note-type-tag {
+            display: inline-flex;
+            align-items: center;
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            font-size: 0.8em;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-bottom: 6px;
+            font-weight: 500;
         }
 
         .note-card-footer {
             display: flex;
             justify-content: space-between;
-            align-items: center; /* Align timestamp and delete button */
-            margin-top: auto; /* Pushes footer to the bottom of the card */
+            align-items: center;
+            margin-top: auto;
+            font-size: 0.8em;
+            color: var(--text-secondary);
         }
 
         .note-card-timestamp {
-            font-size: 0.8em;
-            color: #388e3c; /* Corresponds to Colors.green.shade800 */
-            /* text-align: right; /* Removed as flex handles alignment */
+            font-family: var(--font-primary);
         }
 
-        .delete-button {
+        .menu-button {
             background: none;
             border: none;
-            color: red;
             cursor: pointer;
-            padding: 0; /* Remove default padding */
-            line-height: 1; /* Ensure SVG aligns well */
+            padding: 8px;
+            line-height: 1;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+            z-index: 5; /* Ensure button is above other elements */
         }
 
-        .fab-container {
-            position: fixed;
-            bottom: 32px;
-            right: 16px;
+        .menu-button:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+
+        .menu-button .icon-svg {
+            fill: var(--text-secondary);
+            width: 20px;
+            height: 20px;
+        }
+
+        .menu-dropdown {
+            position: absolute;
+            right: 8px;
+            top: 40px; /* Increased distance from button */
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 10;
+            display: none;
+            overflow: hidden;
+            min-width: 150px; /* Increased width */
+        }
+
+        .menu-dropdown.show {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .menu-item {
+            padding: 10px 16px; /* Increased padding */
             display: flex;
-            flex-direction: column; 
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .menu-item:hover {
+            background-color: var(--primary-light);
+        }
+
+        .menu-item .icon-svg {
+            width: 18px;
+            height: 18px;
+            margin-right: 12px; /* Increased spacing */
+        }
+        .edit-icon .icon-svg {
+            fill: var(--primary-color);
+        }
+
+        .delete-icon .icon-svg {
+            fill: #ea4335;
+        }
+        
+        .highlight-icon .icon-svg {
+            fill: #ffc107; /* Yellow color for highlight icon */
+        }
+        
+        .fab-container {            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
             align-items: flex-end;
-            z-index: 999; /* Ensure FAB is above other content */
+            gap: 16px;
+        }
+
+        .fab-options {
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .fab-options.show {
+            display: flex;
+            animation: fadeIn 0.3s ease;
         }
 
         .fab {
-            background-color: #4caf50; /* Corresponds to Colors.green */
+            background-color: var(--primary-color);
             color: white;
             border: none;
             border-radius: 50%;
@@ -128,80 +299,83 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            box-shadow: var(--shadow-medium);
             cursor: pointer;
-            transition: transform 0.2s ease-in-out, background-color 0.2s;
-            /* margin-top: 10px; /* Removed, was causing issues with order */
-        }
-
-        .fab-extended {
-            background-color: #a5d6a7; /* Corresponds to Colors.green.shade300 */
-            color: #333;
-            border-radius: 28px; /* height/2 */
-            padding: 0 16px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-            cursor: pointer;
-            font-size: 0.9em;
-            white-space: nowrap;
-            overflow: hidden;
-            max-width: 0;
-            opacity: 0;
-            transition: max-width 0.3s ease-in-out, opacity 0.3s ease-in-out, padding 0.3s ease-in-out, margin-bottom 0.3s ease-in-out;
-            margin-bottom: 0; /* Start with no margin */
-        }
-
-        .fab-extended.visible {
-            max-width: 200px; 
-            opacity: 1;
-            padding: 0 16px;
-            margin-bottom: 10px; /* Add margin when visible */
-        }
-
-        .fab-icon-svg {
-            width: 24px;
-            height: 24px;
-            fill: currentColor;
-            vertical-align: middle; 
-        }
-        .fab .fab-icon-svg {
-             width: 30px; 
-             height: 30px;
-        }
-        .fab-extended .fab-icon-svg {
-            margin-right: 8px;
-        }
-        .delete-button .fab-icon-svg {
-            fill: red;
-            width: 20px;
-            height: 20px;
-        }
-        .add-item-btn .fab-icon-svg {
-            fill: white; 
-            width: 20px;
-            height: 20px;
-        }
-        .delete-item-btn .fab-icon-svg {
-             fill: red;
-             width: 18px;
-             height: 18px;
-        }
-        .add-new-list-item-row .fab-icon-svg {
-            margin-right: 8px;
-            fill: #388e3c; 
-            width: 20px;
-            height: 20px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .fab:hover {
-            background-color: #388e3c; 
+            background-color: var(--primary-dark);
+            transform: scale(1.05);
+        }
+
+        .fab:active {
+            transform: scale(0.95);
+        }
+
+        .fab-option {
+            background-color: white;
+            color: var(--text-primary);
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-light);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .fab-option:hover {
+            background-color: var(--card-hover);
+            transform: scale(1.05);
+        }
+
+        .fab-option-label {
+            position: absolute;
+            right: 60px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 6px 12px; /* Increased padding */
+            border-radius: 4px;
+            font-size: 0.9em; /* Increased font size */
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .fab-option:hover .fab-option-label {
+            opacity: 1;
+        }
+
+        .icon-svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+        .fab .icon-svg {
+            width: 30px;
+            height: 30px;
+            transition: transform 0.3s ease; /* Added transition for rotation */
+        }
+
+        .fab.active .icon-svg {
+            transform: rotate(45deg); /* Rotate to form an X */
+        }
+
+        .fab-option .icon-svg {
+            width: 24px;
+            height: 24px;
         }
 
         /* Modal Styles */
         .modal {
-            display: none; 
+            display: none;
             position: fixed;
             z-index: 1000;
             left: 0;
@@ -210,150 +384,569 @@
             height: 100%;
             overflow: auto;
             background-color: rgba(0,0,0,0.4);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.show {
+            opacity: 1;
         }
 
         .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto; /* Adjusted margin for better centering */
-            padding: 20px;
-            border: 1px solid #888;
-            width: 90%;
-            max-width: 500px;
-            border-radius: 16px; /* Rounded all corners */
+            background-color: white;
+            margin: 5% auto;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             position: relative;
-            animation: slideUp 0.3s ease-out;
+            width: 90%;
+            max-width: 600px;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            max-height: 90vh;
             display: flex;
             flex-direction: column;
-            max-height: 90vh; /* Limit modal height */
         }
 
-        @keyframes slideUp {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        .modal.show .modal-content {
+            transform: translateY(0);
+            opacity: 1;
         }
 
         .modal-header {
-            padding-bottom: 10px;
+            padding-bottom: 16px;
             border-bottom: 1px solid #eee;
-            font-size: 1.2em;
-            margin-bottom: 15px;
+            font-size: 1.3em;
+            font-weight: 500;
+            margin-bottom: 20px;
+            color: var(--primary-dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+
         .modal-body {
-            overflow-y: auto; /* Allow scrolling for long content */
+            overflow-y: auto;
             flex-grow: 1;
         }
 
         .modal-body input[type="text"],
         .modal-body textarea {
-            width: calc(100% - 22px); 
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
             font-size: 1em;
+            font-family: var(--font-primary);
+            transition: border-color 0.2s;
+        }
+
+        .modal-body input[type="text"]:focus,
+        .modal-body textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px var(--primary-light);
         }
 
         .modal-body textarea {
-            min-height: 120px;
+            min-height: 150px;
             resize: vertical;
         }
 
+        .modal-footer {
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
         .modal-footer button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 12px 15px; /* Increased padding */
+            padding: 10px 20px;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 1em;
+            font-family: var(--font-primary);
+            transition: all 0.2s;
+        }
+
+        .btn-cancel {
+            background-color: #f5f5f5;
+            color: var(--text-secondary);
+        }
+
+        .btn-cancel:hover {
+            background-color: #e0e0e0;
+        }
+
+        .btn-save {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-save:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-edit {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* Attachment styles */
+        .attachment-section {
+            margin-top: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        .attachment-button {
+            display: inline-flex;
+            align-items: center;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.2s;
+            margin-top: 8px;
+        }
+
+        .attachment-button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .attachment-button .icon-svg {
+            margin-right: 8px;
+            width: 20px;
+            height: 20px;
+        }
+
+        .attachments-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .attachment-preview {
+            position: relative;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            width: 100px;
+            height: 100px;
+            background-color: #f9f9f9;
+        }
+
+        .attachment-preview img {
             width: 100%;
-            margin-top: 15px; /* Increased margin */
+            height: 100%;
+            object-fit: cover;
         }
 
-        .modal-footer button:hover {
-            background-color: #388e3c;
+        .attachment-preview .pdf-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background-color: #f5f5f5;
         }
 
-        /* List item editor styles */
-        .list-item-editor {
-            margin-bottom: 10px;
+        .attachment-preview .pdf-icon .icon-svg {
+            width: 40px;
+            height: 40px;
+            fill: #ea4335;
         }
 
-        .list-item-row {
+        .attachment-preview .pdf-icon span {
+            font-size: 0.8em;
+            margin-top: 5px;
+            color: #555;
+        }
+
+        .attachment-preview .remove-attachment {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .attachment-preview .remove-attachment .icon-svg {
+            width: 16px;
+            height: 16px;
+            fill: #ea4335;
+        }
+
+        .note-card-attachments {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .note-card-attachment {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+
+        .note-card-attachment img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .note-card-attachment .pdf-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background-color: #f5f5f5;
+        }
+
+        .note-card-attachment .pdf-icon .icon-svg {
+            width: 30px;
+            height: 30px;
+            fill: #ea4335;
+        }
+
+        .note-card-attachment .pdf-icon span {
+            font-size: 0.7em;
+            color: #555;
+        }
+
+        .attachment-count {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            font-size: 0.7em;
+            padding: 2px 5px;
+            border-top-left-radius: 4px;
+        }
+
+        /* File input styling */
+        .file-input {
+            display: none;
+        }
+
+        /* Attachment viewer modal */
+        #attachmentViewerModal {
+            display: none;
+            position: fixed;
+            z-index: 1100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #attachmentViewerModal.show {
+            opacity: 1;
+        }
+
+        .attachment-viewer-content {
+            position: relative;
+            margin: 5% auto;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        #attachmentViewerModal.show .attachment-viewer-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .attachment-viewer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background-color: #f5f5f5;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .attachment-viewer-title {
+            font-weight: 500;
+        }
+
+        .attachment-viewer-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5em;
+            line-height: 1;
+            color: var(--text-secondary);
+        }
+
+        .attachment-viewer-body {
+            flex-grow: 1;
+            overflow: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .attachment-viewer-body img {
+            max-width: 100%;
+            max-height: 70vh;
+            object-fit: contain;
+        }
+
+        .attachment-viewer-body iframe {
+            width: 100%;
+            height: 70vh;
+            border: none;
+        }
+
+        /* List item styles */
+        .list-item-container {
+            margin-bottom: 8px;
+        }
+
+        .list-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 4px;
+        }
+
+        .list-item-checkbox {
+            margin-right: 8px;
+            margin-top: 4px;
+        }
+
+        .list-item-input {
+            flex-grow: 1;
+            border: none;
+            background: none;
+            padding: 0;
+            font-size: 1em;
+            font-family: var(--font-primary);
+            color: var(--text-primary);
+            outline: none;
+        }
+
+        .list-item-input:focus {
+            outline: none;
+        }
+
+        .list-item-remove {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-secondary);
+            padding: 0 4px;
+            font-size: 1.2em;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .list-item:hover .list-item-remove {
+            opacity: 0.7;
+        }
+
+        .list-item-remove:hover {
+            opacity: 1;
+            color: #ea4335;
+        }
+
+        .add-list-item {
+            display: flex;
+            align-items: center;
+            color: var(--text-secondary);
+            cursor: pointer;
+            margin-top: 8px;
+            font-size: 0.9em;
+        }
+
+        .add-list-item:hover {
+            color: var(--primary-color);
+        }
+
+        .add-list-item .icon-svg {
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+        }
+
+        /* View mode styles */
+        .view-mode-content {
+            margin-bottom: 20px;
+        }
+
+        .view-mode-title {
+            font-size: 1.4em;
+            font-weight: 500;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .view-mode-text {
+            font-size: 1em;
+            line-height: 1.5;
+            color: var(--text-primary);
+            white-space: pre-wrap;
+        }
+
+        .view-mode-list-item {
             display: flex;
             align-items: center;
             margin-bottom: 8px;
         }
 
-        .list-item-row input[type="checkbox"] {
+        .view-mode-checkbox {
             margin-right: 8px;
-            width: auto;
-            flex-shrink: 0; /* Prevent checkbox from shrinking */
-        }
-
-        .list-item-row input[type="text"] {
-            flex-grow: 1;
-            margin-bottom: 0; 
-            border: 1px solid #ddd; /* Added border for clarity */
-            padding: 8px;
-            border-radius: 4px;
-        }
-
-        .list-item-row .delete-item-btn {
-            background: none;
-            border: none;
-            color: red;
             cursor: pointer;
-            font-size: 1.1em;
-            margin-left: 8px;
-            padding: 0;
-            line-height: 1;
         }
 
-        .add-item-input-row {
+        .view-mode-list-text {
+            font-size: 1em;
+            color: var(--text-primary);
+        }
+
+        .view-mode-list-text.checked {
+            text-decoration: line-through;
+            color: var(--text-secondary);
+        }
+
+        .view-mode-attachments {
+            margin-top: 20px;
             display: flex;
-            align-items: center;
-            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
-        .add-item-input-row input[type="text"] {
-            flex-grow: 1;
-            margin-right: 8px;
-            margin-bottom: 0;
-        }
-
-        .add-item-btn {
-            background-color: #66bb6a; 
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            font-size: 20px;
+        .view-mode-attachment {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #ddd;
             cursor: pointer;
-            display: flex; /* For centering SVG */
+        }
+
+        .view-mode-attachment img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .view-mode-attachment .pdf-icon {
+            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
-        }
-        .add-new-list-item-row {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            color: #388e3c;
-            padding: 8px 0;
-            border: 1px dashed #388e3c;
-            border-radius: 4px;
-            justify-content: center;
-            margin-top: 10px;
-        }
-        .add-new-list-item-row:hover {
-            background-color: #e8f5e9;
-        }
-        .add-new-list-item-row .icon-svg {
-            margin-right: 8px;
+            width: 100%;
+            height: 100%;
+            background-color: #f5f5f5;
         }
 
+        .view-mode-attachment .pdf-icon .icon-svg {
+            width: 50px;
+            height: 50px;
+            fill: #ea4335;
+        }
+
+        .view-mode-attachment .pdf-icon span {
+            font-size: 0.9em;
+            margin-top: 8px;
+            color: #555;
+        }
+
+        .menu-dropdown {
+            position: fixed; /* Changed from absolute to fixed */
+            right: auto; /* Reset right position */
+            top: auto; /* Reset top position */
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            z-index: 1000; /* Increased z-index significantly */
+            display: none;
+            overflow: visible; /* Changed from hidden to visible */
+            min-width: 150px;
+        }
+
+        @media (max-width: 350px) {
+            .notes-container {
+                column-count: 1; /* Ensure single column on very small screens */
+            }
+        }
+        /* Responsive design */
+        @media (max-width: 550px) {
+            .notes-container {
+                column-count: 2; /* Ensure double column on mobile */
+            }
+            
+            .note-card {
+                width: 100%; /* Ensure cards take full width */
+                margin-bottom: 12px; /* Add space between cards */
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+            
+            .fab-container {
+                bottom: 16px;
+                right: 16px;
+            }
+        }
+
+        @media (min-width: 601px) and (max-width: 900px) {
+            .notes-container {
+                column-count: 3; /* Three columns for medium screens */
+            }
+        }
+
+        @media (min-width: 901px) {
+            .notes-container {
+                column-count: 4; /* Three columns for larger screens */
+            }
+        }
+
+        @media (min-width: 1500px) {
+            .notes-container {
+                column-count: 5; /* Five columns for very large screens */
+            }
+        }
     </style>
 </head>
 <body>
@@ -369,17 +962,18 @@
     </div>
 
     <div class="fab-container">
-        <button class="fab-extended" id="fabTextNote">
-            <svg class="fab-icon-svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-            Text Note
-        </button>
-        <button class="fab-extended" id="fabListNote">
-            <svg class="fab-icon-svg" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zm0-8h14V7H7v2z"/></svg>
-            List Note
-        </button>
+        <div class="fab-options" id="fabOptions">
+            <button class="fab-option" id="textNoteBtn">
+                <span class="fab-option-label">Text Note</span>
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-2.5-7h-7v-1h7v1zm0-2.5h-7v-1h7v1zm-7 6h7v-1h-7v1z"/></svg>
+            </button>
+            <button class="fab-option" id="listNoteBtn">
+                <span class="fab-option-label">List Note</span>
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7zm-4 6h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+            </button>
+        </div>
         <button class="fab" id="mainFab">
-            <svg class="fab-icon-svg" id="mainFabIconPlus" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-            <svg class="fab-icon-svg" id="mainFabIconClose" style="display:none;" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
         </button>
     </div>
 
@@ -392,28 +986,97 @@
             <div class="modal-body">
                 <input type="text" id="noteTitleInput" placeholder="Title">
                 
-                <div id="textNoteEditor">
-                    <textarea id="noteContentInput" placeholder="Note"></textarea>
+                <div id="textNoteContent">
+                    <textarea id="noteContentInput" placeholder="Note content"></textarea>
                 </div>
                 
-                <div id="listNoteEditor" style="display: none;">
-                    <div class="add-item-input-row">
-                        <input type="text" id="listItemInput" placeholder="List item">
-                        <button id="addListItemBtn" class="add-item-btn">
-                            <svg class="fab-icon-svg" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-                        </button>
+                <div id="listNoteContent" style="display: none;">
+                    <div id="listItemsContainer" class="list-item-container">
+                        <!-- List items will be added here dynamically -->
                     </div>
-                    <div id="listItemsContainer">
-                        <!-- List items will be added here -->
+                    <div class="add-list-item" id="addListItemBtn">
+                        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                        Add item
                     </div>
-                    <div class="add-new-list-item-row" id="addNewListItemRow">
-                        <svg class="fab-icon-svg icon-svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-5h-3v-2h3v-3h2v3h3v2h-3v3h-2v-3z"/></svg>
-                        <span>Add new item</span>
+                </div>
+                
+                <!-- Attachment section -->
+                <div class="attachment-section">
+                    <label class="attachment-button" for="fileInput">
+                        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg>
+                        Add File
+                    </label>
+                    <input type="file" id="fileInput" class="file-input" accept="image/*,application/pdf">
+                    <div id="attachmentsPreview" class="attachments-preview"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" id="cancelNoteBtn">Cancel</button>
+                <button class="btn-save" id="saveNoteBtn">Save Note</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Note View Modal -->
+    <div id="noteViewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="viewModalTitle">View Note</span>
+                <button class="menu-button" id="viewMenuButton">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                </button>
+                <div class="menu-dropdown" id="viewMenuDropdown">
+                    <div class="menu-item edit-icon" id="editNoteMenuItem">
+                        <svg class="icon-svg" viewBox="0 0 24 24">
+                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                        </svg>
+                        Edit
+                    </div>
+                    <div class="menu-item pin-icon" id="pinNoteMenuItem">
+                        <svg class="icon-svg" viewBox="0 0 24 24">
+                            <path d="M16 5h.99L17 3H7v2h1v7l-2 2v2h5v6l1 1 1-1v-6h5v-2l-2-2V5z"/>
+                        </svg>
+                        Pin
+                    </div>
+                    <div class="menu-item delete-icon" id="deleteNoteMenuItem">
+                        <svg class="icon-svg" viewBox="0 0 24 24">
+                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                        </svg>
+                        Delete
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="view-mode-content">
+                    <h2 class="view-mode-title" id="viewNoteTitle"></h2>
+                    
+                    <div id="viewTextContent" class="view-mode-text"></div>
+                    
+                    <div id="viewListContent" style="display: none;">
+                        <!-- List items will be added here dynamically -->
+                    </div>
+                    
+                    <div id="viewAttachments" class="view-mode-attachments">
+                        <!-- Attachments will be added here dynamically -->
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="saveNoteBtn">Save Note</button>
+                <button class="btn-cancel" id="closeViewBtn">Close</button>
+                <button class="btn-edit" id="editNoteBtn">Edit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attachment viewer modal -->
+    <div id="attachmentViewerModal" class="modal">
+        <div class="attachment-viewer-content">
+            <div class="attachment-viewer-header">
+                <div class="attachment-viewer-title">Attachment</div>
+                <button class="attachment-viewer-close">&times;</button>
+            </div>
+            <div class="attachment-viewer-body" id="attachmentViewerBody">
+                <!-- Content will be dynamically inserted here -->
             </div>
         </div>
     </div>
@@ -421,205 +1084,758 @@
     <script>
       document.addEventListener("DOMContentLoaded", () => {
           // Initialize notes from localStorage
-          let notes = JSON.parse(localStorage.getItem('notes')) || [];
+          let notes = JSON.parse(localStorage.getItem("notes")) || [];
           
           const mainFab = document.getElementById("mainFab");
-          const mainFabIconPlus = document.getElementById("mainFabIconPlus");
-          const mainFabIconClose = document.getElementById("mainFabIconClose");
-          const fabTextNote = document.getElementById("fabTextNote");
-          const fabListNote = document.getElementById("fabListNote");
+          const fabOptions = document.getElementById("fabOptions");
+          const textNoteBtn = document.getElementById("textNoteBtn");
+          const listNoteBtn = document.getElementById("listNoteBtn");
+          
           const noteEditorModal = document.getElementById("noteEditorModal");
           const modalTitle = document.getElementById("modalTitle");
           const saveNoteBtn = document.getElementById("saveNoteBtn");
+          const cancelNoteBtn = document.getElementById("cancelNoteBtn");
           const noteTitleInput = document.getElementById("noteTitleInput");
           const noteContentInput = document.getElementById("noteContentInput");
-          const listItemInput = document.getElementById("listItemInput");
-          const addListItemBtn = document.getElementById("addListItemBtn");
+          const textNoteContent = document.getElementById("textNoteContent");
+          const listNoteContent = document.getElementById("listNoteContent");
           const listItemsContainer = document.getElementById("listItemsContainer");
-          const textNoteEditor = document.getElementById("textNoteEditor");
-          const listNoteEditor = document.getElementById("listNoteEditor");
+          const addListItemBtn = document.getElementById("addListItemBtn");
+          
+          const noteViewModal = document.getElementById("noteViewModal");
+          const viewModalTitle = document.getElementById("viewModalTitle");
+          const viewNoteTitle = document.getElementById("viewNoteTitle");
+          const viewTextContent = document.getElementById("viewTextContent");
+          const viewListContent = document.getElementById("viewListContent");
+          const viewAttachments = document.getElementById("viewAttachments");
+          const closeViewBtn = document.getElementById("closeViewBtn");
+          const editNoteBtn = document.getElementById("editNoteBtn");
+          const viewMenuButton = document.getElementById("viewMenuButton");
+          const viewMenuDropdown = document.getElementById("viewMenuDropdown");
+          const editNoteMenuItem = document.getElementById("editNoteMenuItem");
+          const pinNoteMenuItem = document.getElementById("pinNoteMenuItem");
+          const deleteNoteMenuItem = document.getElementById("deleteNoteMenuItem");
+          
           const notesContainer = document.getElementById("notesContainer");
           const emptyNotesMessage = document.getElementById("emptyNotesMessage");
-          const addNewListItemRow = document.getElementById("addNewListItemRow");
-  
-          let isFabExpanded = false;
-          let currentNoteType = "text"; 
-          let editingNoteIndex = null; 
-          let currentListItems = []; 
-  
+          const fileInput = document.getElementById("fileInput");
+          const attachmentsPreview = document.getElementById("attachmentsPreview");
+          const attachmentViewerModal = document.getElementById("attachmentViewerModal");
+          const attachmentViewerBody = document.getElementById("attachmentViewerBody");
+          const attachmentViewerClose = document.querySelector(".attachment-viewer-close");
+          
+          let currentNoteType = "text";
+          let editingNoteIndex = null;
+          let viewingNoteIndex = null;
+          let currentAttachments = [];
+          let isPinned = false;
+          let activeMenuNoteIndex = null;
+          
           // --- FAB Logic ---
           mainFab.addEventListener("click", () => {
-              isFabExpanded = !isFabExpanded;
-              mainFabIconPlus.style.display = isFabExpanded ? "none" : "block";
-              mainFabIconClose.style.display = isFabExpanded ? "block" : "none";
-              fabTextNote.classList.toggle("visible", isFabExpanded);
-              fabListNote.classList.toggle("visible", isFabExpanded);
+              fabOptions.classList.toggle("show");
+              mainFab.classList.toggle("active"); // Toggle active class for rotation
           });
-  
-          function closeFabMenu() {
-              if (isFabExpanded) {
-                  isFabExpanded = false;
-                  mainFabIconPlus.style.display = "block";
-                  mainFabIconClose.style.display = "none";
-                  fabTextNote.classList.remove("visible");
-                  fabListNote.classList.remove("visible");
-              }
-          }
-  
-          // --- Modal Logic ---
-          function openModal(type, noteIndex = null) {
-              currentNoteType = type;
-              editingNoteIndex = noteIndex;
-              noteTitleInput.value = "";
-              noteContentInput.value = "";
-              listItemInput.value = "";
-              currentListItems = [];
-              renderListItemsInEditor();
-  
-              if (type === "text") {
-                  modalTitle.textContent = noteIndex !== null ? "Edit Text Note" : "Create Text Note";
-                  textNoteEditor.style.display = "block";
-                  listNoteEditor.style.display = "none";
-                  if (noteIndex !== null && notes[noteIndex]) {
-                      noteTitleInput.value = notes[noteIndex].title;
-                      noteContentInput.value = notes[noteIndex].content;
-                  }
-              } else if (type === "list") {
-                  modalTitle.textContent = noteIndex !== null ? "Edit List Note" : "Create List Note";
-                  textNoteEditor.style.display = "none";
-                  listNoteEditor.style.display = "block";
-                  if (noteIndex !== null && notes[noteIndex] && Array.isArray(notes[noteIndex].content)) {
-                      noteTitleInput.value = notes[noteIndex].title;
-                      currentListItems = JSON.parse(JSON.stringify(notes[noteIndex].content)); 
-                      renderListItemsInEditor();
-                  }
-              }
-              noteEditorModal.style.display = "flex";
-              closeFabMenu();
-          }
-  
-          function closeModal() {
-              noteEditorModal.style.display = "none";
-              editingNoteIndex = null;
-              noteTitleInput.value = "";
-              noteContentInput.value = "";
-              listItemInput.value = "";
-              currentListItems = [];
-              renderListItemsInEditor();
-          }
-  
-          fabTextNote.addEventListener("click", () => openModal("text"));
-          fabListNote.addEventListener("click", () => openModal("list"));
           
-          window.addEventListener("click", (event) => {
-              if (event.target === noteEditorModal) {
-                  closeModal();
-              }
+          textNoteBtn.addEventListener("click", () => {
+              openCreateModal("text");
+              fabOptions.classList.remove("show");
+              mainFab.classList.remove("active"); // Remove active class
           });
-  
-          // --- List Item Editor Logic ---
-          function renderListItemsInEditor() {
-              listItemsContainer.innerHTML = ""; 
-              currentListItems.forEach((item, index) => {
-                  const listItemRow = document.createElement("div");
-                  listItemRow.className = "list-item-row";
-  
-                  const checkbox = document.createElement("input");
-                  checkbox.type = "checkbox";
-                  checkbox.checked = item.checked;
-                  checkbox.onchange = () => {
-                      currentListItems[index].checked = checkbox.checked;
-                  };
-  
-                  const textInput = document.createElement("input");
-                  textInput.type = "text";
-                  textInput.value = item.text;
-                  textInput.placeholder = "List item text";
-                  textInput.oninput = () => {
-                      currentListItems[index].text = textInput.value;
-                  };
-  
-                  textInput.addEventListener("keydown", (e) => {
-                      if (e.key === "Enter") {
-                          addNewListItemFromInput();
+          
+          listNoteBtn.addEventListener("click", () => {
+              openCreateModal("list");
+              fabOptions.classList.remove("show");
+              mainFab.classList.remove("active"); // Remove active class
+          });
+          
+          // --- Note Rendering Logic ---
+          function renderNotes() {
+              // Clear previous notes
+              while (notesContainer.firstChild) {
+                  notesContainer.removeChild(notesContainer.firstChild);
+              }
+              
+              if (notes.length === 0) {
+                  notesContainer.appendChild(emptyNotesMessage);
+                  return;
+              }
+              
+              // Sort notes: pinned first, then by timestamp (newest first)
+              const sortedNotes = [...notes].sort((a, b) => {
+                  if (a.pinned && !b.pinned) return -1;
+                  if (!a.pinned && b.pinned) return 1;
+                  return new Date(b.timestamp) - new Date(a.timestamp);
+              });
+              
+              sortedNotes.forEach((note, index) => {
+                  const noteCard = document.createElement("div");
+                  noteCard.className = "note-card";
+                  if (note.pinned) {
+                      noteCard.classList.add("pinned");
+                  }
+                  
+                  if (note.highlighted) {
+                      noteCard.classList.add("highlighted");
+                  }
+                  
+                  const noteHeader = document.createElement("div");
+                  noteHeader.className = "note-card-header";
+                  
+                  const noteTitle = document.createElement("div");
+                  noteTitle.className = "note-card-title";
+                  noteTitle.textContent = note.title || "Untitled Note";
+                  
+                  const menuButton = document.createElement("button");
+                  menuButton.className = "menu-button";
+                  menuButton.innerHTML = `
+                      <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                  `;
+                  
+                  const menuDropdown = document.createElement("div");
+                  menuDropdown.className = "menu-dropdown";
+                  
+                  const pinMenuItem = document.createElement("div");
+                  pinMenuItem.className = "menu-item pin-icon";
+                  pinMenuItem.innerHTML = `
+                      <svg class="icon-svg" viewBox="0 0 24 24">
+                          <path d="M16 5h.99L17 3H7v2h1v7l-2 2v2h5v6l1 1 1-1v-6h5v-2l-2-2V5z"/>
+                      </svg>
+                      ${note.pinned ? "Unpin" : "Pin"}
+                  `;
+                  
+                  const highlightMenuItem = document.createElement("div");
+                  highlightMenuItem.className = "menu-item highlight-icon";
+                  highlightMenuItem.innerHTML = `
+                      <svg class="icon-svg" viewBox="0 0 24 24">
+                          <path d="M3.55 18.54l1.41 1.41 1.79-1.8-1.41-1.41-1.79 1.8zM11 22.45h2V19.5h-2v2.95zM4 10.5H1v2h3v-2zm11-4.19V1.5H9v4.81C7.21 7.35 6 9.28 6 11.5c0 3.31 2.69 6 6 6s6-2.69 6-6c0-2.22-1.21-4.15-3-5.19zm5 4.19v2h3v-2h-3zm-2.76 7.66l1.79 1.8 1.41-1.41-1.8-1.79-1.4 1.4z"/>
+                      </svg>
+                      Highlight
+                  `;
+                  
+                  const editMenuItem = document.createElement("div");
+                  editMenuItem.className = "menu-item edit-icon";
+                  editMenuItem.innerHTML = `
+                      <svg class="icon-svg" viewBox="0 0 24 24">
+                          <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                      </svg>
+                      Edit
+                  `;
+                  
+                  const deleteMenuItem = document.createElement("div");
+                  deleteMenuItem.className = "menu-item delete-icon";
+                  deleteMenuItem.innerHTML = `
+                      <svg class="icon-svg" viewBox="0 0 24 24">
+                          <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                      </svg>
+                      Delete
+                  `;
+                  
+                  menuDropdown.appendChild(pinMenuItem);
+                  menuDropdown.appendChild(highlightMenuItem);
+                  menuDropdown.appendChild(editMenuItem);
+                  menuDropdown.appendChild(deleteMenuItem);
+                  
+                  noteHeader.appendChild(noteTitle);
+                  noteHeader.appendChild(menuButton);
+                  noteHeader.appendChild(menuDropdown);
+                  
+                  noteCard.appendChild(noteHeader);
+                  
+                  // Content section
+                  const contentSection = document.createElement("div");
+                  contentSection.className = "note-card-content-section";
+                  
+                  // Add type tag for list notes
+                  if (note.type === "list") {
+                      const typeTag = document.createElement("div");
+                      typeTag.className = "note-type-tag";
+                      typeTag.innerHTML = `
+                          <svg class="icon-svg" viewBox="0 0 24 24" style="width: 14px; height: 14px; margin-right: 4px;">
+                              <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/>
+                          </svg>
+                          List
+                      `;
+                      // Insert label list between title and menu button
+                      noteHeader.insertBefore(typeTag, menuButton);
+                  }
+                  
+                  if (note.type === "text" && note.content) {
+                      const content = document.createElement("div");
+                      content.className = "note-card-content";
+                      content.textContent = note.content;
+                      contentSection.appendChild(content);
+                  } else if (note.type === "list" && note.listItems && note.listItems.length > 0) {
+                      const listPreview = document.createElement("div");
+                      listPreview.className = "note-card-list-preview";
+                      
+                      // Show up to 3 list items
+                      const itemsToShow = Math.min(note.listItems.length, 3);
+                      for (let i = 0; i < itemsToShow; i++) {
+                          const listItem = document.createElement("div");
+                          listItem.className = "note-card-list-item" + (note.listItems[i].checked ? " checked" : "");
+                          listItem.innerHTML = `
+                              ${note.listItems[i].checked ? "✓ " : "○ "}
+                              ${note.listItems[i].text}
+                          `;
+                          listPreview.appendChild(listItem);
+                      }
+                      
+                      // Show count if there are more items
+                      if (note.listItems.length > 3) {
+                          const moreItems = document.createElement("div");
+                          moreItems.className = "note-card-list-item";
+                          moreItems.textContent = `+ ${note.listItems.length - 3} more items`;
+                          listPreview.appendChild(moreItems);
+                      }
+                      
+                      contentSection.appendChild(listPreview);
+                  }
+                  
+                  noteCard.appendChild(contentSection);
+                  
+                  // Attachments preview
+                  if (note.attachments && note.attachments.length > 0) {
+                      const attachmentsContainer = document.createElement("div");
+                      attachmentsContainer.className = "note-card-attachments";
+                      
+                      // Show up to 3 attachments
+                      const attachmentsToShow = Math.min(note.attachments.length, 3);
+                      for (let i = 0; i < attachmentsToShow; i++) {
+                          const attachment = note.attachments[i];
+                          const attachmentEl = document.createElement("div");
+                          attachmentEl.className = "note-card-attachment";
+                          
+                          if (attachment.type === "image") {
+                              const img = document.createElement("img");
+                              img.src = attachment.data;
+                              img.alt = attachment.name;
+                              attachmentEl.appendChild(img);
+                          } else if (attachment.type === "pdf") {
+                              const pdfIcon = document.createElement("div");
+                              pdfIcon.className = "pdf-icon";
+                              pdfIcon.innerHTML = `
+                                  <svg class="icon-svg" viewBox="0 0 24 24">
+                                      <path d="M20,2H8C6.9,2 6,2.9 6,4V16C6,17.1 6.9,18 8,18H20C21.1,18 22,17.1 22,16V4C22,2.9 21.1,2 20,2M20,16H8V4H20V16M4,6H2V20C2,21.1 2.9,22 4,22H18V20H4V6M16,12V9C16,8.4 15.6,8 15,8H13V13H15C15.6,13 16,12.6 16,12M14,9H15V12H14V9M18,11H19V10H18V9H19V8H17V13H18V11M9,8H12C12.6,8 13,8.4 13,9V13H11V10H10V13H8V9C8,8.4 8.4,8 9,8M10,9V10H11V9H10Z" />
+                                  </svg>
+                                  <span>PDF</span>
+                              `;
+                              attachmentEl.appendChild(pdfIcon);
+                          }
+                          
+                          attachmentsContainer.appendChild(attachmentEl);
+                      }
+                      
+                      // Show count if there are more attachments
+                      if (note.attachments.length > 3) {
+                          const lastAttachment = attachmentsContainer.lastChild;
+                          const countBadge = document.createElement("div");
+                          countBadge.className = "attachment-count";
+                          countBadge.textContent = `+${note.attachments.length - 3}`;
+                          lastAttachment.appendChild(countBadge);
+                      }
+                      
+                      noteCard.appendChild(attachmentsContainer);
+                  }
+                  
+                  // Footer with timestamp
+                  const footer = document.createElement("div");
+                  footer.className = "note-card-footer";
+                  
+                  const timestamp = document.createElement("div");
+                  timestamp.className = "note-card-timestamp";
+                  
+                  // Format date
+                  const noteDate = new Date(note.timestamp);
+                  const now = new Date();
+                  const diffMs = now - noteDate;
+                  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                  
+                  if (diffDays === 0) {
+                      // Today, show time
+                      timestamp.textContent = noteDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                  } else if (diffDays === 1) {
+                      // Yesterday
+                      timestamp.textContent = "Yesterday";
+                  } else if (diffDays < 7) {
+                      // Within a week
+                      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                      timestamp.textContent = days[noteDate.getDay()];
+                  } else {
+                      // Older than a week
+                      timestamp.textContent = noteDate.toLocaleDateString();
+                  }
+                  
+                  footer.appendChild(timestamp);
+                  noteCard.appendChild(footer);
+                  
+                  // Event listeners
+                  noteCard.addEventListener("click", (event) => {
+                      if (!event.target.closest(".menu-button") && !event.target.closest(".menu-dropdown")) {
+                          // Store the actual note object reference instead of index
+                          const noteIndex = notes.findIndex(n => n === note);
+                          openViewModal(noteIndex);
                       }
                   });
-  
-                  const deleteBtn = document.createElement("button");
-                  deleteBtn.className = "delete-item-btn";
-                  deleteBtn.innerHTML = `<svg class="fab-icon-svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>`;
-                  deleteBtn.onclick = () => {
-                      currentListItems.splice(index, 1);
-                      renderListItemsInEditor();
-                  };
-  
-                  listItemRow.appendChild(checkbox);
-                  listItemRow.appendChild(textInput);
-                  listItemRow.appendChild(deleteBtn);
-                  listItemsContainer.appendChild(listItemRow);
+                  
+                  menuButton.addEventListener("click", (event) => {
+              event.stopPropagation();
+              
+              // Close any other open menu
+              if (activeMenuNoteIndex !== null && activeMenuNoteIndex !== index) {
+                  const openMenus = document.querySelectorAll(".menu-dropdown.show");
+                  openMenus.forEach(menu => menu.classList.remove("show"));
+              }
+              
+              // Position the dropdown relative to the button
+              const buttonRect = menuButton.getBoundingClientRect();
+              menuDropdown.style.top = (buttonRect.bottom + 5) + 'px';
+              menuDropdown.style.left = (buttonRect.left - 120) + 'px'; // Align to right side of button
+              
+              menuDropdown.classList.toggle("show");
+              activeMenuNoteIndex = menuDropdown.classList.contains("show") ? index : null;
+          });
+                  
+                  editMenuItem.addEventListener("click", (event) => {
+                      event.stopPropagation();
+                      const noteIndex = notes.findIndex(n => n === note);
+                      openEditModal(noteIndex);
+                      menuDropdown.classList.remove("show");
+                  });
+                  
+                  pinMenuItem.addEventListener("click", (event) => {
+                      event.stopPropagation();
+                      const noteIndex = notes.findIndex(n => n === note);
+                      notes[noteIndex].pinned = !notes[noteIndex].pinned;
+                      localStorage.setItem("notes", JSON.stringify(notes));
+                      renderNotes();
+                  });
+                  
+                  deleteMenuItem.addEventListener("click", (event) => {
+                      event.stopPropagation();
+                      if (confirm("Are you sure you want to delete this note?")) {
+                          const noteIndex = sortedNotes.indexOf(note);
+                          notes.splice(noteIndex, 1);
+                          localStorage.setItem("notes", JSON.stringify(notes));
+                          renderNotes();
+                      }
+                  });
+                  
+                  notesContainer.appendChild(noteCard);
               });
           }
           
-          function addNewListItemFromInput() {
-              const text = listItemInput.value.trim();
-              if (text) {
-                  currentListItems.push({ text: text, checked: false });
-                  listItemInput.value = "";
-                  renderListItemsInEditor();
-                  listItemInput.focus();
+          // --- List Item Logic ---
+          function addListItem(text = "", checked = false) {
+              const listItem = document.createElement("div");
+              listItem.className = "list-item";
+              
+              const checkbox = document.createElement("input");
+              checkbox.type = "checkbox";
+              checkbox.className = "list-item-checkbox";
+              checkbox.checked = checked;
+              
+              const input = document.createElement("input");
+              input.type = "text";
+              input.className = "list-item-input";
+              input.value = text;
+              input.placeholder = "List item";
+              
+              const removeBtn = document.createElement("button");
+              removeBtn.className = "list-item-remove";
+              removeBtn.innerHTML = "&times;";
+              removeBtn.addEventListener("click", () => {
+                  listItem.remove();
+              });
+              
+              listItem.appendChild(checkbox);
+              listItem.appendChild(input);
+              listItem.appendChild(removeBtn);
+              
+              listItemsContainer.appendChild(listItem);
+              
+              // Focus on the new input
+              input.focus();
+          }
+          
+          function clearListItems() {
+              listItemsContainer.innerHTML = "";
+          }
+          
+          function populateListItems(items) {
+              clearListItems();
+              if (items && items.length > 0) {
+                  items.forEach(item => {
+                      addListItem(item.text, item.checked);
+                  });
+              } else {
+                  addListItem();
               }
           }
-  
-          addListItemBtn.addEventListener("click", addNewListItemFromInput);
           
-          addNewListItemRow.addEventListener("click", () => {
-              currentListItems.push({ text: "", checked: false });
-              renderListItemsInEditor();
-              const inputs = listItemsContainer.querySelectorAll(".list-item-row input[type=\'text\']");
-              if(inputs.length > 0) {
-                  inputs[inputs.length -1].focus();
-                }
-            });
-            
-        // Add Enter key functionality for main list item input in step 005
-          listItemInput.addEventListener("keydown", (e) => {
-              if (e.key === "Enter") {
-                  addNewListItemFromInput();
-              }
+          function getListItems() {
+              const items = [];
+              const listItems = listItemsContainer.querySelectorAll(".list-item");
+              
+              listItems.forEach(item => {
+                  const checkbox = item.querySelector(".list-item-checkbox");
+                  const input = item.querySelector(".list-item-input");
+                  const text = input.value.trim();
+                  
+                  if (text) {
+                      items.push({
+                          text: text,
+                          checked: checkbox.checked
+                      });
+                  }
+              });
+              
+              return items;
+          }
+          
+          addListItemBtn.addEventListener("click", () => {
+              addListItem();
           });
+          
+          // --- Modal Logic ---
+          function openCreateModal(type) {
+              currentNoteType = type;
+              editingNoteIndex = null;
+              isPinned = false;
+              currentAttachments = [];
+              
+              noteTitleInput.value = "";
+              noteContentInput.value = "";
+              clearListItems();
+              
+              if (type === "text") {
+                  textNoteContent.style.display = "block";
+                  listNoteContent.style.display = "none";
+                  modalTitle.textContent = "Create Text Note";
+                  addListItem();
+              } else if (type === "list") {
+                  textNoteContent.style.display = "none";
+                  listNoteContent.style.display = "block";
+                  modalTitle.textContent = "Create List Note";
+                  addListItem();
+              }
+              
+              attachmentsPreview.innerHTML = "";
+              
+              noteEditorModal.style.display = "block";
+              setTimeout(() => {
+                  noteEditorModal.classList.add("show");
+              }, 10);
+              
+              // Focus on title input
+              setTimeout(() => {
+                  noteTitleInput.focus();
+              }, 300);
+          }
+          
+          function openEditModal(noteIndex) {
+              editingNoteIndex = noteIndex;
+              const note = notes[noteIndex];
+              
+              noteTitleInput.value = note.title || "";
+              isPinned = note.pinned || false;
+              
+              // Set up attachments
+              currentAttachments = note.attachments ? JSON.parse(JSON.stringify(note.attachments)) : [];
+              
+              // Set up the modal based on note type
+              currentNoteType = note.type || "text";
+              
+              if (currentNoteType === "text") {
+                  textNoteContent.style.display = "block";
+                  listNoteContent.style.display = "none";
+                  modalTitle.textContent = "Edit Text Note";
+                  noteContentInput.value = note.content || "";
+              } else if (currentNoteType === "list") {
+                  textNoteContent.style.display = "none";
+                  listNoteContent.style.display = "block";
+                  modalTitle.textContent = "Edit List Note";
+                  populateListItems(note.listItems);
+              }
+              
+              // Render attachments if they exist
+              renderAttachmentsPreview();
+              
+              noteEditorModal.style.display = "block";
+              setTimeout(() => {
+                  noteEditorModal.classList.add("show");
+              }, 10);
+              
+              // Focus on title input
+              setTimeout(() => {
+                  noteTitleInput.focus();
+              }, 300);
+          }
+          
+          function openViewModal(noteIndex) {
+              viewingNoteIndex = noteIndex;
+              const note = notes[noteIndex];
+              
+              viewNoteTitle.textContent = note.title || "Untitled Note";
+              
+              // Update pin menu item text
+              pinNoteMenuItem.innerHTML = `
+                  <svg class="icon-svg" viewBox="0 0 24 24">
+                      <path d="M16 5h.99L17 3H7v2h1v7l-2 2v2h5v6l1 1 1-1v-6h5v-2l-2-2V5z"/>
+                  </svg>
+                  ${note.pinned ? "Unpin" : "Pin"}
+              `;
+              
+              // Set up the view based on note type
+              const noteType = note.type || "text";
+              
+              if (noteType === "text") {
+                  viewTextContent.style.display = "block";
+                  viewListContent.style.display = "none";
+                  viewTextContent.textContent = note.content || "";
+              } else if (noteType === "list") {
+                  viewTextContent.style.display = "none";
+                  viewListContent.style.display = "block";
+                  
+                  // Render list items
+                  viewListContent.innerHTML = "";
+                  if (note.listItems && note.listItems.length > 0) {
+                      note.listItems.forEach((item, itemIndex) => {
+                          const listItem = document.createElement("div");
+                          listItem.className = "view-mode-list-item";
+                          
+                          const checkbox = document.createElement("input");
+                          checkbox.type = "checkbox";
+                          checkbox.className = "view-mode-checkbox";
+                          checkbox.checked = item.checked;
+                          checkbox.disabled = false; // Make checkboxes interactive
+                          
+                          const text = document.createElement("span");
+                          text.className = "view-mode-list-text" + (item.checked ? " checked" : "");
+                          text.textContent = item.text;
+                          
+                          // Add event listener to checkbox
+                          checkbox.addEventListener("change", (e) => {
+                              e.stopPropagation(); // Prevent modal from closing
+                              // Update the item's checked status
+                              notes[viewingNoteIndex].listItems[itemIndex].checked = checkbox.checked;
+                              // Update text class
+                              text.className = "view-mode-list-text" + (checkbox.checked ? " checked" : "");
+                              // Save to localStorage
+                              localStorage.setItem("notes", JSON.stringify(notes));
+                              // Re-render notes in background
+                              renderNotes();
+                          });
+                          
+                          listItem.appendChild(checkbox);
+                          listItem.appendChild(text);
+                          viewListContent.appendChild(listItem);
+                      });
+                  }
+              }
+              
+              // Render attachments if they exist
+              viewAttachments.innerHTML = "";
+              if (note.attachments && note.attachments.length > 0) {
+                  note.attachments.forEach((attachment, index) => {
+                      const attachmentEl = document.createElement("div");
+                      attachmentEl.className = "view-mode-attachment";
+                      
+                      if (attachment.type === "image") {
+                          const img = document.createElement("img");
+                          img.src = attachment.data;
+                          img.alt = attachment.name;
+                          attachmentEl.appendChild(img);
+                      } else if (attachment.type === "pdf") {
+                          const pdfIcon = document.createElement("div");
+                          pdfIcon.className = "pdf-icon";
+                          pdfIcon.innerHTML = `
+                              <svg class="icon-svg" viewBox="0 0 24 24">
+                                  <path d="M20,2H8C6.9,2 6,2.9 6,4V16C6,17.1 6.9,18 8,18H20C21.1,18 22,17.1 22,16V4C22,2.9 21.1,2 20,2M20,16H8V4H20V16M4,6H2V20C2,21.1 2.9,22 4,22H18V20H4V6M16,12V9C16,8.4 15.6,8 15,8H13V13H15C15.6,13 16,12.6 16,12M14,9H15V12H14V9M18,11H19V10H18V9H19V8H17V13H18V11M9,8H12C12.6,8 13,8.4 13,9V13H11V10H10V13H8V9C8,8.4 8.4,8 9,8M10,9V10H11V9H10Z" />
+                              </svg>
+                              <span>${attachment.name.length > 15 ? attachment.name.substring(0, 12) + "..." : attachment.name}</span>
+                          `;
+                          attachmentEl.appendChild(pdfIcon);
+                      }
+                      
+                      attachmentEl.addEventListener("click", () => {
+                          openAttachmentViewer(attachment);
+                      });
+                      
+                      viewAttachments.appendChild(attachmentEl);
+                  });
+              }
+              
+              noteViewModal.style.display = "block";
+              setTimeout(() => {
+                  noteViewModal.classList.add("show");
+              }, 10);
+          }
+  
+          function closeEditorModal() {
+              noteEditorModal.classList.remove("show");
+              setTimeout(() => {
+                  noteEditorModal.style.display = "none";
+                  editingNoteIndex = null;
+                  noteTitleInput.value = "";
+                  noteContentInput.value = "";
+                  clearListItems();
+                  currentAttachments = [];
+                  isPinned = false;
+                  attachmentsPreview.innerHTML = "";
+              }, 300);
+          }
+          
+          function closeViewModal() {
+              noteViewModal.classList.remove("show");
+              setTimeout(() => {
+                  noteViewModal.style.display = "none";
+                  viewingNoteIndex = null;
+                  viewNoteTitle.textContent = "";
+                  viewTextContent.textContent = "";
+                  viewListContent.innerHTML = "";
+                  viewAttachments.innerHTML = "";
+                  viewMenuDropdown.classList.remove("show");
+              }, 300);
+          }
+          
+          // --- Attachment Logic ---
+          fileInput.addEventListener("change", (e) => {
+              handleFileInput(e);
+          });
+          
+          function handleFiles(files) {
+              for (let i = 0; i < files.length; i++) {
+                  const file = files[i];
+                  if (file.type.startsWith("image/") || file.type === "application/pdf") {
+                      const reader = new FileReader();
+                      reader.onload = function(event) {
+                          const fileType = file.type.startsWith("image/") ? "image" : "pdf";
+                          const attachment = {
+                              type: fileType,
+                              name: file.name,
+                              data: event.target.result
+                          };
+                          currentAttachments.push(attachment);
+                          renderAttachmentsPreview();
+                      };
+                      reader.readAsDataURL(file);
+                  }
+              }
+          }
+          
+          function handleFileInput(e) {
+              if (e.target.files.length) {
+                  handleFiles(e.target.files);
+                  // Reset file input
+                  e.target.value = "";
+              }
+          }
+          
+          function renderAttachmentsPreview() {
+              attachmentsPreview.innerHTML = "";
+              
+              currentAttachments.forEach((attachment, index) => {
+                  const previewEl = document.createElement("div");
+                  previewEl.className = "attachment-preview";
+                  
+                  if (attachment.type === "image") {
+                      const img = document.createElement("img");
+                      img.src = attachment.data;
+                      img.alt = attachment.name;
+                      previewEl.appendChild(img);
+                  } else if (attachment.type === "pdf") {
+                      const pdfIcon = document.createElement("div");
+                      pdfIcon.className = "pdf-icon";
+                      pdfIcon.innerHTML = `
+                          <svg class="icon-svg" viewBox="0 0 24 24">
+                              <path d="M20,2H8C6.9,2 6,2.9 6,4V16C6,17.1 6.9,18 8,18H20C21.1,18 22,17.1 22,16V4C22,2.9 21.1,2 20,2M20,16H8V4H20V16M4,6H2V20C2,21.1 2.9,22 4,22H18V20H4V6M16,12V9C16,8.4 15.6,8 15,8H13V13H15C15.6,13 16,12.6 16,12M14,9H15V12H14V9M18,11H19V10H18V9H19V8H17V13H18V11M9,8H12C12.6,8 13,8.4 13,9V13H11V10H10V13H8V9C8,8.4 8.4,8 9,8M10,9V10H11V9H10Z" />
+                          </svg>
+                          <span>${attachment.name.length > 15 ? attachment.name.substring(0, 12) + "..." : attachment.name}</span>
+                      `;
+                      previewEl.appendChild(pdfIcon);
+                  }
+                  
+                  const removeBtn = document.createElement("div");
+                  removeBtn.className = "remove-attachment";
+                  removeBtn.innerHTML = `<svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>`;
+                  removeBtn.onclick = (e) => {
+                      e.stopPropagation();
+                      currentAttachments.splice(index, 1);
+                      renderAttachmentsPreview();
+                  };
+                  
+                  previewEl.appendChild(removeBtn);
+                  previewEl.addEventListener("click", () => {
+                      openAttachmentViewer(attachment);
+                  });
+                  
+                  attachmentsPreview.appendChild(previewEl);
+              });
+          }
+          
+          function openAttachmentViewer(attachment) {
+              attachmentViewerBody.innerHTML = "";
+              
+              if (attachment.type === "image") {
+                  const img = document.createElement("img");
+                  img.src = attachment.data;
+                  img.alt = attachment.name;
+                  attachmentViewerBody.appendChild(img);
+              } else if (attachment.type === "pdf") {
+                  const iframe = document.createElement("iframe");
+                  iframe.src = attachment.data;
+                  attachmentViewerBody.appendChild(iframe);
+              }
+              
+              attachmentViewerModal.style.display = "block";
+              setTimeout(() => {
+                  attachmentViewerModal.classList.add("show");
+              }, 10);
+          }
   
           // --- Note Saving Logic ---
           saveNoteBtn.addEventListener("click", () => {
               const title = noteTitleInput.value.trim();
-              let content;
-              let finalTitle = title;
-  
+              let content = "";
+              let listItems = [];
+              
               if (currentNoteType === "text") {
                   content = noteContentInput.value.trim();
-                  if (!title && !content) {
-                      alert("Title or content cannot be empty for a text note.");
+                  if (!title && !content && currentAttachments.length === 0) {
+                      alert("Please add a title, content, or attachment to your note.");
                       return;
                   }
-                  if (!title && content) {
-                      finalTitle = content.split("\n")[0].substring(0, 30) || "Untitled Text Note";
-                  }
-              } else {
-                  const validListItems = currentListItems.filter(item => item.text.trim() !== "");
-                  
-                  if (!title && validListItems.length === 0) {
-                      alert("A list note must have a title or at least one item.");
+              } else if (currentNoteType === "list") {
+                  listItems = getListItems();
+                  if (!title && listItems.length === 0 && currentAttachments.length === 0) {
+                      alert("Please add a title, list items, or attachment to your note.");
                       return;
                   }
-                  content = JSON.parse(JSON.stringify(validListItems));
-                  if (!title && validListItems.length > 0) {
-                      finalTitle = validListItems[0].text.substring(0, 30) || "Untitled List Note";
+              }
+              
+              let finalTitle = title;
+              if (!title) {
+                  if (currentNoteType === "text" && content) {
+                      // Use first line of content as title
+                      finalTitle = content.split("\n")[0].substring(0, 30) || "Untitled Note";
+                  } else if (currentNoteType === "list" && listItems.length > 0) {
+                      finalTitle = listItems[0].text.substring(0, 30) || "Untitled List";
+                  } else if (currentAttachments.length > 0) {
+                      finalTitle = currentAttachments[0].name || "Untitled Note";
+                  } else {
+                      finalTitle = currentNoteType === "text" ? "Untitled Note" : "Untitled List";
                   }
               }
   
               const note = {
-                  title: finalTitle || (currentNoteType === 'text' ? "Untitled Text Note" : "Untitled List Note"),
+                  title: finalTitle,
                   type: currentNoteType,
-                  content: content,
+                  content: currentNoteType === "text" ? content : "",
+                  listItems: currentNoteType === "list" ? listItems : [],
+                  attachments: currentAttachments.length > 0 ? JSON.parse(JSON.stringify(currentAttachments)) : [],
+                  pinned: isPinned,
+                  highlighted: editingNoteIndex !== null ? notes[editingNoteIndex].highlighted || false : false,
                   timestamp: new Date().toISOString()
               };
   
@@ -630,99 +1846,128 @@
               }
               
               // Save to localStorage
-              localStorage.setItem('notes', JSON.stringify(notes));
+              localStorage.setItem("notes", JSON.stringify(notes));
               
               renderNotes();
-              closeModal();
+              closeEditorModal();
           });
-  
-          // --- Rendering Notes ---
-          function renderNotes() {
-              notesContainer.innerHTML = "";
-              if (notes.length === 0) {
-                  emptyNotesMessage.style.display = "block";
-                  notesContainer.appendChild(emptyNotesMessage);
-                  return;
+          
+          cancelNoteBtn.addEventListener("click", closeEditorModal);
+          closeViewBtn.addEventListener("click", closeViewModal);
+          
+          editNoteBtn.addEventListener("click", () => {
+              if (viewingNoteIndex !== null) {
+                  const noteIndex = viewingNoteIndex;
+                  closeViewModal();
+                  setTimeout(() => {
+                      openEditModal(noteIndex);
+                  }, 300);
               }
-              emptyNotesMessage.style.display = "none";
-  
-              // Sort by newest first
-              notes.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-  
-              notes.forEach((note, index) => {
-                  const card = document.createElement("div");
-                  card.className = "note-card";
-                  card.onclick = () => openModal(note.type, index);
-  
-                  const headerEl = document.createElement("div");
-                  headerEl.className = "note-card-header";
-  
-                  const titleEl = document.createElement("div");
-                  titleEl.className = "note-card-title";
-                  titleEl.textContent = note.title;
-  
-                  const deleteBtn = document.createElement("button");
-                  deleteBtn.className = "delete-button";
-                  deleteBtn.innerHTML = `<svg class="fab-icon-svg" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>`;
-                  deleteBtn.onclick = (event) => {
-                      event.stopPropagation();
-                      if (confirm("Are you sure you want to delete this note?")) {
-                          notes.splice(index, 1);
-                          localStorage.setItem('notes', JSON.stringify(notes));
-                          renderNotes();
-                      }
-                  };
-                  headerEl.appendChild(titleEl);
-                  headerEl.appendChild(deleteBtn);
-  
-                  const contentSectionEl = document.createElement("div");
-                  contentSectionEl.className = "note-card-content-section";
-  
-                  if (note.type === "text") {
-                      const contentPreview = document.createElement("div");
-                      contentPreview.className = "note-card-content";
-                      contentPreview.textContent = note.content;
-                      contentSectionEl.appendChild(contentPreview);
-                  } else {
-                      const listPreview = document.createElement("div");
-                      listPreview.className = "note-card-list-preview";
-                      const listContent = note.content;
-                      if (Array.isArray(listContent)) {
-                          listContent.slice(0, 3).forEach(item => {
-                              const itemEl = document.createElement("div");
-                              itemEl.className = "note-card-list-item";
-                              itemEl.textContent = `${'○'} ${item.text}`;
-                              itemEl.style.textDecoration = item.checked ? "line-through" : "none";
-                              listPreview.appendChild(itemEl);
-                          });
-                          if (listContent.length > 3) {
-                              const moreEl = document.createElement("div");
-                              moreEl.className = "note-card-list-item";
-                              moreEl.textContent = "+ more...";
-                              moreEl.style.color = "grey";
-                              listPreview.appendChild(moreEl);
-                          }
-                      }
-                      contentSectionEl.appendChild(listPreview);
-                  }
-  
-                  const footerEl = document.createElement("div");
-                  footerEl.className = "note-card-footer";
-  
-                  const timestampEl = document.createElement("div");
-                  timestampEl.className = "note-card-timestamp";
-                  const date = new Date(note.timestamp);
-                  timestampEl.textContent = date.toLocaleDateString() + " " + 
-                      date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+          });
+          
+          // --- View Menu Logic ---
+          viewMenuButton.addEventListener("click", (event) => {
+              event.stopPropagation();
+              viewMenuDropdown.classList.toggle("show");
+          });
+          
+          editNoteMenuItem.addEventListener("click", () => {
+              if (viewingNoteIndex !== null) {
+                  const noteIndex = viewingNoteIndex;
+                  closeViewModal();
+                  setTimeout(() => {
+                      openEditModal(noteIndex);
+                  }, 300);
+              }
+          });
+          
+          pinNoteMenuItem.addEventListener("click", () => {
+              if (viewingNoteIndex !== null) {
+                  const note = notes[viewingNoteIndex];
+                  note.pinned = !note.pinned;
+                  localStorage.setItem("notes", JSON.stringify(notes));
                   
-                  footerEl.appendChild(timestampEl);
-  
-                  card.appendChild(headerEl);
-                  card.appendChild(contentSectionEl);
-                  card.appendChild(footerEl);
-                  notesContainer.appendChild(card);
+                  // Update pin menu item text
+                  pinNoteMenuItem.innerHTML = `
+                      <svg class="icon-svg" viewBox="0 0 24 24">
+                          <path d="M16 5h.99L17 3H7v2h1v7l-2 2v2h5v6l1 1 1-1v-6h5v-2l-2-2V5z"/>
+                      </svg>
+                      ${note.pinned ? "Unpin" : "Pin"}
+                  `;
+                  
+                  // Re-render notes in background
+                  renderNotes();
+              }
+              
+              viewMenuDropdown.classList.remove("show");
+          });
+          
+          // Add highlight menu item event listener
+          const highlightMenuItem = document.getElementById("highlightNoteMenuItem");
+          if (highlightMenuItem) {
+              highlightMenuItem.addEventListener("click", () => {
+                  if (viewingNoteIndex !== null) {
+                      const note = notes[viewingNoteIndex];
+                      note.highlighted = !note.highlighted;
+                      localStorage.setItem("notes", JSON.stringify(notes));
+                      
+                      // Re-render notes in background
+                      renderNotes();
+                  }
+                  
+                  viewMenuDropdown.classList.remove("show");
               });
           }
+          
+          deleteNoteMenuItem.addEventListener("click", () => {
+              if (viewingNoteIndex !== null) {
+                  if (confirm("Are you sure you want to delete this note?")) {
+                      notes.splice(viewingNoteIndex, 1);
+                      localStorage.setItem("notes", JSON.stringify(notes));
+                      closeViewModal();
+                      renderNotes();
+                  }
+              }
+              
+              viewMenuDropdown.classList.remove("show");
+          });
+          
+          // --- Global Event Listeners ---
+          document.addEventListener("click", (event) => {
+              // Close modals when clicking outside
+              if (event.target === noteEditorModal) {
+                  closeEditorModal();
+              }
+              if (event.target === noteViewModal) {
+                  closeViewModal();
+              }
+              if (event.target === attachmentViewerModal) {
+                  attachmentViewerModal.classList.remove("show");
+                  setTimeout(() => {
+                      attachmentViewerModal.style.display = "none";
+                  }, 300);
+              }
+              
+              // Close any open menu dropdown when clicking elsewhere
+              if (!event.target.closest(".menu-button") && !event.target.closest(".menu-dropdown")) {
+                  const openMenus = document.querySelectorAll(".menu-dropdown.show");
+                  openMenus.forEach(menu => menu.classList.remove("show"));
+                  activeMenuNoteIndex = null;
+              }
+              
+              // Close FAB options when clicking elsewhere
+              if (!event.target.closest(".fab-container")) {
+                  fabOptions.classList.remove("show");
+                  mainFab.classList.remove("active"); // Remove active class
+              }
+          });
+          
+          attachmentViewerClose.addEventListener("click", () => {
+              attachmentViewerModal.classList.remove("show");
+              setTimeout(() => {
+                  attachmentViewerModal.style.display = "none";
+              }, 300);
+          });
           
           // Initial render
           renderNotes();
