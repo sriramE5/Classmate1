@@ -57,13 +57,15 @@
 
         .notes-container {
             flex-grow: 1;
+            width: 100%;
+            max-width: 100%;
             padding: 16px;
+            column-gap: 16px;
             overflow-y: auto;
-            /* column-count: 5; */
-            column-gap: 16px; /* Removed max-height to allow scrolling vertically*/
-            scrollbar-width: thin;
-            scrollbar-color: var(--primary-color) var(--background-color);
+            overflow-x: hidden;
+            box-sizing: border-box;
         }
+
 
 
 
