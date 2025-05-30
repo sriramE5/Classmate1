@@ -59,7 +59,7 @@
             flex-grow: 1;
             padding: 16px;
             overflow-y: auto;
-            column-count: 3;
+            column-count: 5;
             column-gap: 16px; /* Removed max-height to allow scrolling vertically*/
             scrollbar-width: thin;
             scrollbar-color: var(--primary-color) var(--background-color);
@@ -909,7 +909,7 @@
             }
         }
         /* Responsive design */
-        @media (min-width: 351px) and (max-width: 550px) {
+        @media  (max-width: 550px) {
             .notes-container {
                 column-count: 2; /* Ensure double column on mobile */
             }
@@ -930,13 +930,13 @@
             }
         }
 
-        @media (min-width: 551px) and (max-width: 900px) {
+        @media (max-width: 900px) {
             .notes-container {
                 column-count: 3; /* Three columns for medium screens */
             }
         }
 
-        @media (min-width: 901px) and (max-width: 1500px) {
+        /* @media (min-width: 901px) and (max-width: 1500px) {
             .notes-container {
                 column-count: 4; /* Three columns for larger screens */
             }
@@ -946,7 +946,7 @@
             .notes-container {
                 column-count: 5; /* Five columns for very large screens */
             }
-        }
+        } */
     </style>
 </head>
 <body>
