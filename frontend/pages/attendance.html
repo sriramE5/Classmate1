@@ -3,6 +3,505 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ClassMate -Attendance Calculator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea, #764ba2);
+      --secondary-gradient: linear-gradient(135deg, #f77062, #fe5196);
+      --highlight: #667eea;
+      --success: #2ecc71;
+      --warning: #f39c12;
+      --danger: #e74c3c;
+      --transition-speed: 0.3s;
+    }
+
+    /* Light Theme Variables - Blue (#1543ce) + Complementary Accent */
+    body.light {
+      --primary-blue: #1543ce;
+      --secondary-accent: #fca311; /* Complementary Orange/Gold */
+      --primary-gradient: linear-gradient(135deg, var(--primary-blue), #5078f2); /* Blue gradient */
+      --highlight: var(--primary-blue);
+      --bg-color: #f0f7ff; /* Lighter blue background */
+      --text-color: #1a3a5a; /* Slightly darker blue text */
+      --container-bg: #ffffff;
+      --input-bg: #e6f2ff;
+      --input-text: #1c3d5a;
+      --input-border: #b0d4ff;
+      --input-focus-border: var(--primary-blue);
+      --input-focus-shadow: 0 0 0 0.2rem rgba(21, 67, 206, 0.25);
+      --result-bg: #e0f2ff;
+      --shadow-color: rgba(21, 67, 206, 0.15);
+      --toggle-bg: #a0d2eb;
+      --toggle-slider: #ffffff;
+      --toggle-icon: var(--secondary-accent); /* Use accent for sun icon */
+      --success: #28a745;
+      --warning: #ffc107; /* Standard warning yellow */
+      --danger: #dc3545;
+      /* Apply complementary color subtly, e.g., maybe for icons or specific highlights if needed */
+    }
+
+    /* Dark Theme Variables - Refined Palette */
+    body.dark {
+      --primary-gradient: linear-gradient(135deg, #89f7fe, #66a6ff); /* Lighter gradient for dark */
+      --highlight: #89f7fe; /* Cyan highlight */
+      --bg-color: #0f172a; /* Dark Slate Blue background */
+      --text-color: #e2e8f0; /* Light Slate Gray text */
+      --container-bg: #1e293b; /* Darker Slate container */
+      --input-bg: #334155; /* Slate input background */
+      --input-text: #f1f5f9; /* Lighter Slate input text */
+      --input-border: #475569; /* Mid Slate border */
+      --input-focus-border: #89f7fe; /* Cyan focus border */
+      --input-focus-shadow: 0 0 0 0.2rem rgba(137, 247, 254, 0.25); /* Cyan focus shadow */
+      --result-bg: #293548; /* Slightly lighter dark result background */
+      --shadow-color: rgba(0, 0, 0, 0.4); /* Darker shadow */
+      --toggle-bg: #475569; /* Mid Slate toggle background */
+      --toggle-slider: #e2e8f0; /* Light Slate slider */
+      --toggle-icon: #facc15; /* Yellow moon icon */
+      --success: #4ade80; /* Brighter Green */
+      --warning: #fbbf24; /* Brighter Amber */
+      --danger: #f87171; /* Brighter Red */
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+      padding: 1rem;
+    }
+
+    .container {
+      background-color: var(--container-bg);
+      padding: 2.5rem 2rem;
+      border-radius: 1rem;
+      max-width: 450px;
+      width: 100%;
+      box-shadow: 0 10px 30px var(--shadow-color);
+      transition: background-color var(--transition-speed) ease;
+      position: relative;
+    }
+
+    .theme-toggle-container {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+    }
+
+    .theme-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 26px;
+    }
+
+    .theme-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--toggle-bg);
+      transition: var(--transition-speed);
+      border-radius: 26px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: var(--toggle-slider);
+      transition: var(--transition-speed);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: "Font Awesome 6 Free";
+      font-weight: 900;
+      font-size: 12px;
+      color: var(--toggle-icon);
+    }
+
+    body.light .slider:before {
+        content: "\f185"; /* Sun icon */
+    }
+
+    body.dark .slider:before {
+        content: "\f186"; /* Moon icon */
+    }
+
+    input:checked + .slider {
+      background-color: var(--toggle-bg);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(24px);
+    }
+
+    h3 {
+      text-align: center;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 1.8rem;
+      margin-bottom: 2rem;
+    }
+
+    .input-group {
+      margin-bottom: 1.2rem;
+      position: relative;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: 1px solid var(--input-border);
+      border-radius: 8px;
+      background: var(--input-bg);
+      color: var(--input-text);
+      font-size: 1rem;
+      font-family: 'Lato', sans-serif;
+      outline: none;
+      transition: border-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease, background-color var(--transition-speed) ease;
+      appearance: textfield; /* Remove spinners */
+      -moz-appearance: textfield; /* Firefox */
+    }
+
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    input[type="number"]:focus {
+      border-color: var(--input-focus-border);
+      box-shadow: var(--input-focus-shadow);
+    }
+
+    input[type="number"].invalid {
+        border-color: var(--danger);
+        box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.25);
+    }
+
+    .error-message {
+        color: var(--danger);
+        font-size: 0.8rem;
+        margin-top: 0.3rem;
+        display: none; /* Hidden by default */
+        height: 1em; /* Reserve space */
+    }
+
+    button {
+      width: 100%;
+      padding: 0.9rem;
+      margin-top: 1.5rem;
+      background: var(--primary-gradient);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      transition: all var(--transition-speed) ease;
+      box-shadow: 0 4px 15px rgba(118, 75, 162, 0.2);
+    }
+
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(118, 75, 162, 0.3);
+    }
+
+    button:active {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 10px rgba(118, 75, 162, 0.2);
+    }
+
+    .result {
+      margin-top: 2rem;
+      font-size: 0.95rem;
+      background: var(--result-bg);
+      padding: 1.5rem;
+      border-radius: 8px;
+      text-align: center;
+      line-height: 1.6;
+      transition: background-color var(--transition-speed) ease;
+      min-height: 100px; /* Ensure consistent height */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .result-content {
+        opacity: 0;
+        transform: translateY(10px);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .result-content.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .highlight {
+      font-weight: 700;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .green {
+      color: var(--success);
+    }
+
+    .yellow {
+      color: var(--warning);
+    }
+
+    .red {
+      color: var(--danger);
+    }
+
+    .back-link {
+      display: block;
+      margin-top: 2rem;
+      text-align: center;
+      text-decoration: none;
+      color: var(--highlight);
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: color var(--transition-speed) ease;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+      color: var(--secondary-gradient);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 500px) {
+      .container {
+        padding: 2rem 1.5rem;
+      }
+      h3 {
+        font-size: 1.6rem;
+      }
+      button {
+        padding: 0.8rem;
+        font-size: 0.95rem;
+      }
+      .result {
+        padding: 1rem;
+        font-size: 0.9rem;
+      }
+    }
+
+  </style>
+</head>
+<body class="dark"> <!-- Default to dark theme -->
+
+  <div class="container">
+    <div class="theme-toggle-container">
+      <label class="theme-switch">
+        <input type="checkbox" id="themeToggle" onchange="toggleTheme()">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <h3>attendance Calculator</h3>
+
+    <div class="input-group">
+      <label for="total">Total Classes:</label>
+      <input type="number" id="total" placeholder="Enter total classes conducted" />
+      <div class="error-message" id="total-error"></div>
+    </div>
+
+    <div class="input-group">
+      <label for="attended">Attended Classes:</label>
+      <input type="number" id="attended" placeholder="Enter classes you attended" />
+      <div class="error-message" id="attended-error"></div>
+    </div>
+
+    <div class="input-group">
+      <label for="mandatory">Mandatory Attendance (%):</label>
+      <input type="number" id="mandatory" placeholder="e.g., 75" />
+      <div class="error-message" id="mandatory-error"></div>
+    </div>
+
+    <div class="input-group">
+      <label for="perDay">Classes Per Day:</label>
+      <input type="number" id="perDay" placeholder="Average classes held per day" />
+      <div class="error-message" id="perDay-error"></div>
+    </div>
+
+    <button onclick="calculateAttendance()">Calculate Attendance</button>
+
+    <div class="result" id="resultText">
+        <!-- Result will be injected here by JavaScript -->
+    </div>
+
+
+  </div>
+
+  <script>
+    const themeToggle = document.getElementById('themeToggle');
+    const body = document.body;
+
+    // Check local storage for theme preference
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        body.className = savedTheme;
+        themeToggle.checked = savedTheme === 'light';
+    } else {
+        // Default to light if no preference saved
+        body.className = 'light';
+        themeToggle.checked = true;
+        localStorage.setItem('theme', 'light'); // Optionally save light as default preference
+    }
+
+    function toggleTheme() {
+        if (themeToggle.checked) {
+            body.className = 'light';
+            localStorage.setItem('theme', 'light');
+        } else {
+            body.className = 'dark';
+            localStorage.setItem('theme', 'dark');
+        }
+    }
+
+    function clearErrors() {
+        const errorMessages = document.querySelectorAll('.error-message');
+        errorMessages.forEach(el => el.style.display = 'none');
+        const inputs = document.querySelectorAll('input[type="number"]');
+        inputs.forEach(el => el.classList.remove('invalid'));
+    }
+
+    function showError(inputId, message) {
+        const inputElement = document.getElementById(inputId);
+        const errorElement = document.getElementById(`${inputId}-error`);
+        if (inputElement) inputElement.classList.add('invalid');
+        if (errorElement) {
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+    }
+
+    function calculateAttendance() {
+      clearErrors();
+      const totalInput = document.getElementById("total");
+      const attendedInput = document.getElementById("attended");
+      const mandatoryInput = document.getElementById("mandatory");
+      const perDayInput = document.getElementById("perDay");
+      const resultDiv = document.getElementById("resultText");
+
+      const total = parseInt(totalInput.value);
+      const attended = parseInt(attendedInput.value);
+      const mandatory = parseInt(mandatoryInput.value);
+      const perDay = parseInt(perDayInput.value);
+
+      let isValid = true;
+
+      if (isNaN(total) || total <= 0) {
+        showError('total', 'Please enter a valid positive number for total classes.');
+        isValid = false;
+      }
+      if (isNaN(attended) || attended < 0) {
+        showError('attended', 'Please enter a valid non-negative number for attended classes.');
+        isValid = false;
+      }
+      if (isNaN(mandatory) || mandatory <= 0 || mandatory > 100) {
+        showError('mandatory', 'Please enter a valid percentage (1-100).');
+        isValid = false;
+      }
+      if (isNaN(perDay) || perDay <= 0) {
+        showError('perDay', 'Please enter a valid positive number for classes per day.');
+        isValid = false;
+      }
+
+      if (isValid && attended > total) {
+          showError('attended', 'Attended classes cannot be more than total classes.');
+          isValid = false;
+      }
+
+      // Clear previous result content and hide it for animation
+      resultDiv.innerHTML = '<div class="result-content"></div>';
+      const resultContent = resultDiv.querySelector('.result-content');
+      resultContent.classList.remove('visible');
+
+      if (!isValid) {
+        resultContent.innerHTML = "<span class='highlight red'><i class='fas fa-exclamation-triangle'></i> Please fix the errors above.</span>";
+        // Make result visible immediately for errors
+        setTimeout(() => resultContent.classList.add('visible'), 50);
+        return;
+      }
+
+      const percentage = total === 0 ? 0 : (attended / total) * 100;
+      let message = '';
+      let colorClass = '';
+
+      if (percentage >= mandatory) {
+        colorClass = 'green';
+        const canBunk = Math.floor((attended * 100 / mandatory) - total);
+        const daysCanBunk = perDay > 0 ? Math.floor(canBunk / perDay) : 0;
+        message = `<i class="fas fa-check-circle"></i> You are safe with <span class="highlight ${colorClass}">${percentage.toFixed(2)}%</span> attendance.<br>
+                   You can afford to miss <span class="highlight">${canBunk}</span> more class(es).<br>
+                   That's approximately <span class="highlight">${daysCanBunk}</span> day(s).`;
+      } else {
+        colorClass = percentage >= (mandatory * 0.8) ? 'yellow' : 'red'; // Yellow if >= 80% of mandatory, else red
+        const needToAttend = Math.ceil((mandatory * total - attended * 100) / (100 - mandatory));
+        const daysToAttend = perDay > 0 ? Math.ceil(needToAttend / perDay) : Infinity;
+        const daysString = daysToAttend === Infinity ? "an infinite number of" : `<span class="highlight">${daysToAttend}</span>`;
+
+        message = `<i class="fas fa-exclamation-triangle"></i> Current Attendance: <span class="highlight ${colorClass}">${percentage.toFixed(2)}%</span>.<br>
+                   You need to attend <span class="highlight">${needToAttend}</span> more class(es) consecutively.<br>
+                   That's approximately ${daysString} day(s) to reach <span class="highlight">${mandatory}%</span>.`;
+      }
+
+      resultContent.innerHTML = message;
+      // Trigger animation
+      setTimeout(() => resultContent.classList.add('visible'), 50);
+    }
+
+  </script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Attendance Calculator</title>
   <link rel="stylesheet" href="css/styles.css" />
   <style>
@@ -34,7 +533,7 @@
       border: 1px solid black;
     }
 
-    .container h2 {
+    .container h3 {
       margin-bottom: 1rem;
       text-align: center;
       background: linear-gradient(to right, #000000);
@@ -89,10 +588,10 @@
 </head>
 <body>
 
-  <!-- <div class="appbar">ClassMate - Attendance</div> -->
+  <!-- <div class="appbar">Attendance Calculator</div> -->
 
   <div class="container">
-    <h2>Attendance Calculator</h2>
+    <h3>Attendance Calculator</h3>
     
     <label>Total Classes:</label>
     <input type="number" id="total" placeholder="Enter total classes" />
