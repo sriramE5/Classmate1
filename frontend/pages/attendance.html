@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ClassMate -Attendance Calculator</title>
+  <title>ClassMate Attendance Calculator</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
@@ -42,27 +42,7 @@
       /* Apply complementary color subtly, e.g., maybe for icons or specific highlights if needed */
     }
 
-    /* Dark Theme Variables - Refined Palette */
-    body.dark {
-      --primary-gradient: linear-gradient(135deg, #89f7fe, #66a6ff); /* Lighter gradient for dark */
-      --highlight: #89f7fe; /* Cyan highlight */
-      --bg-color: #0f172a; /* Dark Slate Blue background */
-      --text-color: #e2e8f0; /* Light Slate Gray text */
-      --container-bg: #1e293b; /* Darker Slate container */
-      --input-bg: #334155; /* Slate input background */
-      --input-text: #f1f5f9; /* Lighter Slate input text */
-      --input-border: #475569; /* Mid Slate border */
-      --input-focus-border: #89f7fe; /* Cyan focus border */
-      --input-focus-shadow: 0 0 0 0.2rem rgba(137, 247, 254, 0.25); /* Cyan focus shadow */
-      --result-bg: #293548; /* Slightly lighter dark result background */
-      --shadow-color: rgba(0, 0, 0, 0.4); /* Darker shadow */
-      --toggle-bg: #475569; /* Mid Slate toggle background */
-      --toggle-slider: #e2e8f0; /* Light Slate slider */
-      --toggle-icon: #facc15; /* Yellow moon icon */
-      --success: #4ade80; /* Brighter Green */
-      --warning: #fbbf24; /* Brighter Amber */
-      --danger: #f87171; /* Brighter Red */
-    }
+
 
     * {
       box-sizing: border-box;
@@ -332,14 +312,9 @@
 <body class="dark"> <!-- Default to dark theme -->
 
   <div class="container">
-    <div class="theme-toggle-container">
-      <label class="theme-switch">
-        <input type="checkbox" id="themeToggle" onchange="toggleTheme()">
-        <span class="slider"></span>
-      </label>
-    </div>
 
-    <h3>attendance Calculator</h3>
+
+    <h3>Attendance Calculator</h3>
 
     <div class="input-group">
       <label for="total">Total Classes:</label>
@@ -497,4 +472,3 @@
 
 </body>
 </html>
-
