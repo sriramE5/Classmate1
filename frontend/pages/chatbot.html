@@ -867,7 +867,7 @@
       <nav class="sidebar-nav">
         <h3>Tools</h3>
         <ul>
-          <li><a href="To Do List Front End.html"><i class="fas fa-list-check"></i>Task Manager</a></li>
+          <li><a href="To Do List Front End.html"><i class="fas fa-list-check"></i> Todo List</a></li>
           <li><a href="notes.html"><i class="fas fa-sticky-note"></i> My Notes</a></li>
           <li><a href="interviewer.html"><i class="fas fa-user-tie"></i> Mock Interviewer</a></li>
         </ul>
@@ -902,7 +902,7 @@
           <textarea id="user-input" placeholder="Ask ClassMate" rows="1"></textarea>
           <div class="input-buttons">
             <!-- Moved To-Do List button here -->
-            <button id="todo-list-option" class="input-button" title="Generate To-Do List"><i class="fas fa-list-check"></i></button> 
+            <button id="todo-list-option" class="input-button" title="To-Do List"><i class="fas fa-list-check"></i></button> 
             <button id="mic-button" class="input-button" title="Speak"><i class="fas fa-microphone"></i></button>
             <button id="send-button" class="input-button" title="Send Message"><i class="fas fa-paper-plane"></i></button>
           </div>
@@ -1081,7 +1081,7 @@ Remember to break your goals into phases and tasks.`;
     todoListOption.addEventListener('click', () => {
         isToDoListModeActive = !isToDoListModeActive;
         todoListOption.classList.toggle('active', isToDoListModeActive);
-        userInput.placeholder = isToDoListModeActive ? "Enter goal for To-Do List..." : "Ask ClassMate...";
+        userInput.placeholder = isToDoListModeActive ? "Enter goal for To-Do List..." : "Ask ClassMate";
         showToast(isToDoListModeActive ? "To-Do List mode activated" : "To-Do List mode deactivated");
     });
 
