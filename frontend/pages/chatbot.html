@@ -1452,24 +1452,18 @@ Remember to break your goals into phases and tasks.`;
             });
             dropdown.appendChild(saveNoteItem);
 
-            // --- ADDED: Save to To-Do List Option ---
-            const saveTodoItem = document.createElement("div");
-            saveTodoItem.classList.add("reply-menu-item");
-            saveTodoItem.innerHTML = "<i class=\"fas fa-list-check\"></i> Save To-Do List";
-            saveTodoItem.style.display = "none"; // Initially hidden
-            
-            // Check if the content is a To-Do list and show the option
-            if (isToDoListFormat(contentDiv.innerText)) { // Check innerText for format
-                saveTodoItem.style.display = "flex"; // Show the option
+            // Conditionally add Save to To-Do List option
+            if (isToDoListFormat(text)) {
+              const saveTodoItem = document.createElement("div");
+              saveTodoItem.className = "reply-menu-item";
+              saveTodoItem.dataset.action = "save-todo";
+              saveTodoItem.innerHTML = `<i class="fas fa-list-check"></i> Save to To-Do List`;
+              saveTodoItem.addEventListener("click", () => {
+                saveToTaskMaster(text); // Use existing function
+                menuDropdown.classList.remove("show");
+              });
+              menuDropdown.appendChild(saveTodoItem);
             }
-            
-            saveTodoItem.addEventListener("click", (e) => {
-                e.stopPropagation();
-                saveToTaskMaster(contentDiv.innerHTML); // Save the HTML content of the to-do list
-                dropdown.classList.remove("show");
-            });
-            dropdown.appendChild(saveTodoItem);
-            // --- END: Save to To-Do List Option ---
 
             menuContainer.appendChild(dropdown);
             messageDiv.appendChild(menuContainer);
