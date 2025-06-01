@@ -1,14 +1,15 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CLASSMATE AI</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CLASSMATE AI</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+<style>
     :root {
       --bg-primary: #ffffff;            /* Main background */
       --bg-secondary: #f5f5f5;          /* Sidebar/Header/Footer background */
@@ -852,70 +853,67 @@
   </style>
 </head>
 <body>
-  <div class="app-container" id="app-container">
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-header">
-        <button class="sidebar-toggle-btn" id="sidebar-toggle-btn" title="Toggle Sidebar"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="1em" height="1em" style="display: block; vertical-align: middle;"><path fill-rule="evenodd" clip-rule="evenodd" d="M3 6C3 5.44772 3.44772 5 4 5H20C20.5523 5 21 5.44772 21 6C21 6.55228 20.5523 7 20 7H4C3.44772 7 3 6.55228 3 6ZM3 12C3 11.4477 3.44772 11 4 11H20C20.5523 11 21 11.4477 21 12C21 12.5523 20.5523 13 20 13H4C3.44772 13 3 12.5523 3 12ZM4 17C3.44772 17 3 17.4477 3 18C3 18.5523 3.44772 19 4 19H20C20.5523 19 21 18.5523 21 18C21 17.4477 20.5523 17 20 17H4Z" fill="currentColor"/></svg></button>
-        <button class="sidebar-search-btn" id="sidebar-search-btn" title="Search Chats"><i class="fas fa-search"></i></button>
-      </div>
-      <input type="text" class="sidebar-search-input" id="sidebar-search-input" placeholder="Search chats...">
-      <button class="new-chat-btn" id="new-chat-btn"><i class="fas fa-plus"></i> New Chat</button>
-      <ul class="chat-history-list" id="chat-history-list">
-        <!-- Chat history items will be loaded here by JS -->
-      </ul>
-      <!-- Sidebar Navigation Links -->
-      <nav class="sidebar-nav">
-        <h3>Tools</h3>
-        <ul>
-          <li><a href="To Do List Front End.html"><i class="fas fa-list-check"></i> Todo List</a></li>
-          <li><a href="notes.html"><i class="fas fa-sticky-note"></i> My Notes</a></li>
-          <li><a href="interviewer.html"><i class="fas fa-user-tie"></i> Mock Interviewer</a></li>
-        </ul>
-      </nav>
-    </aside>
-    <div class="sidebar-overlay" id="sidebar-overlay"></div>
-
-    <div class="main-content" id="main-content">
-      <header>
-        <div class="header-left">
-          <button class="header-sidebar-toggle-btn" id="header-sidebar-toggle-btn" title="Toggle Sidebar"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="1em" height="1em" style="display: block; vertical-align: middle;"><path fill-rule="evenodd" clip-rule="evenodd" d="M3 6C3 5.44772 3.44772 5 4 5H20C20.5523 5 21 5.44772 21 6C21 6.55228 20.5523 7 20 7H4C3.44772 7 3 6.55228 3 6ZM3 12C3 11.4477 3.44772 11 4 11H20C20.5523 11 21 11.4477 21 12C21 12.5523 20.5523 13 20 13H4C3.44772 13 3 12.5523 3 12ZM4 17C3.44772 17 3 17.4477 3 18C3 18.5523 3.44772 19 4 19H20C20.5523 19 21 18.5523 21 18C21 17.4477 20.5523 17 20 17H4Z" fill="currentColor"/></svg></button>
-          <button class="menu-toggle" id="menu-toggle" title="Open Chat History"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="1em" height="1em" style="display: block; vertical-align: middle;"><path fill-rule="evenodd" clip-rule="evenodd" d="M3 6C3 5.44772 3.44772 5 4 5H20C20.5523 5 21 5.44772 21 6C21 6.55228 20.5523 7 20 7H4C3.44772 7 3 6.55228 3 6ZM3 12C3 11.4477 3.44772 11 4 11H20C20.5523 11 21 11.4477 21 12C21 12.5523 20.5523 13 20 13H4C3.44772 13 3 12.5523 3 12ZM4 17C3.44772 17 3 17.4477 3 18C3 18.5523 3.44772 19 4 19H20C20.5523 19 21 18.5523 21 18C21 17.4477 20.5523 17 20 17H4Z" fill="currentColor"/></svg></button>
-        </div>
-        <div class="header-center">
-          <img src="../logos/logoheaderAi.png" alt="Classmate AI Logo" class="header-logo">
-          <span id="chat-title-static">CLASSMATE AI</span>
-        </div>
-        <div class="header-right">
-          <!-- Placeholder for future header elements like theme toggle -->
-        </div>
-      </header>
-      <main>
-        <div class="chat-container" id="chat-container">
-          <!-- Chat messages will be loaded here -->
-        </div>
-        <div class="loading-indicator" id="loading-indicator">
-          <span></span><span></span><span></span>
-        </div>
-      </main>
-      <div class="input-container">
-        <div class="input-wrapper">
-          <textarea id="user-input" placeholder="Ask ClassMate" rows="1"></textarea>
-          <div class="input-buttons">
-            <!-- Moved To-Do List button here -->
-            <button id="todo-list-option" class="input-button" title="To-Do List"><i class="fas fa-list-check"></i></button> 
-            <button id="mic-button" class="input-button" title="Speak"><i class="fas fa-microphone"></i></button>
-            <button id="send-button" class="input-button" title="Send Message"><i class="fas fa-paper-plane"></i></button>
-          </div>
-          <!-- Removed bottom-icons div -->
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Toast notification element -->
-  <div id="toast" class="toast"></div>
-
-  <script>
+<div class="app-container" id="app-container">
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-header">
+<button class="sidebar-toggle-btn" id="sidebar-toggle-btn" title="Toggle Sidebar"><svg fill="currentColor" height="1em" style="display: block; vertical-align: middle;" viewbox="0 0 24 24" width="1em" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="M3 6C3 5.44772 3.44772 5 4 5H20C20.5523 5 21 5.44772 21 6C21 6.55228 20.5523 7 20 7H4C3.44772 7 3 6.55228 3 6ZM3 12C3 11.4477 3.44772 11 4 11H20C20.5523 11 21 11.4477 21 12C21 12.5523 20.5523 13 20 13H4C3.44772 13 3 12.5523 3 12ZM4 17C3.44772 17 3 17.4477 3 18C3 18.5523 3.44772 19 4 19H20C20.5523 19 21 18.5523 21 18C21 17.4477 20.5523 17 20 17H4Z" fill="currentColor" fill-rule="evenodd"></path></svg></button>
+<button class="sidebar-search-btn" id="sidebar-search-btn" title="Search Chats"><i class="fas fa-search"></i></button>
+</div>
+<input class="sidebar-search-input" id="sidebar-search-input" placeholder="Search chats..." type="text"/>
+<button class="new-chat-btn" id="new-chat-btn"><i class="fas fa-plus"></i> New Chat</button>
+<ul class="chat-history-list" id="chat-history-list">
+<!-- Chat history items will be loaded here by JS -->
+</ul>
+<!-- Sidebar Navigation Links -->
+<nav class="sidebar-nav">
+<h3>Tools</h3>
+<ul>
+<li><a href="To Do List Front End.html"><i class="fas fa-list-check"></i> Todo List</a></li>
+<li><a href="notes.html"><i class="fas fa-sticky-note"></i> My Notes</a></li>
+<li><a href="interviewer.html"><i class="fas fa-user-tie"></i> Mock Interviewer</a></li>
+</ul>
+</nav>
+</aside>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<div class="main-content" id="main-content">
+<header>
+<div class="header-left">
+<button class="header-sidebar-toggle-btn" id="header-sidebar-toggle-btn" title="Toggle Sidebar"><svg fill="currentColor" height="1em" style="display: block; vertical-align: middle;" viewbox="0 0 24 24" width="1em" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="M3 6C3 5.44772 3.44772 5 4 5H20C20.5523 5 21 5.44772 21 6C21 6.55228 20.5523 7 20 7H4C3.44772 7 3 6.55228 3 6ZM3 12C3 11.4477 3.44772 11 4 11H20C20.5523 11 21 11.4477 21 12C21 12.5523 20.5523 13 20 13H4C3.44772 13 3 12.5523 3 12ZM4 17C3.44772 17 3 17.4477 3 18C3 18.5523 3.44772 19 4 19H20C20.5523 19 21 18.5523 21 18C21 17.4477 20.5523 17 20 17H4Z" fill="currentColor" fill-rule="evenodd"></path></svg></button>
+<button class="menu-toggle" id="menu-toggle" title="Open Chat History"><svg fill="currentColor" height="1em" style="display: block; vertical-align: middle;" viewbox="0 0 24 24" width="1em" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="M3 6C3 5.44772 3.44772 5 4 5H20C20.5523 5 21 5.44772 21 6C21 6.55228 20.5523 7 20 7H4C3.44772 7 3 6.55228 3 6ZM3 12C3 11.4477 3.44772 11 4 11H20C20.5523 11 21 11.4477 21 12C21 12.5523 20.5523 13 20 13H4C3.44772 13 3 12.5523 3 12ZM4 17C3.44772 17 3 17.4477 3 18C3 18.5523 3.44772 19 4 19H20C20.5523 19 21 18.5523 21 18C21 17.4477 20.5523 17 20 17H4Z" fill="currentColor" fill-rule="evenodd"></path></svg></button>
+</div>
+<div class="header-center">
+<img alt="Classmate AI Logo" class="header-logo" src="../logos/logoheaderAi.png"/>
+<span id="chat-title-static">CLASSMATE AI</span>
+</div>
+<div class="header-right">
+<!-- Placeholder for future header elements like theme toggle -->
+</div>
+</header>
+<main>
+<div class="chat-container" id="chat-container">
+<!-- Chat messages will be loaded here -->
+</div>
+<div class="loading-indicator" id="loading-indicator">
+<span></span><span></span><span></span>
+</div>
+</main>
+<div class="input-container">
+<div class="input-wrapper">
+<textarea id="user-input" placeholder="Ask ClassMate" rows="1"></textarea>
+<div class="input-buttons">
+<!-- Moved To-Do List button here -->
+<button class="input-button" id="todo-list-option" title="To-Do List"><i class="fas fa-list-check"></i></button>
+<button class="input-button" id="mic-button" title="Speak"><i class="fas fa-microphone"></i></button>
+<button class="input-button" id="send-button" title="Send Message"><i class="fas fa-paper-plane"></i></button>
+</div>
+<!-- Removed bottom-icons div -->
+</div>
+</div>
+</div>
+</div>
+<!-- Toast notification element -->
+<div class="toast" id="toast"></div>
+<script>
     const chatContainer = document.getElementById("chat-container");
     const userInput = document.getElementById("user-input");
     const sendButton = document.getElementById("send-button");
@@ -934,7 +932,7 @@
     const sidebarSearchBtn = document.getElementById("sidebar-search-btn");
     const sidebarSearchInput = document.getElementById("sidebar-search-input");
     const serverUrl = "https://classmate1-ffw7.onrender.com"; // Update with your server URL
-    const style = document.createElement('style'); // Add CSS for toast messages (can also be in your main CSS file)
+    const style = document.createElement("style"); // Add CSS for toast messages (can also be in your main CSS file)
     const toast = document.getElementById("toast");
 
     let currentChatId = null;
@@ -951,7 +949,7 @@
     
     For all queries, respond as a helpful academic assistant.`;
 
-    let todoListPrompt = `IMPORTANT INSTRUCTION: You MUST generate the actual content for a to-do list or plan. Then, format YOUR GENERATED CONTENT according to the following multi-level structure. Fill in all placeholders like [Generated Goal Name] and [Generated Task X.Y] with specific, relevant information based on the user's request. Do not just show an empty template. Your entire response must be:
+    let todoListPrompt = `IMPORTANT INSTRUCTION: You MUST generate the actual content for a to-do list or plan. Then, format YOUR GENERATED CONTENT according to the following multi-level structure. Fill in all placeholders like [Generated Goal Name] and [Generated Task X.Y] with specific, relevant information based on the user\'s request. Do not just show an empty template. Your entire response must be:
 
 Goal: [Generated Goal Name based on user query, e.g., Learn Python Basics]
 Phase 1: [e.g., Foundational Concepts]
@@ -964,11 +962,11 @@ Phase 2: [e.g., Data Structures and Control Flow]
 - [Task 2.2, e.g., Master string methods and slicing]
 - [Task 2.3, e.g., Understand and implement for and while loops]
 ...
-(Add more phases and tasks as appropriate for the user's request)
+(Add more phases and tasks as appropriate for the user\'s request)
 
 Remember to break your goals into phases and tasks.`;
 
-    // Function to check if we're in mobile/tablet view
+    // Function to check if we\'re in mobile/tablet view
     function isMobileView() {
         // Check if window width is below threshold OR if the window is likely minimized (very small height)
         return window.innerWidth <= 1024 || window.innerHeight < 200; 
@@ -979,19 +977,19 @@ Remember to break your goals into phases and tasks.`;
         const mobileView = isMobileView();
         if (mobileView) {
             // In mobile view, toggle the open class
-            sidebar.classList.toggle('open');
-            sidebarOverlay.style.display = sidebar.classList.contains('open') ? 'block' : 'none';
+            sidebar.classList.toggle("open");
+            sidebarOverlay.style.display = sidebar.classList.contains("open") ? "block" : "none";
             // Ensure desktop classes are removed
-            sidebar.classList.remove('collapsed');
-            appContainer.classList.remove('sidebar-hidden');
+            sidebar.classList.remove("collapsed");
+            appContainer.classList.remove("sidebar-hidden");
         } else {
             // In desktop view, toggle the collapsed class
-            sidebar.classList.toggle('collapsed');
-            appContainer.classList.toggle('sidebar-hidden');
-            localStorage.setItem('sidebarState_ClassMate', sidebar.classList.contains('collapsed') ? 'collapsed' : 'open');
+            sidebar.classList.toggle("collapsed");
+            appContainer.classList.toggle("sidebar-hidden");
+            localStorage.setItem("sidebarState_ClassMate", sidebar.classList.contains("collapsed") ? "collapsed" : "open");
             // Ensure mobile classes are removed
-            sidebar.classList.remove('open');
-            sidebarOverlay.style.display = 'none';
+            sidebar.classList.remove("open");
+            sidebarOverlay.style.display = "none";
         }
         
         // Update toggle button visibility
@@ -999,66 +997,66 @@ Remember to break your goals into phases and tasks.`;
     }
     
     // Attach click handlers to all toggle buttons
-    sidebarToggleBtn.addEventListener('click', toggleSidebar);
-    headerSidebarToggleBtn.addEventListener('click', toggleSidebar);
-    menuToggle.addEventListener('click', toggleSidebar);
+    sidebarToggleBtn.addEventListener("click", toggleSidebar);
+    headerSidebarToggleBtn.addEventListener("click", toggleSidebar);
+    menuToggle.addEventListener("click", toggleSidebar);
 
     // Update toggle button visibility based on sidebar state and viewport
     function updateToggleButtonVisibility() {
         const mobileView = isMobileView();
         if (mobileView) {
             // Mobile view
-            menuToggle.style.display = 'block';
-            headerSidebarToggleBtn.style.display = 'none';
-            sidebarToggleBtn.style.display = 'block'; // Ensure internal toggle is visible on mobile
+            menuToggle.style.display = "block";
+            headerSidebarToggleBtn.style.display = "none";
+            sidebarToggleBtn.style.display = "block"; // Ensure internal toggle is visible on mobile
         } else {
             // Desktop view
-            menuToggle.style.display = 'none';
+            menuToggle.style.display = "none";
             // MODIFIED: Show header toggle button only when sidebar is collapsed (default state)
-            headerSidebarToggleBtn.style.display = sidebar.classList.contains('collapsed') ? 'block' : 'none'; 
-            sidebarToggleBtn.style.display = sidebar.classList.contains('collapsed') ? 'none' : 'block'; // Show internal toggle only when sidebar is open
+            headerSidebarToggleBtn.style.display = sidebar.classList.contains("collapsed") ? "block" : "none"; 
+            sidebarToggleBtn.style.display = sidebar.classList.contains("collapsed") ? "none" : "block"; // Show internal toggle only when sidebar is open
         }
     }
 
     // Close mobile sidebar when clicking overlay
-    sidebarOverlay.addEventListener('click', () => {
-        if (sidebar.classList.contains('open')) {
-            sidebar.classList.remove('open');
-            sidebarOverlay.style.display = 'none';
+    sidebarOverlay.addEventListener("click", () => {
+        if (sidebar.classList.contains("open")) {
+            sidebar.classList.remove("open");
+            sidebarOverlay.style.display = "none";
             updateToggleButtonVisibility();
         }
     });
 
     // Close mobile sidebar when clicking outside
-    document.addEventListener('click', (event) => {
+    document.addEventListener("click", (event) => {
         if (isMobileView() && 
-            sidebar.classList.contains('open') && 
+            sidebar.classList.contains("open") && 
             !sidebar.contains(event.target) && 
             !menuToggle.contains(event.target)) {
-            sidebar.classList.remove('open');
-            sidebarOverlay.style.display = 'none';
+            sidebar.classList.remove("open");
+            sidebarOverlay.style.display = "none";
             updateToggleButtonVisibility();
         }
         
         // Close chat item menus if clicking outside
-        document.querySelectorAll('.chat-item-menu-dropdown.show').forEach(menu => {
+        document.querySelectorAll(".chat-item-menu-dropdown.show").forEach(menu => {
             if (!menu.parentElement.contains(event.target)) {
-                menu.classList.remove('show');
+                menu.classList.remove("show");
             }
         });
         // Close reply menus if clicking outside
-        document.querySelectorAll('.reply-menu-dropdown.show').forEach(menu => {
+        document.querySelectorAll(".reply-menu-dropdown.show").forEach(menu => {
             const btn = menu.previousElementSibling; // Assuming button is sibling before dropdown
             if (btn && !btn.contains(event.target) && !menu.contains(event.target)) {
-                menu.classList.remove('show');
+                menu.classList.remove("show");
             }
         });
     });
 
     // UPDATED: Dynamic input bar expansion (1 line default, up to 10 lines, then scroll)
-    userInput.addEventListener('input', function() {
+    userInput.addEventListener("input", function() {
         // Reset height to calculate proper scrollHeight
-        userInput.style.height = 'auto';
+        userInput.style.height = "auto";
         
         // Get line height from computed style
         const lineHeight = parseFloat(getComputedStyle(userInput).lineHeight) || 24;
@@ -1069,40 +1067,40 @@ Remember to break your goals into phases and tasks.`;
         
         // Set new height based on content
         const newHeight = Math.min(Math.max(userInput.scrollHeight, minHeight), maxHeight);
-        userInput.style.height = newHeight + 'px';
+        userInput.style.height = newHeight + "px";
         
         // Enable/disable send button based on content
-        sendButton.disabled = userInput.value.trim() === '';
+        sendButton.disabled = userInput.value.trim() === "";
     });
     // Trigger initial height adjustment
-    userInput.dispatchEvent(new Event('input'));
+    userInput.dispatchEvent(new Event("input"));
 
     // To-Do List mode toggle with visual feedback
-    todoListOption.addEventListener('click', () => {
+    todoListOption.addEventListener("click", () => {
         isToDoListModeActive = !isToDoListModeActive;
-        todoListOption.classList.toggle('active', isToDoListModeActive);
+        todoListOption.classList.toggle("active", isToDoListModeActive);
         userInput.placeholder = isToDoListModeActive ? "Enter goal for To-Do List..." : "Ask ClassMate";
         showToast(isToDoListModeActive ? "To-Do List mode activated" : "To-Do List mode deactivated");
     });
 
     // --- Chat History Management ---
     function saveChats() {
-        localStorage.setItem('allChats_ClassMate', JSON.stringify(allChats));
+        localStorage.setItem("allChats_ClassMate", JSON.stringify(allChats));
     }
 
     function loadChats() {
-        const storedChats = localStorage.getItem('allChats_ClassMate');
+        const storedChats = localStorage.getItem("allChats_ClassMate");
         if (storedChats) {
             allChats = JSON.parse(storedChats);
         } else {
             allChats = {};
         }
-        // Ensure there's always at least one chat (or create one)
+        // Ensure there\'s always at least one chat (or create one)
         if (Object.keys(allChats).length === 0) {
             startNewChat(false); // Start a new chat without switching if none exist
         }
         // Load the last active chat or the first one
-        const lastChatId = localStorage.getItem('currentChatId_ClassMate');
+        const lastChatId = localStorage.getItem("currentChatId_ClassMate");
         if (lastChatId && allChats[lastChatId]) {
             switchChat(lastChatId);
         } else if (Object.keys(allChats).length > 0) {
@@ -1112,8 +1110,8 @@ Remember to break your goals into phases and tasks.`;
     }
 
     // MODIFIED: renderChatHistory now accepts an optional filter term
-    function renderChatHistory(filterTerm = '') {
-        chatHistoryList.innerHTML = ''; // Clear existing list
+    function renderChatHistory(filterTerm = "") {
+        chatHistoryList.innerHTML = ""; // Clear existing list
         const searchTerm = filterTerm.toLowerCase().trim();
         
         // Filter chat IDs based on the search term before reversing
@@ -1127,12 +1125,12 @@ Remember to break your goals into phases and tasks.`;
 
         chatIdsToRender.forEach(chatId => {
             const chat = allChats[chatId];
-            const li = document.createElement('li');
+            const li = document.createElement("li");
             li.dataset.chatId = chatId;
-            li.classList.toggle('active', chatId === currentChatId);
+            li.classList.toggle("active", chatId === currentChatId);
 
-            const titleSpan = document.createElement('span');
-            titleSpan.classList.add('chat-item-title');
+            const titleSpan = document.createElement("span");
+            titleSpan.classList.add("chat-item-title");
             titleSpan.textContent = chat.title || `Chat ${chatId.substring(0, 4)}`;
             li.appendChild(titleSpan);
 
@@ -1150,14 +1148,14 @@ Remember to break your goals into phases and tasks.`;
 
                 if (daysSinceActivity === 0) {
                     // Today: Show time (e.g., 10:30 AM)
-                    dateSpan.textContent = activityDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                    dateSpan.textContent = activityDate.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
                 } else if (daysSinceActivity > 0 && daysSinceActivity <= 7) {
                     // Within the last week (but not today): Show short weekday (e.g., Fri)
-                    dateSpan.textContent = activityDate.toLocaleDateString([], { weekday: 'short' });
+                    dateSpan.textContent = activityDate.toLocaleDateString([], { weekday: "short" });
                 } else {
                     // Older than a week: Show DD/MM/YY (e.g., 31/05/25)
-                    const day = String(activityDate.getDate()).padStart(2, '0');
-                    const month = String(activityDate.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+                    const day = String(activityDate.getDate()).padStart(2, "0");
+                    const month = String(activityDate.getMonth() + 1).padStart(2, "0"); // Month is 0-indexed
                     const year = String(activityDate.getFullYear()).slice(-2); // Get last two digits
                     dateSpan.textContent = `${day}/${month}/${year}`;
                 }
@@ -1166,37 +1164,37 @@ Remember to break your goals into phases and tasks.`;
             // --- END: Add Last Activity Date ---
 
             // --- MODIFIED: Add Three Dots Menu --- 
-            const menuContainer = document.createElement('div');
-            menuContainer.classList.add('chat-item-menu-container');
+            const menuContainer = document.createElement("div");
+            menuContainer.classList.add("chat-item-menu-container");
 
-            const menuBtn = document.createElement('button');
-            menuBtn.classList.add('chat-item-menu-btn');
-            menuBtn.innerHTML = '<i class="fas fa-ellipsis-v"></i>'; // Three vertical dots icon
-            menuBtn.title = 'Options';
+            const menuBtn = document.createElement("button");
+            menuBtn.classList.add("chat-item-menu-btn");
+            menuBtn.innerHTML = "<i class=\"fas fa-ellipsis-v\"></i>"; // Three vertical dots icon
+            menuBtn.title = "Options";
             menuContainer.appendChild(menuBtn);
 
-            const dropdown = document.createElement('div');
-            dropdown.classList.add('chat-item-menu-dropdown');
+            const dropdown = document.createElement("div");
+            dropdown.classList.add("chat-item-menu-dropdown");
 
             // Rename Option
-            const renameItem = document.createElement('div');
-            renameItem.classList.add('chat-item-menu-item');
-            renameItem.innerHTML = '<i class="fas fa-pen"></i> Rename';
-            renameItem.addEventListener('click', (e) => {
+            const renameItem = document.createElement("div");
+            renameItem.classList.add("chat-item-menu-item");
+            renameItem.innerHTML = "<i class=\"fas fa-pen\"></i> Rename";
+            renameItem.addEventListener("click", (e) => {
                 e.stopPropagation(); // Prevent li click
                 renameChat(chatId);
-                dropdown.classList.remove('show'); // Close menu
+                dropdown.classList.remove("show"); // Close menu
             });
             dropdown.appendChild(renameItem);
 
             // Delete Option
-            const deleteItem = document.createElement('div');
-            deleteItem.classList.add('chat-item-menu-item', 'delete');
-            deleteItem.innerHTML = '<i class="fas fa-trash-alt"></i> Delete';
-            deleteItem.addEventListener('click', (e) => {
+            const deleteItem = document.createElement("div");
+            deleteItem.classList.add("chat-item-menu-item", "delete");
+            deleteItem.innerHTML = "<i class=\"fas fa-trash-alt\"></i> Delete";
+            deleteItem.addEventListener("click", (e) => {
                 e.stopPropagation(); // Prevent li click
                 deleteChat(chatId);
-                dropdown.classList.remove('show'); // Close menu
+                dropdown.classList.remove("show"); // Close menu
             });
             dropdown.appendChild(deleteItem);
 
@@ -1204,21 +1202,21 @@ Remember to break your goals into phases and tasks.`;
             li.appendChild(menuContainer);
 
             // Toggle dropdown visibility
-            menuBtn.addEventListener('click', (e) => {
+            menuBtn.addEventListener("click", (e) => {
                 e.stopPropagation(); // Prevent li click
                 // Close other open menus
-                document.querySelectorAll('.chat-item-menu-dropdown.show').forEach(m => {
-                    if (m !== dropdown) m.classList.remove('show');
+                document.querySelectorAll(".chat-item-menu-dropdown.show").forEach(m => {
+                    if (m !== dropdown) m.classList.remove("show");
                 });
-                dropdown.classList.toggle('show');
+                dropdown.classList.toggle("show");
             });
             // --- End Three Dots Menu Modification ---
 
             // Click listener for the list item itself (to switch chat)
-            li.addEventListener('click', () => {
+            li.addEventListener("click", () => {
                 switchChat(chatId);
                 // Close sidebar on mobile after selection
-                if (isMobileView() && sidebar.classList.contains('open')) {
+                if (isMobileView() && sidebar.classList.contains("open")) {
                     toggleSidebar();
                 }
             });
@@ -1228,18 +1226,18 @@ Remember to break your goals into phases and tasks.`;
     }
 
     // Event listener for sidebar search icon
-    sidebarSearchBtn.addEventListener('click', () => {
-        sidebarSearchInput.classList.toggle('show');
-        if (sidebarSearchInput.classList.contains('show')) {
+    sidebarSearchBtn.addEventListener("click", () => {
+        sidebarSearchInput.classList.toggle("show");
+        if (sidebarSearchInput.classList.contains("show")) {
             sidebarSearchInput.focus();
         } else {
-            sidebarSearchInput.value = ''; // Clear search on hide
+            sidebarSearchInput.value = ""; // Clear search on hide
             renderChatHistory(); // Re-render full list
         }
     });
 
     // Event listener for sidebar search input
-    sidebarSearchInput.addEventListener('input', () => {
+    sidebarSearchInput.addEventListener("input", () => {
         renderChatHistory(sidebarSearchInput.value);
     });
 
@@ -1252,15 +1250,15 @@ Remember to break your goals into phases and tasks.`;
         };
         if (switchToNew) {
             currentChatId = newChatId;
-            localStorage.setItem('currentChatId_ClassMate', currentChatId);
-            chatContainer.innerHTML = ''; // Clear chat display
-            userInput.value = '';
-            userInput.dispatchEvent(new Event('input')); // Adjust height
+            localStorage.setItem("currentChatId_ClassMate", currentChatId);
+            chatContainer.innerHTML = ""; // Clear chat display
+            userInput.value = "";
+            userInput.dispatchEvent(new Event("input")); // Adjust height
             sendButton.disabled = true;
             // Deactivate To-Do mode for new chats
             if (isToDoListModeActive) {
                 isToDoListModeActive = false;
-                todoListOption.classList.remove('active');
+                todoListOption.classList.remove("active");
                 userInput.placeholder = "Ask ClassMate";
             }
         }
@@ -1270,8 +1268,8 @@ Remember to break your goals into phases and tasks.`;
              // Ensure the new chat is marked active immediately
              const newLi = chatHistoryList.querySelector(`[data-chat-id="${newChatId}"]`);
              if (newLi) {
-                 document.querySelectorAll('#chat-history-list li.active').forEach(el => el.classList.remove('active'));
-                 newLi.classList.add('active');
+                 document.querySelectorAll("#chat-history-list li.active").forEach(el => el.classList.remove("active"));
+                 newLi.classList.add("active");
              }
         }
         console.log("Started new chat:", newChatId);
@@ -1289,17 +1287,17 @@ Remember to break your goals into phases and tasks.`;
             return;
         }
         currentChatId = chatId;
-        localStorage.setItem('currentChatId_ClassMate', currentChatId);
-        chatContainer.innerHTML = ''; // Clear display first
+        localStorage.setItem("currentChatId_ClassMate", currentChatId);
+        chatContainer.innerHTML = ""; // Clear display first
         allChats[currentChatId].messages.forEach(msg => addMessageToUI(msg.sender, msg.content));
         renderChatHistory(); // Update active state in history list
-        userInput.value = '';
-        userInput.dispatchEvent(new Event('input')); // Adjust height
+        userInput.value = "";
+        userInput.dispatchEvent(new Event("input")); // Adjust height
         sendButton.disabled = true;
         // Deactivate To-Do mode when switching chats
         if (isToDoListModeActive) {
             isToDoListModeActive = false;
-            todoListOption.classList.remove('active');
+            todoListOption.classList.remove("active");
             userInput.placeholder = "Ask ClassMate";
         }
         console.log("Switched to chat:", currentChatId);
@@ -1309,7 +1307,7 @@ Remember to break your goals into phases and tasks.`;
         const chat = allChats[chatId];
         if (!chat) return;
         const newTitle = prompt("Enter new name for this chat:", chat.title || `Chat ${chatId.substring(0, 4)}`);
-        if (newTitle && newTitle.trim() !== '') {
+        if (newTitle && newTitle.trim() !== "") {
             chat.title = newTitle.trim();
             saveChats();
             renderChatHistory();
@@ -1318,7 +1316,7 @@ Remember to break your goals into phases and tasks.`;
 
     function deleteChat(chatId) {
         if (!allChats[chatId]) return;
-        if (confirm(`Are you sure you want to delete "${allChats[chatId].title || 'this chat'}"?`)) {
+        if (confirm(`Are you sure you want to delete "${allChats[chatId].title || "this chat"}"?`)) {
             delete allChats[chatId];
             saveChats();
             // If deleting the current chat, switch to another or start new
@@ -1335,317 +1333,328 @@ Remember to break your goals into phases and tasks.`;
         }
     }
 
-    newChatBtn.addEventListener('click', () => {
+    newChatBtn.addEventListener("click", () => {
         startNewChat();
         // Close sidebar on mobile after action
-        if (isMobileView() && sidebar.classList.contains('open')) {
+        if (isMobileView() && sidebar.classList.contains("open")) {
             toggleSidebar();
         }
     });
 
     // --- Message Handling ---
     function addMessageToUI(sender, content) {
-    // --- REMOVED: Logic that saved messages/metadata to allChats ---
-    // Metadata (title, timestamp) updates and saving are now handled within sendMessage or loadChats
-
-    const messageDiv = document.createElement("div");
-    messageDiv.classList.add("message", sender);
-
-    const contentDiv = document.createElement("div");
-    contentDiv.classList.add("chat-content");
-
-    if (sender === 'bot') {
-        // Check if content is already HTML (for To-Do list format)
-        let isHtml = /<[a-z][\s\S]*>/i.test(content);
-        if (isHtml) {
-            // If it looks like HTML, insert it directly
-            // Be cautious with unsanitized HTML from the bot
-            contentDiv.innerHTML = content;
-        } else {
-            // Otherwise, parse as Markdown
-            try {
-                contentDiv.innerHTML = marked.parse(content);
-            } catch(e) {
-                console.error("Error parsing Markdown:", e);
-                contentDiv.textContent = content; // Fallback to text
+        // --- MODIFICATION START: Update Title and Timestamp ---
+        const chat = allChats[currentChatId];
+        if (chat) {
+            // Set title from first user message if not already set
+            if (sender === "user" && (!chat.title || chat.title === "New Chat")) { // Check if title is default
+                // Use first 30 chars of user message as title, or keep default if empty
+                const potentialTitle = content.trim().substring(0, 30);
+                chat.title = potentialTitle || chat.title; // Keep default "New Chat" if user sends empty message first
             }
+            // Update last activity timestamp
+            chat.lastActivityTimestamp = Date.now();
+            // Save the message (moved here to ensure timestamp/title are updated first)
+            // chat.messages.push({ sender, content }); // Message is saved in saveMessage function now
+            saveChats();
+            renderChatHistory(); // Re-render history to show updated title/date
+        } else {
+            console.error("Cannot add message: currentChatId not found in allChats");
+            return; // Don\'t proceed if chat doesn\'t exist
         }
+        // --- MODIFICATION END ---
 
-        // Add copy button for code blocks (apply after innerHTML is set)
-        contentDiv.querySelectorAll('pre code').forEach((block) => {
-            try {
-                 hljs.highlightElement(block);
-            } catch (e) { console.error("Highlight.js error:", e); }
-            const preElement = block.parentNode;
-            if (preElement && preElement.tagName === 'PRE') { // Added null check for preElement
-                // Check if button already exists
-                if (!preElement.querySelector('.code-copy-btn-container')) {
-                    const copyBtnContainer = document.createElement('div');
-                    copyBtnContainer.classList.add('code-copy-btn-container');
+        const messageDiv = document.createElement("div");
+        messageDiv.classList.add("message", sender);
+
+        const contentDiv = document.createElement("div");
+        contentDiv.classList.add("chat-content");
+
+        if (sender === "bot") {
+            // Use marked to render Markdown content
+            // Check if content is already HTML (for To-Do list structure)
+            if (content.startsWith("<div class=\"todo-list-container\">")) {
+                contentDiv.innerHTML = content;
+            } else {
+                contentDiv.innerHTML = marked.parse(content);
+            }
+            
+            // Add copy button for code blocks
+            contentDiv.querySelectorAll("pre code").forEach((block) => {
+                hljs.highlightElement(block);
+                const preElement = block.parentNode;
+                if (preElement.tagName === "PRE") {
+                    const copyBtnContainer = document.createElement("div");
+                    copyBtnContainer.classList.add("code-copy-btn-container");
                     
-                    const copyButton = document.createElement('button');
-                    copyButton.innerHTML = '<i class="far fa-copy"></i> Copy';
-                    copyButton.classList.add('input-button'); // Use existing style
-                    copyButton.style.fontSize = '0.8em';
-                    copyButton.style.padding = '4px 8px';
-                    copyButton.style.backgroundColor = 'rgba(255,255,255,0.1)';
-                    copyButton.style.border = '1px solid rgba(255,255,255,0.2)';
-                    copyButton.style.color = '#ccc';
+                    const copyButton = document.createElement("button");
+                    copyButton.innerHTML = "<i class=\"far fa-copy\"></i> Copy";
+                    copyButton.classList.add("input-button"); // Use existing style
+                    copyButton.style.fontSize = "0.8em";
+                    copyButton.style.padding = "4px 8px";
+                    copyButton.style.backgroundColor = "rgba(255,255,255,0.1)";
+                    copyButton.style.border = "1px solid rgba(255,255,255,0.2)";
+                    copyButton.style.color = "#ccc";
                     copyButton.onclick = () => {
                         navigator.clipboard.writeText(block.textContent).then(() => {
-                            copyButton.innerHTML = '<i class="fas fa-check"></i> Copied!';
-                            setTimeout(() => { copyButton.innerHTML = '<i class="far fa-copy"></i> Copy'; }, 2000);
-                        }).catch(err => console.error('Copy failed', err));
+                            copyButton.innerHTML = "<i class=\"fas fa-check\"></i> Copied!";
+                            setTimeout(() => { copyButton.innerHTML = "<i class=\"far fa-copy\"></i> Copy"; }, 2000);
+                        }).catch(err => console.error("Copy failed", err));
                     };
                     copyBtnContainer.appendChild(copyButton);
                     preElement.appendChild(copyBtnContainer);
-                    preElement.style.position = 'relative'; // Ensure container positions correctly
+                    preElement.style.position = "relative"; // Ensure container positions correctly
                 }
-            }
-        });
-        
-        // Add Reply Actions Menu (Copy Text, Save as Note)
-        // Check if menu already exists
-        if (!messageDiv.querySelector('.reply-menu-container')) {
-            const menuContainer = document.createElement('div');
-            menuContainer.classList.add('reply-menu-container');
+            });
+            
+            // Add Reply Actions Menu (Copy Text, Save as Note)
+            const menuContainer = document.createElement("div");
+            menuContainer.classList.add("reply-menu-container");
 
-            const menuBtn = document.createElement('button');
-            menuBtn.classList.add('reply-menu-btn');
-            menuBtn.innerHTML = '<i class="fas fa-ellipsis-v"></i>'; // Vertical dots
-            menuBtn.title = 'More Actions';
+            const menuBtn = document.createElement("button");
+            menuBtn.classList.add("reply-menu-btn");
+            menuBtn.innerHTML = "<i class=\"fas fa-ellipsis-v\"></i>"; // Vertical dots
+            menuBtn.title = "More Actions";
             menuContainer.appendChild(menuBtn);
 
-            const dropdown = document.createElement('div');
-            dropdown.classList.add('reply-menu-dropdown');
+            const dropdown = document.createElement("div");
+            dropdown.classList.add("reply-menu-dropdown");
 
             // Copy Text Option
-            const copyItem = document.createElement('div');
-            copyItem.classList.add('reply-menu-item');
-            copyItem.innerHTML = '<i class="far fa-copy"></i> Copy Text';
-            copyItem.addEventListener('click', (e) => {
+            const copyItem = document.createElement("div");
+            copyItem.classList.add("reply-menu-item");
+            copyItem.innerHTML = "<i class=\"far fa-copy\"></i> Copy Text";
+            copyItem.addEventListener("click", (e) => {
                 e.stopPropagation();
                 navigator.clipboard.writeText(contentDiv.innerText).then(() => {
-                    showToast('Bot reply copied!');
-                }).catch(err => console.error('Copy failed', err));
-                dropdown.classList.remove('show');
+                    showToast("Bot reply copied!");
+                }).catch(err => console.error("Copy failed", err));
+                dropdown.classList.remove("show");
             });
             dropdown.appendChild(copyItem);
 
-            // Save as Note Option (Placeholder - requires notes integration)
-            const saveNoteItem = document.createElement('div');
-            saveNoteItem.classList.add('reply-menu-item');
-            saveNoteItem.innerHTML = '<i class="far fa-sticky-note"></i> Save as Note';
-            saveNoteItem.addEventListener('click', (e) => {
+            // Save as Note Option (Restored functionality)
+            const saveNoteItem = document.createElement("div");
+            saveNoteItem.classList.add("reply-menu-item");
+            saveNoteItem.innerHTML = "<i class=\"far fa-sticky-note\"></i> Save as Note";
+            saveNoteItem.addEventListener("click", (e) => {
                 e.stopPropagation();
-                // TODO: Implement save as note functionality
-                showToast('Save as Note (Not Implemented)'); 
-                console.log("Save note clicked. Content:", contentDiv.innerText);
-                dropdown.classList.remove('show');
+                // Try to find the preceding user message for a title
+                let noteTitle = "Chat Reply";
+                const messages = allChats[currentChatId]?.messages || [];
+                // Find the index of the current bot message (assuming it's the last one)
+                const botMessageIndex = messages.length - 1; 
+                if (botMessageIndex > 0 && messages[botMessageIndex - 1]?.sender === "user") {
+                    noteTitle = messages[botMessageIndex - 1].content.substring(0, 50) || "Chat Reply";
+                }
+                saveToNotes(noteTitle, contentDiv.innerText); // Use the restored function
+                dropdown.classList.remove("show");
             });
             dropdown.appendChild(saveNoteItem);
+
+            // --- ADDED: Save to To-Do List Option ---
+            const saveTodoItem = document.createElement("div");
+            saveTodoItem.classList.add("reply-menu-item");
+            saveTodoItem.innerHTML = "<i class=\"fas fa-list-check\"></i> Save To-Do List";
+            saveTodoItem.style.display = "none"; // Initially hidden
+            
+            // Check if the content is a To-Do list and show the option
+            if (isToDoListFormat(contentDiv.innerText)) { // Check innerText for format
+                saveTodoItem.style.display = "flex"; // Show the option
+            }
+            
+            saveTodoItem.addEventListener("click", (e) => {
+                e.stopPropagation();
+                saveToTaskMaster(contentDiv.innerHTML); // Save the HTML content of the to-do list
+                dropdown.classList.remove("show");
+            });
+            dropdown.appendChild(saveTodoItem);
+            // --- END: Save to To-Do List Option ---
 
             menuContainer.appendChild(dropdown);
             messageDiv.appendChild(menuContainer);
 
             // Toggle dropdown visibility
-            menuBtn.addEventListener('click', (e) => {
+            menuBtn.addEventListener("click", (e) => {
                 e.stopPropagation();
                 // Close other open menus
-                document.querySelectorAll('.reply-menu-dropdown.show').forEach(m => {
-                    if (m !== dropdown) m.classList.remove('show');
+                document.querySelectorAll(".reply-menu-dropdown.show").forEach(m => {
+                    if (m !== dropdown) m.classList.remove("show");
                 });
-                dropdown.classList.toggle('show');
+                dropdown.classList.toggle("show");
             });
-        }
 
-    } else {
-        // For user messages, just display the text content
-        // The white-space: pre-wrap style handles formatting
-        contentDiv.textContent = content;
-    }
-
-    messageDiv.appendChild(contentDiv);
-    if (chatContainer) chatContainer.appendChild(messageDiv); // Added null check
-    // Ensure scrolling happens after content is added
-    // Use requestAnimationFrame to wait for rendering
-    requestAnimationFrame(() => {
-        if (chatContainer) { // Added null check for chatContainer
-             chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-    });
-}
-
-    // Removed redundant saveMessage function
-
-    async function sendMessage() {
-    const userMessageText = userInput.value.trim();
-    if (userMessageText === '' || messageBeingSent) return;
-
-    messageBeingSent = true; // Set flag
-    if(sendButton) sendButton.disabled = true; // Disable send button
-    if(userInput) userInput.disabled = true; // Disable input
-    if(userInput) userInput.placeholder = "ClassMate is thinking..."; // Update placeholder
-
-    // Add user message immediately to the chat display (using modified addMessageToUI)
-    addMessageToUI('user', userMessageText); // ONLY adds to UI
-    if(userInput) userInput.value = '';
-    if(userInput) userInput.style.height = 'auto'; // Reset height after sending
-    if(userInput) userInput.dispatchEvent(new Event('input')); // Trigger resize check
-    // scrollToBottom(); // Moved scrolling to end of addMessageToUI
-
-    // Show loading indicator
-    if (loadingIndicator) loadingIndicator.style.display = 'flex'; // Added null check
-
-    // Determine the prompt to send (handle To-Do list mode)
-    // Using original prompt logic which includes promptBase
-    let finalPrompt = promptBase;
-    if (isToDoListModeActive) {
-        finalPrompt += "\n\n" + todoListPrompt + "\n\nUser query for To-Do List: " + userMessageText;
-    } else {
-        finalPrompt += "\n\nUser query: " + userMessageText;
-    }
-
-    // --- Prepare request data ---
-    // IMPORTANT: Send chat_id (null if new chat) based on suggestion
-    const requestData = {
-        prompt: finalPrompt
-    };
-
-    try {
-        // Using original fetch URL and structure, but sending chat_id
-        const response = await fetch(`${serverUrl}/api/chat`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestData),
-        });
-
-        if (!response.ok) {
-            // Try to get error message from response body
-            let errorDetail = `HTTP error! status: ${response.status}`;
-            try {
-                const errorData = await response.json();
-                // Use backend error structure if available (e.g., data.detail or data.message or data.error)
-                errorDetail = errorData.detail || errorData.message || errorData.error || JSON.stringify(errorData);
-            } catch (e) { /* Ignore if response is not JSON */ }
-            throw new Error(errorDetail);
-        }
-
-        const data = await response.json();
-        // Expecting { reply: "...", chat_id: "...", title: "..." } based on backend suggestion
-        // Adapt based on actual backend response structure if different
-        const botReplyText = data.reply || data.response || "Sorry, I couldn't process that."; // Adapt to actual key
-        const returnedChatId = data.chat_id; // Get chat_id from response
-        const updatedTitle = data.title;     // Get potentially updated title
-
-        // *** If this was the first message (currentChatId was null), update state ***
-        if (currentChatId === null && returnedChatId) {
-            currentChatId = returnedChatId;
-            console.log("Received new chat ID from backend:", currentChatId);
-
-            // Add this new chat to the local state and sidebar
-            const timestamp = new Date().toISOString();
-            // Create the new chat entry in allChats
-            // Messages array starts empty here - it will be populated by loadMessagesForChat / fetch from /history
-            if (!allChats) allChats = {}; // Ensure allChats is initialized
-            allChats[currentChatId] = {
-                id: currentChatId,
-                // Use title from response, default if missing or still "New Chat"
-                title: (updatedTitle && updatedTitle !== "New Chat") ? updatedTitle : userMessageText.substring(0, 30) + (userMessageText.length > 30 ? '...' : ''),
-                messages: [], // MESSAGES WILL BE LOADED FROM SERVER via loadMessagesForChat / fetch from /history
-                created_at: timestamp, // Approximate
-                last_updated_at: new Date().toISOString(),
-                lastActivityTimestamp: Date.now() // Add timestamp for sorting
-            };
-            saveChats(); // Save the new chat structure to localStorage
-            renderChatHistory(); // Update sidebar
-            setActiveChat(currentChatId); // Highlight the new chat
-        }
-
-        // Add bot message to display (using modified addMessageToUI)
-        // Handle potential To-Do list HTML structure
-        if (isToDoListModeActive) {
-             const todoContainer = document.createElement('div');
-             todoContainer.classList.add('todo-list-container');
-             const label = document.createElement('span');
-             label.classList.add('todo-list-label');
-             label.textContent = 'To-Do List';
-             todoContainer.appendChild(label);
-             const contentWrapper = document.createElement('div');
-             contentWrapper.classList.add('todo-list-content');
-             try {
-                contentWrapper.innerHTML = marked.parse(botReplyText); // Parse the actual list content
-             } catch(e) {
-                 console.error("Error parsing Markdown for ToDo:", e);
-                 contentWrapper.textContent = botReplyText; // Fallback
-             }
-             todoContainer.appendChild(contentWrapper);
-             addMessageToUI('bot', todoContainer.outerHTML); // Add the whole container to the UI
         } else {
-             addMessageToUI('bot', botReplyText); // ONLY adds to UI
+            // For user messages, just display the text content
+            // The white-space: pre-wrap style handles formatting
+            contentDiv.textContent = content;
         }
 
-
-        // Update timestamp and potentially title for the current chat
-        if (currentChatId && allChats && allChats[currentChatId]) { // Added null check for allChats
-            allChats[currentChatId].last_updated_at = new Date().toISOString();
-            allChats[currentChatId].lastActivityTimestamp = Date.now();
-            if (updatedTitle && allChats[currentChatId].title !== updatedTitle) {
-                 allChats[currentChatId].title = updatedTitle;
-            }
-            saveChats(); // Save updated metadata
-            renderChatHistory(); // Update sidebar if title/timestamp changed order
-        }
-
-    } catch (error) {
-        console.error('Error sending message:', error);
-        addMessageToUI('bot', `Error: ${error.message || "Could not connect to the server or process the request."}. Please check the server or try again.`); // ONLY adds to UI
-        if (typeof showToast === 'function') showToast(`Error: ${error.message || "Failed to get response."}`); // Added check for showToast
-    } finally {
-        // Hide loading indicator
-        if (loadingIndicator) loadingIndicator.style.display = 'none'; // Added null check
-        messageBeingSent = false; // Reset flag
-        if (userInput) { // Added null check
-            userInput.disabled = false; // Re-enable input
-            userInput.placeholder = isToDoListModeActive ? "Enter goal for To-Do List..." : "Ask ClassMate";
-            userInput.focus();
-        }
-        if (sendButton) { // Added null check
-             sendButton.disabled = !userInput || userInput.value.trim() === ''; // Re-enable send button if input has text
-        }
-        // scrollToBottom(); // Moved scrolling to end of addMessageToUI
+        messageDiv.appendChild(contentDiv);
+        chatContainer.appendChild(messageDiv);
+        chatContainer.scrollTop = chatContainer.scrollHeight; // Scroll to bottom
     }
-}
 
-    sendButton.addEventListener('click', sendMessage);
-    userInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
+    function saveMessage(sender, content) {
+        if (!currentChatId || !allChats[currentChatId]) {
+            console.error("Cannot save message, no active chat selected.");
+            // Attempt to recover by starting a new chat if none exists
+            if (Object.keys(allChats).length === 0) {
+                startNewChat();
+            } else if (!currentChatId) {
+                // If chat exists but none is selected, select the first one
+                switchChat(Object.keys(allChats)[0]);
+            } else if (!allChats[currentChatId]) { // If currentChatId is invalid but chats exist
+                 console.error(`Current chat ID ${currentChatId} is invalid.`);
+                 switchChat(Object.keys(allChats)[0]); // Switch to first valid chat
+            }
+            // Retry saving after potential recovery
+            if (currentChatId && allChats[currentChatId]) {
+                 allChats[currentChatId].messages.push({ sender, content });
+                 saveChats();
+            } else {
+                 console.error("Failed to save message even after recovery attempt.");
+            }
+            return; // Exit original function call
+        }
+        // Normal save operation
+        allChats[currentChatId].messages.push({ sender, content });
+        saveChats();
+    }
+
+    // *** MODIFIED sendMessage function ***
+    async function sendMessage() {
+        const messageText = userInput.value.trim();
+        if (!messageText || messageBeingSent) return;
+
+        if (!currentChatId || !allChats[currentChatId]) {
+            console.error("sendMessage: No active chat session.");
+            addMessageToUI("bot", "Error: No active chat. Please start a new chat.");
+            saveMessage("bot", "Error: No active chat. Please start a new chat.");
+            return;
+        }
+
+        messageBeingSent = true; // Set flag
+        sendButton.disabled = true;
+        loadingIndicator.style.display = "flex";
+        userInput.value = "";
+        userInput.dispatchEvent(new Event("input")); // Reset height
+        userInput.placeholder = "ClassMate is thinking...";
+        userInput.disabled = true;
+
+        addMessageToUI("user", messageText);
+        saveMessage("user", messageText); // Save user message before sending API request
+
+        // --- START: Added history construction (based on prev_script.js logic) ---
+        const currentMessages = allChats[currentChatId]?.messages || [];
+        // Format history, ensuring the *newly added* user message is included
+        const conversationHistoryForAPI = currentMessages
+            .map(msg => `${msg.sender === "user" ? "User" : "AI"}: ${msg.content}`)
+            .join("\n");
+
+        let finalPrompt = promptBase;
+        if (isToDoListModeActive) {
+            finalPrompt = todoListPrompt; // Use the specific To-Do prompt as the base
+            finalPrompt += "\n\nConversation History (leading to To-Do request):\n" + conversationHistoryForAPI;
+
+        } else {
+            finalPrompt += "\n\nConversation History:\n" + conversationHistoryForAPI;
+            // The current user message is already part of the history, no need to add it separately as "User query:"
+        }
+        // --- END: Added history construction ---
+
+        try {
+            const response = await fetch(`${serverUrl}/api/chat`, { // Using original endpoint /api/chat
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ prompt: finalPrompt }), // Send the combined prompt with history
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            let botResponse = data.reply || "Sorry, I couldn\\'t process that.";            
+            // If it was a To-Do list request, add a label and save HTML
+            if (isToDoListModeActive && botResponse.includes("Goal:") && botResponse.includes("Phase")) { // Basic check for To-Do format
+                const todoContainer = document.createElement("div");
+                todoContainer.classList.add("todo-list-container");
+                
+                const label = document.createElement("span");
+                label.classList.add("todo-list-label");
+                label.textContent = "To-Do List";
+                todoContainer.appendChild(label);
+                
+                const contentWrapper = document.createElement("div");
+                contentWrapper.classList.add("todo-list-content");
+                contentWrapper.innerHTML = marked.parse(botResponse); // Parse the actual list content
+                todoContainer.appendChild(contentWrapper);
+                
+                // Add the whole container to the UI instead of just the text
+                addMessageToUI("bot", todoContainer.outerHTML);
+                saveMessage("bot", todoContainer.outerHTML); // Save the HTML structure
+
+            } else {
+                addMessageToUI("bot", botResponse);
+                saveMessage("bot", botResponse);
+            }
+
+            // Auto-rename chat based on the first user message if it\'s a new chat
+            // Check if title is still default "New Chat" and there are exactly 2 messages (user + bot response)
+            if (allChats[currentChatId] && allChats[currentChatId].messages.length === 2 && allChats[currentChatId].title === "New Chat") { 
+                // Use the actual messageText sent by the user as title
+                const potentialTitle = messageText.substring(0, 30); // Limit title length
+                allChats[currentChatId].title = potentialTitle || "Chat"; // Fallback if message was empty
+                saveChats();
+                renderChatHistory(); // Update sidebar display
+            }
+
+        } catch (error) {
+            console.error("Error sending message:", error);
+            const errorMsg = `Sorry, there was an error connecting to the assistant. Please try again later. (${error.message})`;
+            addMessageToUI("bot", errorMsg);
+            saveMessage("bot", errorMsg);
+        } finally {
+            messageBeingSent = false; // Reset flag
+            userInput.disabled = false;
+            userInput.placeholder = isToDoListModeActive ? "Enter goal for To-Do List..." : "Ask ClassMate";
+            // Re-enable send button only if input is not empty (user might have typed while waiting)
+            sendButton.disabled = userInput.value.trim() === ""; 
+            userInput.focus();
+            loadingIndicator.style.display = "none"; // Add this line back
+        }
+    }
+
+    sendButton.addEventListener("click", sendMessage);
+    userInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault(); // Prevent default newline insertion
             sendMessage();
         }
     });
 
     // --- Speech Recognition ---
-    if ('webkitSpeechRecognition' in window) {
+    if ("webkitSpeechRecognition" in window) {
         recognition = new webkitSpeechRecognition();
         recognition.continuous = false;
-        recognition.lang = 'en-US';
+        recognition.lang = "en-US";
         recognition.interimResults = false;
         recognition.maxAlternatives = 1;
 
         recognition.onresult = (event) => {
             const transcript = event.results[0][0].transcript;
             userInput.value = transcript;
-            userInput.dispatchEvent(new Event('input')); // Trigger height adjustment and enable send button
+            userInput.dispatchEvent(new Event("input")); // Trigger height adjustment and enable send button
             stopRecording();
             // Optionally send the message automatically after speech input
             // sendMessage(); 
         };
 
         recognition.onerror = (event) => {
-            console.error('Speech recognition error:', event.error);
+            console.error("Speech recognition error:", event.error);
             showToast(`Speech error: ${event.error}`);
             stopRecording();
         };
@@ -1657,7 +1666,7 @@ Remember to break your goals into phases and tasks.`;
             }
         };
 
-        micButton.addEventListener('click', () => {
+        micButton.addEventListener("click", () => {
             if (isRecording) {
                 stopRecording();
             } else {
@@ -1676,14 +1685,14 @@ Remember to break your goals into phases and tasks.`;
         try {
             recognition.start();
             isRecording = true;
-            micButton.classList.add('recording');
+            micButton.classList.add("recording");
             micButton.title = "Stop Recording";
             showToast("Listening...");
         } catch (error) {
             console.error("Error starting recognition:", error);
             showToast("Could not start microphone.");
             isRecording = false; // Ensure state is correct
-            micButton.classList.remove('recording');
+            micButton.classList.remove("recording");
             micButton.title = "Speak";
         }
     }
@@ -1692,7 +1701,7 @@ Remember to break your goals into phases and tasks.`;
         if (!recognition || !isRecording) return;
         recognition.stop();
         isRecording = false;
-        micButton.classList.remove('recording');
+        micButton.classList.remove("recording");
         micButton.title = "Speak";
         // Toast for stopping is optional, could be annoying
         // showToast("Stopped listening."); 
@@ -1701,9 +1710,9 @@ Remember to break your goals into phases and tasks.`;
     // --- Toast Notifications ---
     function showToast(message) {
         toast.textContent = message;
-        toast.classList.add('show');
+        toast.classList.add("show");
         setTimeout(() => {
-            toast.classList.remove('show');
+            toast.classList.remove("show");
         }, 3000); // Hide after 3 seconds
     }
 
@@ -1712,67 +1721,67 @@ Remember to break your goals into phases and tasks.`;
         loadChats(); // Load chats and potentially the last active one
         
         // MODIFIED: Set initial sidebar state (Default to collapsed on desktop)
-        const savedState = localStorage.getItem('sidebarState_ClassMate');
+        const savedState = localStorage.getItem("sidebarState_ClassMate");
         const mobileView = isMobileView();
 
         if (mobileView) {
-            // Mobile: Always start closed (no 'open' class)
-            sidebar.classList.remove('open');
-            sidebar.classList.remove('collapsed'); // Ensure no desktop class
-            appContainer.classList.remove('sidebar-hidden');
-            sidebarOverlay.style.display = 'none';
+            // Mobile: Always start closed (no "open" class)
+            sidebar.classList.remove("open");
+            sidebar.classList.remove("collapsed"); // Ensure no desktop class
+            appContainer.classList.remove("sidebar-hidden");
+            sidebarOverlay.style.display = "none";
         } else {
-            // Desktop: Default to collapsed unless explicitly saved as 'open'
-            if (savedState === 'open') {
-                sidebar.classList.remove('collapsed');
-                appContainer.classList.remove('sidebar-hidden');
+            // Desktop: Default to collapsed unless explicitly saved as "open"
+            if (savedState === "open") {
+                sidebar.classList.remove("collapsed");
+                appContainer.classList.remove("sidebar-hidden");
             } else {
-                // Default to collapsed (or if savedState is 'collapsed' or null/invalid)
-                sidebar.classList.add('collapsed');
-                appContainer.classList.add('sidebar-hidden');
+                // Default to collapsed (or if savedState is "collapsed" or null/invalid)
+                sidebar.classList.add("collapsed");
+                appContainer.classList.add("sidebar-hidden");
             }
-            sidebar.classList.remove('open'); // Ensure no mobile class
-            sidebarOverlay.style.display = 'none';
+            sidebar.classList.remove("open"); // Ensure no mobile class
+            sidebarOverlay.style.display = "none";
         }
         
         updateToggleButtonVisibility(); // Update buttons based on initial state
-        userInput.dispatchEvent(new Event('input')); // Adjust input height initially
+        userInput.dispatchEvent(new Event("input")); // Adjust input height initially
         sendButton.disabled = true; // Send button disabled initially
         isInitialLoad = false; // Mark initial load as complete
     }
 
     // Handle window resize to adjust sidebar behavior
-    window.addEventListener('resize', () => {
+    window.addEventListener("resize", () => {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
             if (!isInitialLoad) { // Avoid running during initial setup potentially before elements are ready
                 const mobileView = isMobileView();
-                const isCurrentlyOpenMobile = sidebar.classList.contains('open');
-                const isCurrentlyCollapsedDesktop = sidebar.classList.contains('collapsed');
+                const isCurrentlyOpenMobile = sidebar.classList.contains("open");
+                const isCurrentlyCollapsedDesktop = sidebar.classList.contains("collapsed");
 
                 if (mobileView) {
                     // Transitioning TO mobile view
-                    sidebar.classList.remove('collapsed'); // Remove desktop state
-                    appContainer.classList.remove('sidebar-hidden');
+                    sidebar.classList.remove("collapsed"); // Remove desktop state
+                    appContainer.classList.remove("sidebar-hidden");
                     // If it was open on desktop, keep it closed on mobile initially
                     if (!isCurrentlyOpenMobile) {
-                        sidebar.classList.remove('open');
-                        sidebarOverlay.style.display = 'none';
+                        sidebar.classList.remove("open");
+                        sidebarOverlay.style.display = "none";
                     } else {
-                         sidebarOverlay.style.display = 'block'; // Ensure overlay shows if already open
+                         sidebarOverlay.style.display = "block"; // Ensure overlay shows if already open
                     }
                 } else {
                     // Transitioning TO desktop view
-                    sidebar.classList.remove('open'); // Remove mobile state
-                    sidebarOverlay.style.display = 'none';
+                    sidebar.classList.remove("open"); // Remove mobile state
+                    sidebarOverlay.style.display = "none";
                     // Restore collapsed state if it was collapsed, otherwise default to open (or keep previous desktop state)
-                    const savedState = localStorage.getItem('sidebarState_ClassMate');
-                    if (savedState === 'collapsed' || isCurrentlyCollapsedDesktop) {
-                         sidebar.classList.add('collapsed');
-                         appContainer.classList.add('sidebar-hidden');
+                    const savedState = localStorage.getItem("sidebarState_ClassMate");
+                    if (savedState === "collapsed" || isCurrentlyCollapsedDesktop) {
+                         sidebar.classList.add("collapsed");
+                         appContainer.classList.add("sidebar-hidden");
                     } else {
-                         sidebar.classList.remove('collapsed');
-                         appContainer.classList.remove('sidebar-hidden');
+                         sidebar.classList.remove("collapsed");
+                         appContainer.classList.remove("sidebar-hidden");
                     }
                 }
                 updateToggleButtonVisibility();
@@ -1783,6 +1792,69 @@ Remember to break your goals into phases and tasks.`;
     // Initialize the app on load
     initializeApp();
 
-  </script>
+
+
+
+
+    // Function to check if text contains a to-do list format (from prev_script.js)
+    function isToDoListFormat(text) {
+        // Basic check: Look for "Goal:" and "Phase" or task markers
+        const goalPattern = /^goal:/im;
+        const phasePattern = /^phase\s*\d+:/im;
+        const taskPattern = /^\s*[-*•]\s+/m;
+        return typeof text === "string" && goalPattern.test(text) && (phasePattern.test(text) || taskPattern.test(text));
+    }
+
+    // Function to save to-do list to localStorage for todolist.html (from prev_script.js)
+    function saveToTaskMaster(content) {
+        try {
+            const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            tasks.push({ 
+                text: content, // Save the raw content (likely HTML from marked.parse)
+                pinned: false,
+                highlighted: false,
+                id: Date.now().toString() // Add an ID
+            });
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+            showToast("To-do list saved to Task Master!");
+        } catch (e) {
+            console.error("Failed to save to Task Master:", e);
+            showToast("Error saving To-Do list.");
+        }
+    }
+
+    // Function to save content to notes (from prev_script.js)
+    function saveToNotes(title, content) {
+        try {
+            const notes = JSON.parse(localStorage.getItem("notes")) || [];
+            const timestamp = new Date().toISOString();
+            notes.push({ 
+                id: Date.now().toString(),
+                title: title.substring(0, 50) || "Untitled Note", // Limit title length and provide default
+                content: content,
+                created: timestamp,
+                updated: timestamp,
+                type: "text", // Add type property for compatibility with notes page
+                timestamp: timestamp // Add timestamp property for compatibility with notes page
+            });
+            localStorage.setItem("notes", JSON.stringify(notes));
+            showToast("Saved to notes!");
+        } catch (e) {
+            console.error("Failed to save note:", e);
+            showToast("Error saving note.");
+        }
+    }
+
+    // Function to show toast notifications (already exists, ensure it's present)
+    function showToast(message, duration = 3000) {
+        toast.textContent = message;
+        toast.classList.add("show");
+        setTimeout(() => {
+            toast.classList.remove("show");
+        }, duration);
+    }
+
+
+</script>
 </body>
 </html>
