@@ -1465,7 +1465,7 @@ Remember to break your goals into phases and tasks.`;
             
             saveTodoItem.addEventListener("click", (e) => {
                 e.stopPropagation();
-                saveToTaskMaster(contentDiv.innerHTML); // Save the HTML content of the to-do list
+                saveToTaskMaster(contentDiv.innerText); // Save the HTML content of the to-do list
                 dropdown.classList.remove("show");
             });
             dropdown.appendChild(saveTodoItem);
@@ -1798,11 +1798,15 @@ Remember to break your goals into phases and tasks.`;
 
     // Function to check if text contains a to-do list format (from prev_script.js)
     function isToDoListFormat(text) {
-        // Basic check: Look for "Goal:" and "Phase" or task markers
-        const goalPattern = /^goal:/im;
-        const phasePattern = /^phase\s*\d+:/im;
-        const taskPattern = /^\s*[-*•]\s+/m;
-        return typeof text === "string" && goalPattern.test(text) && (phasePattern.test(text) || taskPattern.test(text));
+        const goalPattern = /goal\s*:/i;
+        const hasGoal = goalPattern.test(text);
+        const phasePattern = /phase\s*\d+|phase\s*[a-z]+|step\s*\d+|part\s*\d+/i;
+        const hasPhase = phasePattern.test(text);
+        const taskPattern = /[-•*]\s+\w+|^\d+\.\s+\w+/m;
+        const hasTasks = taskPattern.test(text);
+        const structurePattern = /goal\s*:.*?(?:phase|step|part)\s*(?:\d+|[a-z]+)/is;
+        const hasStructure = structurePattern.test(text);
+        return hasGoal && (hasPhase || hasTasks) && hasStructure;
     }
 
     // Function to save to-do list to localStorage for todolist.html (from prev_script.js)
