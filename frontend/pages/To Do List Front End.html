@@ -1354,18 +1354,19 @@ Phase 2:
     });
   }
 
-  // Send task to ClassMate AI
+  // Send task to ClassMate AI via URL parameter
   function sendToClassMateAI(taskText) {
-    // Store the task text in localStorage for ClassMate AI to retrieve
-    localStorage.setItem('taskMasterQuery', taskText);
-    // Don't activate to-do list mode as per user request
-    localStorage.removeItem('activateTodoMode');
+    // Encode the task text to be safe for URL
+    const encodedTaskText = encodeURIComponent(taskText);
+    
+    // Construct the URL with the query parameter
+    const chatbotUrl = `chatbot.html?query=${encodedTaskText}`;
     
     // Show a toast notification in Task Master
-    showToast('Task sent to ClassMate AI');
+    showToast("Opening ClassMate AI with task...");
     
-    // Open ClassMate AI in a new tab
-    window.open('chatbot.html', '_blank');
+    // Open ClassMate AI in a new tab with the parameter
+    window.open(chatbotUrl, "_blank");
   }
 
   // Render task cards
