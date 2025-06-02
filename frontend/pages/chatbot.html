@@ -1375,6 +1375,12 @@ Remember to break your goals into phases and tasks.`;
             // Check if content is already HTML (for To-Do list structure)
             if (content.startsWith("<div class=\"todo-list-container\">")) {
                 contentDiv.innerHTML = content;
+                container = contentDiv.querySelector(".todo-list-container")
+                
+                const label = document.createElement("span");
+                label.classList.add("todo-list-label");
+                label.textContent = "To-Do List";
+                container.insertBefore(label,container.firstChild); // Insert label at the beginning
             } else {
                 contentDiv.innerHTML = marked.parse(content);
             }
@@ -1583,10 +1589,10 @@ Remember to break your goals into phases and tasks.`;
                 const todoContainer = document.createElement("div");
                 todoContainer.classList.add("todo-list-container");
                 
-                const label = document.createElement("span");
-                label.classList.add("todo-list-label");
-                label.textContent = "To-Do List";
-                todoContainer.appendChild(label);
+                // const label = document.createElement("span");
+                // label.classList.add("todo-list-label");
+                // label.textContent = "To-Do List";
+                // todoContainer.appendChild(label);
                 
                 const contentWrapper = document.createElement("div");
                 contentWrapper.classList.add("todo-list-content");
