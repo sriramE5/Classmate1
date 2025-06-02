@@ -1459,13 +1459,13 @@ Remember to break your goals into phases and tasks.`;
             saveTodoItem.style.display = "none"; // Initially hidden
             
             // Check if the content is a To-Do list and show the option
-            if (isToDoListFormat(contentDiv.querySelector(".todo-list-content").innerText)) { // Check innerText for format
+            if (isToDoListFormat(contentDiv.innerText)) { // Check innerText for format
                 saveTodoItem.style.display = "flex"; // Show the option
             }
             
             saveTodoItem.addEventListener("click", (e) => {
                 e.stopPropagation();
-                saveToTaskMaster(contentDiv.innerText); // Save the  content of the to-do list
+                saveToTaskMaster(contentDiv.querySelector(".todo-list-content").innerText); // Save the  content of the to-do list
                 dropdown.classList.remove("show");
             });
             dropdown.appendChild(saveTodoItem);
