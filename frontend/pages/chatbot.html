@@ -1465,7 +1465,7 @@ Remember to break your goals into phases and tasks.`;
             
             saveTodoItem.addEventListener("click", (e) => {
                 e.stopPropagation();
-                saveToTaskMaster(contentDiv.getElementsByClassName("todo-list-content").innerText); // Save the  content of the to-do list
+                saveToTaskMaster(contentDiv.innerText); // Save the  content of the to-do list
                 dropdown.classList.remove("show");
             });
             dropdown.appendChild(saveTodoItem);
