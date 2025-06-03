@@ -8,7 +8,7 @@
 <style>
   /* Modern CSS Reset & Base Styles */
   :root {
-    --primary: #4f46e5;
+    --primary: linear-gradient(to right, #d9138a, #5e0f7b);
     --primary-light: #818cf8;
     --primary-dark: #4338ca;
     --secondary: #10b981;
@@ -20,6 +20,7 @@
     --highlight: #f59e0b;
     --highlight-light: #fbbf24;
     --highlight-dark: #d97706;
+    --progress: linear-gradient(to right, #d9138a, #5e0f7b);
     --neutral-50: #fafafa;
     --neutral-100: #f5f5f5;
     --neutral-200: #e5e5e5;
@@ -174,7 +175,7 @@
   }
 
   .collapsible.open .collapsible-toggle {
-    transform: rotate(180deg);
+    transform: rotate(225deg);
   }
 
   .input-container {
@@ -216,7 +217,7 @@
   }
 
   .button-primary {
-    background-color: var(--primary);
+    background: var(--primary);
     color: white;
   }
 
@@ -526,7 +527,7 @@
 
   .progress-fill {
     height: 100%;
-    background-color: var(--primary);
+    background: var(--progress);
     border-radius: var(--radius-full);
     transition: width 0.3s ease;
   }
@@ -920,8 +921,8 @@
     <!-- Collapsible input panel -->
     <div class="collapsible" id="inputPanel">
       <div class="collapsible-header" id="inputPanelHeader">
-        <h3><span><i class="fas fa-plus-circle"></i></span> Create New Tasks</h3>
-        <span class="collapsible-toggle">▼</span>
+        <h3><span><i class="fa-solid fa-pencil"></i></span> Create New Tasks</h3>
+        <span class="collapsible-toggle"><i class="fa-solid fa-plus"></i></span>
       </div>
       <div class="collapsible-content">
         <div class="input-container">
@@ -935,7 +936,7 @@ Phase 2:
 - React Basics"></textarea>
           <div style="margin-top: 1rem; text-align: right;">
             <button class="button button-primary" id="saveGoalBtn">
-              <span class="button-icon"><i class="fas fa-save"></i></span> Save Tasks
+              <span class="button-icon"><i class="fa-solid fa-download"></i></span>
             </button>
           </div>
         </div>
@@ -993,8 +994,8 @@ Phase 2:
 - React Basics"></textarea>
         </div>
         <div class="form-actions">
-          <button class="button button-secondary" id="editCancelBtn">Cancel</button>
-          <button class="button button-primary" id="editSaveBtn">Save Changes</button>
+          <button class="button button-secondary" id="editCancelBtn"><i class="fa-solid fa-xmark"></i></button>
+          <button class="button button-primary" id="editSaveBtn"><i class="fa-solid fa-download"></i></button>
         </div>
       </div>
     </div>
@@ -1462,7 +1463,7 @@ Phase 2:
       
       const progressText = document.createElement('div');
       progressText.className = 'progress-text';
-      progressText.textContent = `${completionPercentage}% complete`;
+      progressText.textContent = `${completionPercentage}% completed`;
       
       progressBar.appendChild(progressFill);
       progressContainer.appendChild(progressBar);
