@@ -1379,7 +1379,7 @@ Remember to break your goals into phases and tasks.`;
                 
                 const label = document.createElement("span");
                 label.classList.add("todo-list-label");
-                label.textContent = "To-Do List";
+                label.textContent = "<i class="fa-solid fa-list-check"></i>To-Do List";
                 container.insertBefore(label,container.firstChild); // Insert label at the beginning
             } else {
                 contentDiv.innerHTML = marked.parse(content);
@@ -1826,9 +1826,9 @@ Remember to break your goals into phases and tasks.`;
                 id: Date.now().toString() // Add an ID
             });
             localStorage.setItem("tasks", JSON.stringify(tasks));
-            showToast("To-do list saved to Task Master!");
+            showToast("To-do list saved to Task Manager!");
         } catch (e) {
-            console.error("Failed to save to Task Master:", e);
+            console.error("Failed to save to Task Manager:", e);
             showToast("Error saving To-Do list.");
         }
     }
