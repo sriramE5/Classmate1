@@ -1053,27 +1053,38 @@ Remember to break your goals into phases and tasks.`;
         });
     });
 
-    // UPDATED: Dynamic input bar expansion (1 line default, up to 10 lines, then scroll)
+    // Helper function to update button visibility and state based on input content
+    function updateInputButtonState() {
+        const hasText = userInput.value.trim() !== "";
+
+        // Toggle button visibility
+        micButton.style.display = hasText ? "none" : "flex"; // Use 'flex' as buttons are in a flex container
+        sendButton.style.display = hasText ? "flex" : "none"; // Use 'flex'
+
+        // Enable/disable send button (only relevant when it's visible)
+        sendButton.disabled = !hasText;
+    }
+
+    // UPDATED: Dynamic input bar expansion AND button toggle
     userInput.addEventListener("input", function() {
         // Reset height to calculate proper scrollHeight
         userInput.style.height = "auto";
-        
+
         // Get line height from computed style
         const lineHeight = parseFloat(getComputedStyle(userInput).lineHeight) || 24;
-        
+
         // Calculate number of lines (minimum 1, maximum 10)
         const minHeight = lineHeight * 1; // 1 line minimum
         const maxHeight = lineHeight * 10; // 10 lines maximum
-        
+
         // Set new height based on content
         const newHeight = Math.min(Math.max(userInput.scrollHeight, minHeight), maxHeight);
         userInput.style.height = newHeight + "px";
-        
-        // Enable/disable send button based on content
-        sendButton.disabled = userInput.value.trim() === "";
+
+        // Update button state based on current input value
+        updateInputButtonState();
     });
-    // Trigger initial height adjustment
-    userInput.dispatchEvent(new Event("input"));
+    // Initial state is set via calls in loadChats/switchChat/startNewChat triggered by DOMContentLoaded -> loadChats
 
     // To-Do List mode toggle with visual feedback
     todoListOption.addEventListener("click", () => {
