@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Mock Interviewer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #ffffff;            /* Main background */
+            --bg-secondary: #f5f5f5;          /* Secondary background */
+            --bg-tertiary: #eaeaea;           /* Chat bubbles or tertiary areas */
+            --text-primary: #1a1a1a;          /* Main text color */
+            --text-secondary: #555555;        /* Secondary text */
+            --accent-primary: #1543ce;        /* Primary accent (e.g., buttons) */
+            --accent-secondary: #2409bb;      /* Secondary accent (e.g., hover or action) */
+            --border-color: #cccccc;          /* Border and outlines */
+            --font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            --border-radius: 8px;
+            --header-height: 60px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+        }
+
+        header {
+            height: var(--header-height);
+            padding: 0 1.5rem;
+            background: linear-gradient(
+                to right,
+                #0d2b8c 0%,    /* Darker Blue */
+                #1543ce 20%,   /* Base Blue #1543ce */
+                #000000 40%,   /* Black Center Start */
+                #000000 60%,   /* Black Center End */
+                #1543ce 80%,   /* Base Blue #1543ce */
+                #0d2b8c 100%   /* Darker Blue */
+            );
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .header-center {
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Screen Management */
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Welcome Screen */
+        .welcome-content {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .welcome-content h2 {
+            margin-bottom: 1rem;
+            color: var(--accent-primary);
+        }
+
+        .welcome-content p {
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .domain-selection {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .domain-btn {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--accent-primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+
+        .domain-btn:hover {
+            background-color: var(--accent-secondary);
+        }
+
+        #custom-domain-input {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #custom-domain-input.hidden {
+            display: none;
+        }
+
+        #custom-domain-field {
+            padding: 0.75rem;
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+        }
+
+        #custom-domain-submit {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--accent-primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+
+        #custom-domain-submit:hover {
+            background-color: var(--accent-secondary);
+        }
+
+        /* Interview Screen */
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .chat-container::-webkit-scrollbar { width: 8px; }
+        .chat-container::-webkit-scrollbar-track { background: var(--bg-secondary); }
+        .chat-container::-webkit-scrollbar-thumb { background-color: var(--accent-primary); border-radius: var(--border-radius); border: 2px solid var(--bg-secondary); }
+
+        .message {
+            max-width: 75%;
+            padding: 0.75rem 1rem;
+            border-radius: var(--border-radius);
+            line-height: 1.5;
+            word-wrap: break-word;
+            position: relative;
+        }
+
+        .user {
+            align-self: flex-end;
+            background-color: var(--accent-primary);
+            color: #FFFFFF;
+            border-bottom-right-radius: 0;
+        }
+
+        .interviewer {
+            align-self: flex-start;
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            border-bottom-left-radius: 0;
+        }
+
+        .feedback {
+            align-self: flex-start;
+            background-color: #4CAF50; /* Green for feedback */
+            color: white;
+            border-bottom-left-radius: 0;
+            border-left: 4px solid #2E7D32; /* Darker green border */
+        }
+
+        .system {
+            align-self: center;
+            background-color: #f0f0f0;
+            color: #666;
+            font-style: italic;
+            max-width: 90%;
+            text-align: center;
+            padding: 0.5rem 1rem;
+        }
+
+        .loading-indicator {
+            display: none;
+            align-self: flex-start;
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .loading-indicator span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            margin-right: 4px;
+            border-radius: 50%;
+            background-color: var(--text-secondary);
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .loading-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .loading-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
+
+        /* Input Container */
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            padding: 1rem 1.5rem;
+            background-color: black;
+            border-top: 1px solid white;
+            width: 100%;
+            position: relative;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        .input-wrapper {
+            position: relative;
+            background-color: white;
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            min-height: 50px;
+            display: flex;
+            align-items: flex-end;
+            padding-bottom: 8px;
+        }
+
+        #user-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 8px 0;
+            font-family: var(--font-family);
+            font-size: 1rem;
+            resize: none;
+            outline: none;
+            max-height: calc(1.5em * 10);
+            min-height: calc(1.5em * 1);
+            overflow-y: auto;
+            line-height: 1.5em;
+            align-self: stretch;
+            margin-right: 8px;
+        }
+
+        .input-buttons {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+            padding-bottom: 4px;
+        }
+
+        .input-button {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 8px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .input-button:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        #mic-button {
+            color: var(--text-secondary);
+        }
+
+        #mic-button.recording {
+            color: #ff4d4d;
+        }
+
+        #send-button {
+            color: var(--accent-primary);
+        }
+
+        #send-button:disabled {
+            color: var(--text-secondary);
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #feedback-button {
+            color: #4CAF50;
+        }
+
+        .interview-controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        #end-interview-btn {
+            padding: 0.5rem 1rem;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+
+        #end-interview-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        /* Summary Screen */
+        .summary-content {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .summary-content h2 {
+            margin-bottom: 1.5rem;
+            color: var(--accent-primary);
+            text-align: center;
+        }
+
+        #summary-container {
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .summary-actions {
+            display: flex;
+            justify-content: center;
+        }
+
+        #new-interview-btn {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--accent-primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+
+        #new-interview-btn:hover {
+            background-color: var(--accent-secondary);
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 4px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+
+        /* Speech Controls */
+        .speech-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.5rem;
+            gap: 1rem;
+        }
+
+        .speech-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 20px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #4CAF50;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+
+        /* Voice settings */
+        .voice-settings {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+        }
+
+        #voice-select {
+            padding: 0.25rem;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background-color: white;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .welcome-content,
+            .summary-content {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+
+            .domain-selection {
+                gap: 0.5rem;
+            }
+
+            .domain-btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .message {
+                max-width: 85%;
+            }
+
+            .input-container {
+                padding: 0.75rem 1rem;
+            }
+
+            .speech-controls {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .domain-btn {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.85rem;
+            }
+
+            .message {
+                max-width: 90%;
+            }
+
+            .input-buttons {
+                gap: 4px;
+            }
+
+            .input-button {
+                font-size: 1rem;
+                padding: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" id="app-container">
+        <!-- Header -->
+        <header>
+            <div class="header-center">
+                <h1>AI Mock Interviewer</h1>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main>
+            <!-- Welcome Screen (shown first) -->
+            <div id="welcome-screen" class="screen active">
+                <div class="welcome-content">
+                    <h2>Welcome to your Mock Interview</h2>
+                    <p>I'll help you prepare for your next interview with realistic questions and feedback.</p>
+                    <p>Please select the domain you'd like to practice:</p>
+                    <div class="domain-selection">
+                        <button class="domain-btn" data-domain="software-engineering">Software Engineering</button>
+                        <button class="domain-btn" data-domain="data-science">Data Science</button>
+                        <button class="domain-btn" data-domain="product-management">Product Management</button>
+                        <button class="domain-btn" data-domain="marketing">Marketing</button>
+                        <button class="domain-btn" data-domain="sales">Sales</button>
+                        <button class="domain-btn" data-domain="finance">Finance</button>
+                        <button class="domain-btn" data-domain="hr">Human Resources</button>
+                        <button class="domain-btn" data-domain="custom">Custom Domain</button>
+                    </div>
+                    <div id="custom-domain-input" class="hidden">
+                        <input type="text" id="custom-domain-field" placeholder="Enter your domain (e.g., Mechanical Engineering)">
+                        <button id="custom-domain-submit">Start Interview</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interview Screen -->
+            <div id="interview-screen" class="screen">
+                <div class="chat-container" id="chat-container">
+                    <!-- Messages will be added here dynamically -->
+                </div>
+                <div class="loading-indicator" id="loading-indicator">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+
+            <!-- Summary Screen -->
+            <div id="summary-screen" class="screen">
+                <div class="summary-content">
+                    <h2>Interview Summary</h2>
+                    <div id="summary-container">
+                        <!-- Summary content will be added here dynamically -->
+                    </div>
+                    <div class="summary-actions">
+                        <button id="new-interview-btn">Start New Interview</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Input Container (only shown during interview) -->
+        <div class="input-container" id="input-container">
+            <div class="input-wrapper">
+                <textarea id="user-input" placeholder="Type your answer here..." rows="1"></textarea>
+                <div class="input-buttons">
+                    <button class="input-button" id="feedback-button" title="Request Feedback"><i class="fas fa-comment-dots"></i></button>
+                    <button class="input-button" id="mic-button" title="Speak"><i class="fas fa-microphone"></i></button>
+                    <button class="input-button" id="send-button" title="Send Message"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+            <div class="speech-controls">
+                <div class="speech-toggle">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="speech-toggle" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span>Text-to-Speech</span>
+                </div>
+                <div class="voice-settings">
+                    <label for="voice-select">Voice:</label>
+                    <select id="voice-select"></select>
+                </div>
+            </div>
+            <div class="interview-controls">
+                <button id="end-interview-btn">End Interview</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast notification element -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const welcomeScreen = document.getElementById('welcome-screen');
+            const interviewScreen = document.getElementById('interview-screen');
+            const summaryScreen = document.getElementById('summary-screen');
+            const chatContainer = document.getElementById('chat-container');
+            const userInput = document.getElementById('user-input');
+            const sendButton = document.getElementById('send-button');
+            const micButton = document.getElementById('mic-button');
+            const feedbackButton = document.getElementById('feedback-button');
+            const endInterviewBtn = document.getElementById('end-interview-btn');
+            const newInterviewBtn = document.getElementById('new-interview-btn');
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const inputContainer = document.getElementById('input-container');
+            const domainButtons = document.querySelectorAll('.domain-btn');
+            const customDomainInput = document.getElementById('custom-domain-input');
+            const customDomainField = document.getElementById('custom-domain-field');
+            const customDomainSubmit = document.getElementById('custom-domain-submit');
+            const summaryContainer = document.getElementById('summary-container');
+            const toast = document.getElementById('toast');
+            const speechToggle = document.getElementById('speech-toggle');
+            const voiceSelect = document.getElementById('voice-select');
+
+            // State variables
+            let currentDomain = '';
+            let interviewInProgress = false;
+            let isRecording = false;
+            let recognition = null;
+            let messageBeingSent = false;
+            let interviewContext = {
+                questions: [],
+                answers: [],
+                feedback: [],
+                currentQuestionIndex: 0
+            };
+            let isSpeechEnabled = true;
+            let synth = window.speechSynthesis;
+            let voices = [];
+
+            // Server URL for AI backend (same as in the original code)
+            const serverUrl = "https://classmate1-ffw7.onrender.com";
+
+            // Base prompts for different interview stages
+            const INTERVIEW_PROMPT_BASE = `You are an AI Mock Interviewer, designed to conduct realistic interviews via speech and text. 
+            You work in interview mode only.
+
+            Your current task is to conduct a professional interview in the {domain} domain.
+            Follow these guidelines:
+            - Ask one interview question at a time.
+            - Keep the flow natural and professional.
+            - Avoid repeating questions. Track context during the session.
+            - Format your output for both speech and text display.
+
+            Current interview context:
+            {context}
+
+            Your response should be ONLY the next interview question, formatted professionally.`;
+
+            const FEEDBACK_PROMPT_BASE = `You are an AI Mock Interviewer, designed to conduct realistic interviews via speech and text.
+            You work in interview mode only.
+
+            Your current task is to provide feedback on the candidate's answer in a {domain} interview.
+            Follow these guidelines:
+            - Provide constructive, specific feedback on the most recent answer.
+            - Highlight strengths and areas for improvement.
+            - Keep feedback professional, concise, and actionable.
+            - Format your output for both speech and text display.
+
+            Current interview context:
+            {context}
+
+            Your response should be ONLY the feedback on the most recent answer, formatted professionally.`;
+
+            const SUMMARY_PROMPT_BASE = `You are an AI Mock Interviewer, designed to conduct realistic interviews via speech and text.
+            You work in interview mode only.
+
+            Your current task is to provide a summary of the entire {domain} interview that just concluded.
+            Follow these guidelines:
+            - Provide an overall assessment of the candidate's performance.
+            - Highlight 2-3 key strengths demonstrated during the interview.
+            - Suggest 2-3 specific areas for improvement.
+            - Offer actionable advice for future interviews.
+            - Format your output for both speech and text display.
+
+            Complete interview context:
+            {context}
+
+            Your response should be a comprehensive interview summary with clear sections for overall assessment, strengths, areas for improvement, and advice.`;
+
+            // Initialize speech recognition if available
+            function initSpeechRecognition() {
+                if ('webkitSpeechRecognition' in window) {
+                    recognition = new webkitSpeechRecognition();
+                    recognition.continuous = false;
+                    recognition.interimResults = true;
+                    recognition.lang = 'en-US';
+
+                    recognition.onstart = function() {
+                        isRecording = true;
+                        micButton.classList.add('recording');
+                        showToast('Listening...');
+                    };
+
+                    recognition.onresult = function(event) {
+                        const transcript = Array.from(event.results)
+                            .map(result => result[0])
+                            .map(result => result.transcript)
+                            .join('');
+                        
+                        userInput.value = transcript;
+                        userInput.dispatchEvent(new Event('input'));
+                    };
+
+                    recognition.onerror = function(event) {
+                        console.error('Speech recognition error', event.error);
+                        isRecording = false;
+                        micButton.classList.remove('recording');
+                        showToast('Speech recognition error: ' + event.error);
+                    };
+
+                    recognition.onend = function() {
+                        isRecording = false;
+                        micButton.classList.remove('recording');
+                    };
+                } else {
+                    micButton.style.display = 'none';
+                    showToast('Speech recognition not supported in this browser');
+                }
+            }
+
+            // Initialize text-to-speech
+            function initTextToSpeech() {
+                if ('speechSynthesis' in window) {
+                    // Populate voice select dropdown
+                    function populateVoiceList() {
+                        voices = synth.getVoices();
+                        voiceSelect.innerHTML = '';
+                        
+                        // Filter for English voices
+                        const englishVoices = voices.filter(voice => voice.lang.includes('en'));
+                        const voicesToUse = englishVoices.length > 0 ? englishVoices : voices;
+                        
+                        voicesToUse.forEach((voice, i) => {
+                            const option = document.createElement('option');
+                            option.textContent = voice.name + ' (' + voice.lang + ')';
+                            option.setAttribute('data-voice-index', i);
+                            option.setAttribute('value', voice.name);
+                            voiceSelect.appendChild(option);
+                        });
+                        
+                        // Try to select a good default voice
+                        const preferredVoices = ['Google UK English Male', 'Microsoft David', 'Alex'];
+                        let defaultVoice = 0;
+                        
+                        for (const preferred of preferredVoices) {
+                            const index = Array.from(voiceSelect.options).findIndex(
+                                option => option.value.includes(preferred)
+                            );
+                            if (index !== -1) {
+                                defaultVoice = index;
+                                break;
+                            }
+                        }
+                        
+                        voiceSelect.selectedIndex = defaultVoice;
+                    }
+                    
+                    populateVoiceList();
+                    
+                    if (speechSynthesis.onvoiceschanged !== undefined) {
+                        speechSynthesis.onvoiceschanged = populateVoiceList;
+                    }
+                } else {
+                    speechToggle.checked = false;
+                    speechToggle.disabled = true;
+                    voiceSelect.disabled = true;
+                    showToast('Text-to-speech not supported in this browser');
+                }
+            }
+
+            // Function to speak text
+            function speakText(text) {
+                if (!isSpeechEnabled || !synth) return;
+                
+                // Cancel any ongoing speech
+                synth.cancel();
+                
+                // Create a new utterance
+                const utterance = new SpeechSynthesisUtterance(text);
+                
+                // Set the selected voice
+                const selectedOption = voiceSelect.selectedOptions[0].getAttribute('data-voice-index');
+                if (selectedOption && voices[selectedOption]) {
+                    utterance.voice = voices[selectedOption];
+                }
+                
+                // Set other properties
+                utterance.pitch = 1;
+                utterance.rate = 1;
+                utterance.volume = 1;
+                
+                // Speak the text
+                synth.speak(utterance);
+            }
+
+            // Event Listeners
+            domainButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const domain = this.dataset.domain;
+                    if (domain === 'custom') {
+                        customDomainInput.classList.remove('hidden');
+                        customDomainField.focus();
+                    } else {
+                        startInterview(domain);
+                    }
+                });
+            });
+
+            customDomainSubmit.addEventListener('click', function() {
+                const customDomain = customDomainField.value.trim();
+                if (customDomain) {
+                    startInterview(customDomain);
+                } else {
+                    showToast('Please enter a domain');
+                }
+            });
+
+            // Speech toggle
+            speechToggle.addEventListener('change', function() {
+                isSpeechEnabled = this.checked;
+                if (isSpeechEnabled) {
+                    showToast('Text-to-speech enabled');
+                    voiceSelect.disabled = false;
+                } else {
+                    showToast('Text-to-speech disabled');
+                    voiceSelect.disabled = true;
+                    if (synth) synth.cancel(); // Stop any ongoing speech
+                }
+            });
+
+            // Helper function to update button visibility and state based on input content
+            function updateInputButtonState() {
+                const hasText = userInput.value.trim() !== '';
+                
+                // Toggle button visibility
+                micButton.style.display = hasText ? 'none' : 'flex';
+                sendButton.style.display = hasText ? 'flex' : 'none';
+                
+                // Enable/disable send button
+                sendButton.disabled = !hasText;
+            }
+
+            // Dynamic input bar expansion
+            userInput.addEventListener('input', function() {
+                // Reset height to calculate proper scrollHeight
+                userInput.style.height = 'auto';
+                
+                // Get line height from computed style
+                const lineHeight = parseFloat(getComputedStyle(userInput).lineHeight) || 24;
+                
+                // Calculate number of lines (minimum 1, maximum 10)
+                const minHeight = lineHeight * 1;
+                const maxHeight = lineHeight * 10;
+                
+                // Set new height based on content
+                const newHeight = Math.min(Math.max(userInput.scrollHeight, minHeight), maxHeight);
+                userInput.style.height = newHeight + 'px';
+                
+                // Update button state based on current input value
+                updateInputButtonState();
+            });
+
+            sendButton.addEventListener('click', sendUserMessage);
+            
+            userInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendUserMessage();
+                }
+            });
+
+            micButton.addEventListener('click', function() {
+                if (!isRecording && recognition) {
+                    recognition.start();
+                } else if (isRecording && recognition) {
+                    recognition.stop();
+                }
+            });
+
+            feedbackButton.addEventListener('click', requestFeedback);
+            
+            endInterviewBtn.addEventListener('click', endInterview);
+            
+            newInterviewBtn.addEventListener('click', function() {
+                // Reset to welcome screen
+                switchToScreen('welcome');
+                resetInterview();
+            });
+
+            // Functions
+            function switchToScreen(screenName) {
+                // Hide all screens
+                welcomeScreen.classList.remove('active');
+                interviewScreen.classList.remove('active');
+                summaryScreen.classList.remove('active');
+                
+                // Show input container only during interview
+                inputContainer.style.display = screenName === 'interview' ? 'flex' : 'none';
+                
+                // Show the requested screen
+                switch(screenName) {
+                    case 'welcome':
+                        welcomeScreen.classList.add('active');
+                        break;
+                    case 'interview':
+                        interviewScreen.classList.add('active');
+                        break;
+                    case 'summary':
+                        summaryScreen.classList.add('active');
+                        break;
+                }
+            }
+
+            function startInterview(domain) {
+                currentDomain = domain;
+                interviewInProgress = true;
+                interviewContext = {
+                    questions: [],
+                    answers: [],
+                    feedback: [],
+                    currentQuestionIndex: 0,
+                    domain: domain
+                };
+                
+                // Switch to interview screen
+                switchToScreen('interview');
+                
+                // Clear chat container
+                chatContainer.innerHTML = '';
+                
+                // Add system message
+                addMessageToUI('system', `Starting interview in ${domain}`);
+                
+                // Request first question
+                requestNextQuestion();
+            }
+
+            function resetInterview() {
+                currentDomain = '';
+                interviewInProgress = false;
+                interviewContext = {
+                    questions: [],
+                    answers: [],
+                    feedback: [],
+                    currentQuestionIndex: 0
+                };
+                
+                // Clear chat container
+                chatContainer.innerHTML = '';
+                
+                // Reset input
+                userInput.value = '';
+                userInput.dispatchEvent(new Event('input'));
+                userInput.placeholder = 'Type your answer here...';
+                userInput.disabled = false;
+                
+                // Stop any ongoing speech
+                if (synth) synth.cancel();
+            }
+
+            async function sendUserMessage() {
+                const messageText = userInput.value.trim();
+                if (!messageText || messageBeingSent) return;
+                
+                messageBeingSent = true;
+                sendButton.disabled = true;
+                userInput.value = '';
+                userInput.dispatchEvent(new Event('input'));
+                userInput.disabled = true;
+                
+                // Add user message to UI
+                addMessageToUI('user', messageText);
+                
+                // Check for special commands
+                if (messageText.toLowerCase() === 'end interview') {
+                    endInterview();
+                    messageBeingSent = false;
+                    userInput.disabled = false;
+                    return;
+                }
+                
+                // Store the answer
+                interviewContext.answers.push(messageText);
+                
+                // Check if feedback was requested
+                if (messageText.toLowerCase().includes('give feedback') || 
+                    messageText.toLowerCase().includes('evaluate')) {
+                    await requestFeedback();
+                } else {
+                    // Request next question
+                    await requestNextQuestion();
+                }
+                
+                messageBeingSent = false;
+                userInput.disabled = false;
+            }
+
+            function formatContextForPrompt(context) {
+                const formatted = [];
+                
+                // Add domain information
+                if (context.domain) {
+                    formatted.push(`Interview Domain: ${context.domain}`);
+                }
+                
+                // Add questions and answers as a conversation
+                const questions = context.questions || [];
+                const answers = context.answers || [];
+                
+                formatted.push("\nInterview History:");
+                
+                // Pair questions with answers
+                for (let i = 0; i < Math.min(questions.length, answers.length); i++) {
+                    formatted.push(`Question ${i+1}: ${questions[i]}`);
+                    formatted.push(`Answer ${i+1}: ${answers[i]}`);
+                }
+                
+                // Add any unpaired questions (in case there are more questions than answers)
+                if (questions.length > answers.length) {
+                    formatted.push(`Question ${questions.length}: ${questions[questions.length-1]}`);
+                    formatted.push("(Awaiting answer)");
+                }
+                
+                // Add feedback history if available
+                const feedbackList = context.feedback || [];
+                if (feedbackList.length > 0) {
+                    formatted.push("\nFeedback History:");
+                    for (let i = 0; i < feedbackList.length; i++) {
+                        formatted.push(`Feedback ${i+1}: ${feedbackList[i]}`);
+                    }
+                }
+                
+                return formatted.join("\n");
+            }
+
+            async function requestNextQuestion() {
+                loadingIndicator.style.display = 'flex';
+                
+                try {
+                    // Format context for the prompt
+                    const formattedContext = formatContextForPrompt(interviewContext);
+                    
+                    // Create prompt for the AI
+                    const prompt = INTERVIEW_PROMPT_BASE
+                        .replace('{domain}', currentDomain)
+                        .replace('{context}', formattedContext);
+                    
+                    // Call the AI backend
+                    const response = await fetch(`${serverUrl}/api/chat`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ prompt: prompt }),
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    const question = data.reply || "I don't have any more questions. Would you like to end the interview?";
+                    
+                    // Store the question
+                    interviewContext.questions.push(question);
+                    interviewContext.currentQuestionIndex++;
+                    
+                    // Add interviewer message to UI
+                    addMessageToUI('interviewer', question);
+                    
+                    // Speak the question
+                    speakText(question);
+                    
+                } catch (error) {
+                    console.error('Error requesting next question:', error);
+                    addMessageToUI('system', 'Error requesting next question. Please try again.');
+                } finally {
+                    loadingIndicator.style.display = 'none';
+                }
+            }
+
+            async function requestFeedback() {
+                if (interviewContext.answers.length === 0) {
+                    showToast('Please answer a question first before requesting feedback');
+                    return;
+                }
+                
+                loadingIndicator.style.display = 'flex';
+                
+                try {
+                    // Format context for the prompt
+                    const formattedContext = formatContextForPrompt(interviewContext);
+                    
+                    // Create prompt for the AI
+                    const prompt = FEEDBACK_PROMPT_BASE
+                        .replace('{domain}', currentDomain)
+                        .replace('{context}', formattedContext);
+                    
+                    // Call the AI backend
+                    const response = await fetch(`${serverUrl}/api/chat`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ prompt: prompt }),
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    const feedback = data.reply || "I don't have specific feedback at this time.";
+                    
+                    // Store the feedback
+                    interviewContext.feedback.push(feedback);
+                    
+                    // Add feedback message to UI
+                    addMessageToUI('feedback', feedback);
+                    
+                    // Speak the feedback
+                    speakText(feedback);
+                    
+                } catch (error) {
+                    console.error('Error requesting feedback:', error);
+                    addMessageToUI('system', 'Error requesting feedback. Please try again.');
+                } finally {
+                    loadingIndicator.style.display = 'none';
+                }
+            }
+
+            async function endInterview() {
+                if (!interviewInProgress) return;
+                
+                interviewInProgress = false;
+                loadingIndicator.style.display = 'flex';
+                
+                try {
+                    // Format context for the prompt
+                    const formattedContext = formatContextForPrompt(interviewContext);
+                    
+                    // Create prompt for the AI
+                    const prompt = SUMMARY_PROMPT_BASE
+                        .replace('{domain}', currentDomain)
+                        .replace('{context}', formattedContext);
+                    
+                    // Call the AI backend
+                    const response = await fetch(`${serverUrl}/api/chat`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ prompt: prompt }),
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    const summary = data.reply || "Thank you for completing the interview.";
+                    
+                    // Display summary
+                    summaryContainer.innerHTML = summary;
+                    
+                    // Switch to summary screen
+                    switchToScreen('summary');
+                    
+                    // Speak the summary
+                    speakText(summary);
+                    
+                } catch (error) {
+                    console.error('Error generating summary:', error);
+                    addMessageToUI('system', 'Error generating interview summary. Please try again.');
+                } finally {
+                    loadingIndicator.style.display = 'none';
+                }
+            }
+
+            function addMessageToUI(sender, content) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', sender);
+                
+                if (sender === 'system') {
+                    messageDiv.textContent = content;
+                } else {
+                    messageDiv.innerHTML = content;
+                }
+                
+                chatContainer.appendChild(messageDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight; // Scroll to bottom
+            }
+
+            function showToast(message) {
+                toast.textContent = message;
+                toast.classList.add('show');
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+
+            // Initialize
+            initSpeechRecognition();
+            initTextToSpeech();
+            switchToScreen('welcome');
+            updateInputButtonState();
+        });
+    </script>
+</body>
+</html>
