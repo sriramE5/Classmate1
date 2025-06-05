@@ -648,7 +648,7 @@
                 <!-- Left side of header (empty for now) -->
             </div>
             <div class="header-center">
-                <img id="header-logo-title" src="../logos/interviewerheader.png" alt="AI Interviewer" style="height: 55px;"> <!-- Placeholder for logo/title image -->
+                <img id="header-logo-title" src="logoheaderAi.png" alt="Logo and Title" style="height: 40px;"> <!-- Placeholder for logo/title image -->
             </div>
             <div class="header-right">
                 <div class="settings-dropdown">
@@ -885,7 +885,7 @@
                 if ('webkitSpeechRecognition' in window) {
                     recognition = new webkitSpeechRecognition();
                     recognition.continuous = false;
-                    recognition.interimResults = true;
+                    recognition.interimResults = false;
                     recognition.lang = 'en-US';
 
                     recognition.onstart = function() {
