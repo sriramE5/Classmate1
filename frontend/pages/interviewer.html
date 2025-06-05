@@ -58,11 +58,15 @@
             border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             font-size: 1.2rem;
             font-weight: 600;
             color: white;
             flex-shrink: 0;
+        }
+
+        .header-left {
+            width: 200px;
         }
 
         .header-center {
@@ -70,6 +74,130 @@
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+
+        .header-right {
+            width: 200px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        /* Settings Dropdown */
+        .settings-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .settings-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .settings-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            min-width: 250px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            color: var(--text-primary);
+        }
+
+        .settings-dropdown:hover .settings-content {
+            display: block;
+        }
+
+        .settings-section {
+            margin-bottom: 15px;
+        }
+
+        .settings-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .settings-section h3 {
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+
+        /* Speech Toggle */
+        .speech-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 10px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 20px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #4CAF50;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+
+        /* Voice settings */
+        .voice-settings {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        #voice-select {
+            padding: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background-color: white;
+            font-size: 0.9rem;
+            width: 100%;
         }
 
         main {
@@ -258,7 +386,7 @@
             display: flex;
             flex-direction: column;
             padding: 1rem 1.5rem;
-            background-color: black;
+            background-color: rgb(255, 255, 255);
             border-top: 1px solid white;
             width: 100%;
             position: relative;
@@ -344,6 +472,14 @@
             color: #4CAF50;
         }
 
+        #feedback-button.mic-mode {
+            color: var(--text-secondary);
+        }
+
+        #feedback-button.mic-mode.recording {
+            color: #ff4d4d;
+        }
+
         .interview-controls {
             display: flex;
             justify-content: center;
@@ -425,82 +561,28 @@
             opacity: 1;
         }
 
-        /* Speech Controls */
-        .speech-controls {
+        /* Command buttons */
+        .command-buttons {
             display: flex;
-            align-items: center;
+            flex-wrap: wrap;
             justify-content: center;
+            gap: 0.5rem;
             margin-top: 0.5rem;
-            gap: 1rem;
         }
 
-        .speech-toggle {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        .command-btn {
+            padding: 0.4rem 0.8rem;
+            background-color: #333;
             color: white;
-            font-size: 0.9rem;
-        }
-
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 40px;
-            height: 20px;
-        }
-
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .toggle-slider {
-            position: absolute;
+            border: none;
+            border-radius: var(--border-radius);
             cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 20px;
+            font-size: 0.8rem;
+            transition: background-color 0.2s;
         }
 
-        .toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 2px;
-            bottom: 2px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .toggle-slider {
-            background-color: #4CAF50;
-        }
-
-        input:checked + .toggle-slider:before {
-            transform: translateX(20px);
-        }
-
-        /* Voice settings */
-        .voice-settings {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: white;
-        }
-
-        #voice-select {
-            padding: 0.25rem;
-            border-radius: 4px;
-            border: 1px solid var(--border-color);
-            background-color: white;
-            font-size: 0.9rem;
+        .command-btn:hover {
+            background-color: #555;
         }
 
         /* Responsive Design */
@@ -527,10 +609,9 @@
             .input-container {
                 padding: 0.75rem 1rem;
             }
-
-            .speech-controls {
-                flex-direction: column;
-                gap: 0.5rem;
+            
+            .header-left, .header-right {
+                width: auto;
             }
         }
 
@@ -552,6 +633,10 @@
                 font-size: 1rem;
                 padding: 6px;
             }
+            
+            .header-center h1 {
+                font-size: 1.2rem;
+            }
         }
     </style>
 </head>
@@ -559,8 +644,36 @@
     <div class="app-container" id="app-container">
         <!-- Header -->
         <header>
+            <div class="header-left">
+                <!-- Left side of header (empty for now) -->
+            </div>
             <div class="header-center">
-                <h1>AI Mock Interviewer</h1>
+                <img id="header-logo-title" src="C:\Users\srira\Desktop\Projects\ClassMate\ClassMate\assets\interviewerheader.png" alt="AI Interviewer" style="height: 55px;"> <!-- Placeholder for logo/title image -->
+            </div>
+            <div class="header-right">
+                <div class="settings-dropdown">
+                    <button class="settings-btn">
+                        <i class="fas fa-cog"></i> <!-- Removed " Settings" text -->
+                    </button>
+                    <div class="settings-content">
+                        <div class="settings-section">
+                            <h3>Speech Options</h3>
+                            <div class="speech-toggle">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="speech-toggle" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span>Text-to-Speech</span>
+                            </div>
+                        </div>
+                        <div class="settings-section">
+                            <h3>Voice Selection</h3>
+                            <div class="voice-settings">
+                                <select id="voice-select"></select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </header>
 
@@ -623,18 +736,9 @@
                     <button class="input-button" id="send-button" title="Send Message"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
-            <div class="speech-controls">
-                <div class="speech-toggle">
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="speech-toggle" checked>
-                        <span class="toggle-slider"></span>
-                    </label>
-                    <span>Text-to-Speech</span>
-                </div>
-                <div class="voice-settings">
-                    <label for="voice-select">Voice:</label>
-                    <select id="voice-select"></select>
-                </div>
+            <div class="command-buttons">
+                <button class="command-btn" id="repeat-btn">Repeat Question</button>
+                <button class="command-btn" id="clarify-btn">Ask for Clarification</button>
             </div>
             <div class="interview-controls">
                 <button id="end-interview-btn">End Interview</button>
@@ -655,8 +759,8 @@
             const chatContainer = document.getElementById('chat-container');
             const userInput = document.getElementById('user-input');
             const sendButton = document.getElementById('send-button');
-            const micButton = document.getElementById('mic-button');
-            const feedbackButton = document.getElementById('feedback-button');
+            const micButton = document.getElementById('mic-button'); // Mic button when input is empty
+            const feedbackButton = document.getElementById('feedback-button'); // Acts as feedback or mic when input has text
             const endInterviewBtn = document.getElementById('end-interview-btn');
             const newInterviewBtn = document.getElementById('new-interview-btn');
             const loadingIndicator = document.getElementById('loading-indicator');
@@ -669,6 +773,8 @@
             const toast = document.getElementById('toast');
             const speechToggle = document.getElementById('speech-toggle');
             const voiceSelect = document.getElementById('voice-select');
+            const repeatBtn = document.getElementById('repeat-btn');
+            const clarifyBtn = document.getElementById('clarify-btn');
 
             // State variables
             let currentDomain = '';
@@ -680,11 +786,14 @@
                 questions: [],
                 answers: [],
                 feedback: [],
-                currentQuestionIndex: 0
+                currentQuestionIndex: 0,
+                interviewStage: 'basic', // Start with basic questions
+                lastUserResponse: '' // Track the last user response for context
             };
             let isSpeechEnabled = true;
             let synth = window.speechSynthesis;
             let voices = [];
+            let lastQuestion = '';
 
             // Server URL for AI backend (same as in the original code)
             const serverUrl = "https://classmate1-ffw7.onrender.com";
@@ -695,15 +804,25 @@
 
             Your current task is to conduct a professional interview in the {domain} domain.
             Follow these guidelines:
+            - The interview has two stages: basic questions first, then technical questions.
+            - Current stage: {stage}
+            - For basic stage: Ask general interview questions like background, experience, strengths/weaknesses, etc.
+            - For technical stage: Ask domain-specific technical questions related to {domain}.
             - Ask one interview question at a time.
             - Keep the flow natural and professional.
             - Avoid repeating questions. Track context during the session.
-            - Format your output for both speech and text display.
+            - IMPORTANT: Always generate fresh, unique questions based on the context.
+            - CRITICAL: Your next question MUST directly relate to and build upon the candidate's previous answer.
+            - If the candidate mentioned specific skills, experiences, or interests in their answer, ask follow-up questions about those topics.
+            - If the candidate's answer was brief or vague, ask for more specific details or examples.
+            - Never use saved or canned responses - each question must be tailored to what the candidate just said.
 
             Current interview context:
             {context}
 
-            Your response should be ONLY the next interview question, formatted professionally.`;
+            Last user response: {lastResponse}
+
+            Your response should be ONLY the next interview question, formatted professionally. DO NOT include any prefixes like "text:" or "speech:".`;
 
             const FEEDBACK_PROMPT_BASE = `You are an AI Mock Interviewer, designed to conduct realistic interviews via speech and text.
             You work in interview mode only.
@@ -713,12 +832,35 @@
             - Provide constructive, specific feedback on the most recent answer.
             - Highlight strengths and areas for improvement.
             - Keep feedback professional, concise, and actionable.
-            - Format your output for both speech and text display.
+            - IMPORTANT: Always generate fresh, unique feedback based on the specific answer.
+            - Your feedback must directly address the content and delivery of the candidate's response.
+            - Never use saved or canned responses.
 
             Current interview context:
             {context}
 
-            Your response should be ONLY the feedback on the most recent answer, formatted professionally.`;
+            Last user response: {lastResponse}
+
+            Your response should be ONLY the feedback on the most recent answer, formatted professionally. DO NOT include any prefixes like "text:" or "speech:".`;
+
+            const CLARIFY_PROMPT_BASE = `You are an AI Mock Interviewer, designed to conduct realistic interviews via speech and text.
+            You work in interview mode only.
+
+            Your current task is to clarify your previous question in a {domain} interview.
+            Follow these guidelines:
+            - Provide a clearer explanation or rephrase your previous question.
+            - Add context or examples if helpful.
+            - Keep clarification professional and helpful.
+            - Consider the candidate's previous answers when clarifying.
+
+            Current interview context:
+            {context}
+
+            Previous question: {question}
+
+            Last user response: {lastResponse}
+
+            Your response should be ONLY a clarification of the previous question, formatted professionally. DO NOT include any prefixes like "text:" or "speech:".`;
 
             const SUMMARY_PROMPT_BASE = `You are an AI Mock Interviewer, designed to conduct realistic interviews via speech and text.
             You work in interview mode only.
@@ -729,12 +871,14 @@
             - Highlight 2-3 key strengths demonstrated during the interview.
             - Suggest 2-3 specific areas for improvement.
             - Offer actionable advice for future interviews.
-            - Format your output for both speech and text display.
+            - IMPORTANT: Always generate a fresh, unique summary based on the specific interview.
+            - Reference specific answers the candidate gave during the interview.
+            - Never use saved or canned responses.
 
             Complete interview context:
             {context}
 
-            Your response should be a comprehensive interview summary with clear sections for overall assessment, strengths, areas for improvement, and advice.`;
+            Your response should be a comprehensive interview summary with clear sections for overall assessment, strengths, areas for improvement, and advice. DO NOT include any prefixes like "text:" or "speech:".`;
 
             // Initialize speech recognition if available
             function initSpeechRecognition() {
@@ -746,7 +890,13 @@
 
                     recognition.onstart = function() {
                         isRecording = true;
-                        micButton.classList.add('recording');
+                        // Update correct button based on mode
+                        const hasText = userInput.value.trim() !== '';
+                        if (hasText) {
+                            feedbackButton.classList.add('recording');
+                        } else {
+                            micButton.classList.add('recording');
+                        }
                         showToast('Listening...');
                     };
 
@@ -756,7 +906,10 @@
                             .map(result => result.transcript)
                             .join('');
                         
-                        userInput.value = transcript;
+                        // Append transcript to existing text if any
+                        const currentText = userInput.value;
+                        const separator = currentText.length > 0 && currentText.slice(-1) !== ' ' ? ' ' : '';
+                        userInput.value = currentText + separator + transcript;
                         userInput.dispatchEvent(new Event('input'));
                     };
 
@@ -764,15 +917,18 @@
                         console.error('Speech recognition error', event.error);
                         isRecording = false;
                         micButton.classList.remove('recording');
+                        feedbackButton.classList.remove('recording');
                         showToast('Speech recognition error: ' + event.error);
                     };
 
                     recognition.onend = function() {
                         isRecording = false;
                         micButton.classList.remove('recording');
+                        feedbackButton.classList.remove('recording');
                     };
                 } else {
                     micButton.style.display = 'none';
+                    feedbackButton.style.display = 'none'; // Hide feedback button too if no mic
                     showToast('Speech recognition not supported in this browser');
                 }
             }
@@ -887,13 +1043,44 @@
                 }
             });
 
+            // Command buttons
+            repeatBtn.addEventListener('click', function() {
+                if (lastQuestion) {
+                    addMessageToUI('interviewer', lastQuestion);
+                    speakText(lastQuestion);
+                } else {
+                    showToast('No question to repeat');
+                }
+            });
+
+            clarifyBtn.addEventListener('click', function() {
+                if (lastQuestion) {
+                    requestClarification();
+                } else {
+                    showToast('No question to clarify');
+                }
+            });
+
             // Helper function to update button visibility and state based on input content
             function updateInputButtonState() {
                 const hasText = userInput.value.trim() !== '';
                 
                 // Toggle button visibility
-                micButton.style.display = hasText ? 'none' : 'flex';
-                sendButton.style.display = hasText ? 'flex' : 'none';
+                micButton.style.display = hasText ? 'none' : 'flex'; // Mic only when empty
+                sendButton.style.display = hasText ? 'flex' : 'none'; // Send only when text
+                feedbackButton.style.display = 'flex'; // Always show feedback/mic button
+                
+                // Change feedback button icon and title based on text presence
+                const feedbackIcon = feedbackButton.querySelector('i');
+                if (hasText) {
+                    feedbackIcon.className = 'fas fa-microphone'; // Change to mic icon
+                    feedbackButton.title = 'Append Speech';
+                    feedbackButton.classList.add('mic-mode');
+                } else {
+                    feedbackIcon.className = 'fas fa-comment-dots'; // Change back to feedback icon
+                    feedbackButton.title = 'Request Feedback';
+                    feedbackButton.classList.remove('mic-mode');
+                }
                 
                 // Enable/disable send button
                 sendButton.disabled = !hasText;
@@ -928,15 +1115,30 @@
                 }
             });
 
+            // Mic button (only active when input is empty)
             micButton.addEventListener('click', function() {
-                if (!isRecording && recognition) {
+                if (!isRecording && recognition && userInput.value.trim() === '') {
                     recognition.start();
                 } else if (isRecording && recognition) {
                     recognition.stop();
                 }
             });
 
-            feedbackButton.addEventListener('click', requestFeedback);
+            // Feedback button (acts as feedback or mic)
+            feedbackButton.addEventListener('click', function() {
+                const hasText = userInput.value.trim() !== '';
+                if (hasText) {
+                    // Act as mic button (append speech)
+                    if (!isRecording && recognition) {
+                        recognition.start();
+                    } else if (isRecording && recognition) {
+                        recognition.stop();
+                    }
+                } else {
+                    // Act as feedback button
+                    requestFeedback();
+                }
+            });
             
             endInterviewBtn.addEventListener('click', endInterview);
             
@@ -978,7 +1180,9 @@
                     answers: [],
                     feedback: [],
                     currentQuestionIndex: 0,
-                    domain: domain
+                    domain: domain,
+                    interviewStage: 'basic', // Start with basic questions
+                    lastUserResponse: ''
                 };
                 
                 // Switch to interview screen
@@ -988,7 +1192,7 @@
                 chatContainer.innerHTML = '';
                 
                 // Add system message
-                addMessageToUI('system', `Starting interview in ${domain}`);
+                addMessageToUI('system', `Starting interview in ${domain} (Basic questions phase)`);
                 
                 // Request first question
                 requestNextQuestion();
@@ -1001,8 +1205,11 @@
                     questions: [],
                     answers: [],
                     feedback: [],
-                    currentQuestionIndex: 0
+                    currentQuestionIndex: 0,
+                    interviewStage: 'basic',
+                    lastUserResponse: ''
                 };
+                lastQuestion = '';
                 
                 // Clear chat container
                 chatContainer.innerHTML = '';
@@ -1015,6 +1222,37 @@
                 
                 // Stop any ongoing speech
                 if (synth) synth.cancel();
+            }
+
+            // Check if message is a command
+            function isCommand(message) {
+                const lowerMessage = message.toLowerCase().trim();
+                
+                // List of command phrases
+                const repeatCommands = [
+                    'repeat', 'repeat question', 'repeat that', 'say again', 'repeat again',
+                    'can you repeat', 'could you repeat', 'what was the question', 'pardon'
+                ];
+                
+                const clarifyCommands = [
+                    'clarify', 'explain', 'what do you mean', 'i don\'t understand',
+                    'can you explain', 'could you clarify', 'please explain', 'please clarify'
+                ];
+                
+                // Check if message matches any command
+                for (const cmd of repeatCommands) {
+                    if (lowerMessage === cmd || lowerMessage.includes(cmd + ' ') || lowerMessage.includes(' ' + cmd)) {
+                        return 'repeat';
+                    }
+                }
+                
+                for (const cmd of clarifyCommands) {
+                    if (lowerMessage === cmd || lowerMessage.includes(cmd + ' ') || lowerMessage.includes(' ' + cmd)) {
+                        return 'clarify';
+                    }
+                }
+                
+                return false;
             }
 
             async function sendUserMessage() {
@@ -1038,8 +1276,37 @@
                     return;
                 }
                 
-                // Store the answer
+                // Check if message is a command
+                const commandType = isCommand(messageText);
+                if (commandType) {
+                    if (commandType === 'repeat') {
+                        // Repeat the last question
+                        if (lastQuestion) {
+                            addMessageToUI('interviewer', lastQuestion);
+                            speakText(lastQuestion);
+                        } else {
+                            addMessageToUI('system', 'No question to repeat');
+                        }
+                    } else if (commandType === 'clarify') {
+                        // Request clarification
+                        await requestClarification();
+                    }
+                    
+                    messageBeingSent = false;
+                    userInput.disabled = false;
+                    return;
+                }
+                
+                // Store the answer and update last user response
                 interviewContext.answers.push(messageText);
+                interviewContext.lastUserResponse = messageText;
+                
+                // Check if we should transition from basic to technical questions
+                // Typically after 4-5 basic questions
+                if (interviewContext.interviewStage === 'basic' && interviewContext.questions.length >= 5) {
+                    interviewContext.interviewStage = 'technical';
+                    addMessageToUI('system', `Moving to technical questions phase`);
+                }
                 
                 // Check if feedback was requested
                 if (messageText.toLowerCase().includes('give feedback') || 
@@ -1061,6 +1328,9 @@
                 if (context.domain) {
                     formatted.push(`Interview Domain: ${context.domain}`);
                 }
+                
+                // Add interview stage
+                formatted.push(`Interview Stage: ${context.interviewStage}`);
                 
                 // Add questions and answers as a conversation
                 const questions = context.questions || [];
@@ -1092,6 +1362,12 @@
                 return formatted.join("\n");
             }
 
+            // Function to clean AI response (remove prefixes)
+            function cleanAIResponse(rawResponse) {
+                // Remove potential prefixes like "text: ", "speech: ", etc.
+                return rawResponse.replace(/^(text|speech):\[\s\S\]*/i, '').trim();
+            }
+
             async function requestNextQuestion() {
                 loadingIndicator.style.display = 'flex';
                 
@@ -1102,7 +1378,9 @@
                     // Create prompt for the AI
                     const prompt = INTERVIEW_PROMPT_BASE
                         .replace('{domain}', currentDomain)
-                        .replace('{context}', formattedContext);
+                        .replace('{stage}', interviewContext.interviewStage)
+                        .replace('{context}', formattedContext)
+                        .replace('{lastResponse}', interviewContext.lastUserResponse || "No response yet");
                     
                     // Call the AI backend
                     const response = await fetch(`${serverUrl}/api/chat`, {
@@ -1118,11 +1396,13 @@
                     }
                     
                     const data = await response.json();
-                    const question = data.reply || "I don't have any more questions. Would you like to end the interview?";
+                    const rawQuestion = data.reply || "I don't have any more questions. Would you like to end the interview?";
+                    const question = cleanAIResponse(rawQuestion);
                     
                     // Store the question
                     interviewContext.questions.push(question);
                     interviewContext.currentQuestionIndex++;
+                    lastQuestion = question;
                     
                     // Add interviewer message to UI
                     addMessageToUI('interviewer', question);
@@ -1133,6 +1413,56 @@
                 } catch (error) {
                     console.error('Error requesting next question:', error);
                     addMessageToUI('system', 'Error requesting next question. Please try again.');
+                } finally {
+                    loadingIndicator.style.display = 'none';
+                }
+            }
+
+            async function requestClarification() {
+                if (!lastQuestion) {
+                    showToast('No question to clarify');
+                    return;
+                }
+                
+                loadingIndicator.style.display = 'flex';
+                
+                try {
+                    // Format context for the prompt
+                    const formattedContext = formatContextForPrompt(interviewContext);
+                    
+                    // Create prompt for the AI
+                    const prompt = CLARIFY_PROMPT_BASE
+                        .replace('{domain}', currentDomain)
+                        .replace('{context}', formattedContext)
+                        .replace('{question}', lastQuestion)
+                        .replace('{lastResponse}', interviewContext.lastUserResponse || "No response yet");
+                    
+                    // Call the AI backend
+                    const response = await fetch(`${serverUrl}/api/chat`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ prompt: prompt }),
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    const rawClarification = data.reply || "I apologize, but I don't have additional clarification at this time.";
+                    const clarification = cleanAIResponse(rawClarification);
+                    
+                    // Add clarification message to UI
+                    addMessageToUI('interviewer', clarification);
+                    
+                    // Speak the clarification
+                    speakText(clarification);
+                    
+                } catch (error) {
+                    console.error('Error requesting clarification:', error);
+                    addMessageToUI('system', 'Error requesting clarification. Please try again.');
                 } finally {
                     loadingIndicator.style.display = 'none';
                 }
@@ -1153,7 +1483,8 @@
                     // Create prompt for the AI
                     const prompt = FEEDBACK_PROMPT_BASE
                         .replace('{domain}', currentDomain)
-                        .replace('{context}', formattedContext);
+                        .replace('{context}', formattedContext)
+                        .replace('{lastResponse}', interviewContext.lastUserResponse || "No response yet");
                     
                     // Call the AI backend
                     const response = await fetch(`${serverUrl}/api/chat`, {
@@ -1169,7 +1500,8 @@
                     }
                     
                     const data = await response.json();
-                    const feedback = data.reply || "I don't have specific feedback at this time.";
+                    const rawFeedback = data.reply || "I don't have specific feedback at this time.";
+                    const feedback = cleanAIResponse(rawFeedback);
                     
                     // Store the feedback
                     interviewContext.feedback.push(feedback);
@@ -1217,7 +1549,8 @@
                     }
                     
                     const data = await response.json();
-                    const summary = data.reply || "Thank you for completing the interview.";
+                    const rawSummary = data.reply || "Thank you for completing the interview.";
+                    const summary = cleanAIResponse(rawSummary);
                     
                     // Display summary
                     summaryContainer.innerHTML = summary;
@@ -1243,7 +1576,8 @@
                 if (sender === 'system') {
                     messageDiv.textContent = content;
                 } else {
-                    messageDiv.innerHTML = content;
+                    // Sanitize content before setting innerHTML if needed, or use textContent
+                    messageDiv.textContent = content; // Safer approach
                 }
                 
                 chatContainer.appendChild(messageDiv);
