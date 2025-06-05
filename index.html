@@ -482,6 +482,174 @@
       color: var(--text-secondary);
       margin-top: auto;
     }
+    
+    /* Student Success Section */
+    .student-success {
+        padding: 4rem 2rem; 
+        position: relative;
+        z-index: 2;
+        background: var(--card-bg);
+        border-top: 1px solid var(--card-border);
+        border-bottom: 1px solid var(--card-border);
+    }
+
+    .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    }
+
+    .success-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    align-items: center;
+    }
+
+    .success-text {
+    flex: 1;
+    min-width: 300px;
+    }
+
+    .success-text h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: var(--text);
+    font-weight: 700;
+    }
+
+    .success-text p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    }
+
+    .benefits {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    }
+
+    .benefit-item {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    }
+
+    .benefit-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1rem;
+    flex-shrink: 0;
+    }
+
+    .benefit-text h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+    }
+
+    .benefit-text p {
+    font-size: 0.9rem;
+    margin-bottom: 0;
+    color: var(--text-secondary);
+    }
+
+    .student-image {
+        margin-bottom: 1.5rem;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--card-border);
+    }
+
+    .student-img {
+        width: 100%;
+        height: auto;
+        display: block;
+        /* transition: transform 0.3s ease; */
+    }
+
+    /* .student-img:hover {
+        transform: scale(1.02);
+    } */
+
+    .success-stats {
+    flex: 1;
+    min-width: 300px;
+    }
+
+    .stats-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(10px);
+    }
+
+    .stats-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+
+    .stats-title-container {
+        flex: 1;
+    }
+    
+
+    .stats-header h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.25rem;
+    color: var(--text);
+    }
+
+    .stats-header p {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    }
+
+    .stats-percentage {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+    margin-left: 1rem;
+    }
+
+    .stats-metrics {
+    display: grid;
+    gap: 1rem;
+    }
+
+    .metric-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+    font-size: 0.9rem;
+    }
+
+    .progress-bar {
+    height: 6px;
+    border-radius: 3x;
+    background-color: var(--card-border);
+    overflow: hidden;
+    }
+
+    .progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(to right, var(--accent), var(--accent-secondary));
+    }
 
     footer {
       background: var(--footer-bg);
@@ -822,6 +990,14 @@
         width: 180px;
         height: 240px;
       }
+
+      .success-content {
+            flex-direction: column;
+        }
+        
+        .success-text, .success-stats {
+            width: 100%;
+        }
     }
 
     @media (max-width: 768px) {
@@ -877,6 +1053,30 @@
       .image-left, .image-right {
         display: none;
       }
+
+      .student-success {
+            padding: 2rem 1rem;
+        }
+        
+        .stats-card {
+            padding: 1rem;
+        }
+        
+        .success-text h2 {
+            font-size: 1.8rem;
+        }
+        
+        .stats-percentage {
+            font-size: 2rem;
+        }
+        .stats-header {
+            flex-direction: column;
+        }
+        .stats-percentage {
+            margin-left: 0;
+            margin-top: 0.5rem;
+            align-self: flex-end;
+        }
     }
 
     @media (max-width: 480px) {
@@ -902,6 +1102,16 @@
         height: 40px;
         font-size: 1.2rem;
       }
+      .benefit-item {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .benefit-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
     }
   </style>
 </head>
@@ -917,7 +1127,7 @@
     <header id="mainHeader">
       <div class="header-container">
         <div class="logo-container">
-          <img src="..frontend/logos/logo.png" alt="Classmate AI Logo" class="logo" />
+          <img src="logo.png" alt="Classmate AI Logo" class="logo" />
           <span class="logo-text">ClassmateAI</span>
         </div>
         <nav>
@@ -1026,6 +1236,123 @@
       <p>Visualize your academic progress with customizable charts and performance metrics.</p>
     </div>
   </section>
+  
+  <!-- Student Success Section -->
+    <section class="student-success">
+        <div class="container">
+            <div class="success-content">
+                <div class="success-text">
+                    <h2>Why Students Choose Classmate</h2>
+                    <p>We understand the unique challenges students face. Here's how Classmate helps you overcome them:</p>
+                    
+                    <div class="benefits">
+                        <div class="benefit-item">
+                            <div class="benefit-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="benefit-text">
+                                <h3>Boost Academic Performance</h3>
+                                <p>Students using Classmate report an average 15% improvement in grades and assignment completion rates.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="benefit-item">
+                            <div class="benefit-icon">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <div class="benefit-text">
+                                <h3>Reduce Stress and Anxiety</h3>
+                                <p>Never miss a deadline or forget an assignment again. Our smart reminder system keeps you on track.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="benefit-item">
+                            <div class="benefit-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="benefit-text">
+                                <h3>Save Valuable Time</h3>
+                                <p>Our AI assistant helps you study smarter, not harder, by providing instant answers and summarizing complex materials.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="benefit-item">
+                            <div class="benefit-icon">
+                                <i class="fas fa-layer-group"></i>
+                            </div>
+                            <div class="benefit-text">
+                                <h3>Centralize Your Academic Life</h3>
+                                <p>Keep all your notes, assignments, schedules, and resources in one secure, accessible place.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="success-stats">
+                    <!-- Student Image -->
+                    <div class="student-image">
+                        <img
+                            src="https://readdy.ai/api/search-image?query=A%20group%20of%20diverse%20college%20students%20studying%20together%20in%20a%20modern%20library%20or%20campus%20setting.%20They%20are%20using%20laptops%20and%20tablets%2C%20looking%20engaged%20and%20productive.%20Some%20students%20are%20collaborating%20while%20others%20are%20focused%20on%20individual%20work.%20The%20scene%20shows%20a%20mix%20of%20male%20and%20female%20students%20from%20different%20backgrounds%2C%20all%20appearing%20motivated%20and%20successful%20in%20their%20academic%20pursuits.%20The%20lighting%20is%20bright%20and%20natural.&width=800&height=600&seq=students&orientation=landscape"
+                            alt="Students using Classmate"
+                            class="student-img"
+                        />
+                    </div>
+                    
+                    <div class="stats-card">
+                        <div class="stats-header">
+                            <div class="stats-title-container">
+                                <h3>Student Success Rate</h3>
+                                <p>Based on survey of 2,500+ students</p>
+                            </div>
+                            <div class="stats-percentage">94%</div>
+                        </div>
+                        
+                        <div class="stats-metrics">
+                            <div class="metric">
+                                <div class="metric-label">
+                                    <span>Improved Organization</span>
+                                    <span>96%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 96%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="metric">
+                                <div class="metric-label">
+                                    <span>Better Time Management</span>
+                                    <span>92%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 92%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="metric">
+                                <div class="metric-label">
+                                    <span>Reduced Academic Stress</span>
+                                    <span>89%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 89%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="metric">
+                                <div class="metric-label">
+                                    <span>Grade Improvement</span>
+                                    <span>87%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 87%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
   <!-- Footer -->
   <footer>
