@@ -1,250 +1,1152 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ClassMate - AI Learning Assistant</title>
-  <meta name="description" content="ClassMate is your all-in-one AI assistant for smarter learning, goal tracking, and daily productivity." />
-  <meta name="author" content="ClassMate" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Classmate AI - Smart Study Assistant</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./frontend/css/index.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+    /* light mode colors */
+    --bg: #f5f5f5;
+    --text: #333333;
+    --text-secondary: rgba(51, 51, 51, 0.7);
+    --accent: #2a8cf4;
+    --accent-secondary: #ff3a8c;
+    --accent-tertiary: #00c2ff;
+    --card-bg: rgba(255, 255, 255, 0.9);
+    --card-border: rgba(0, 0, 0, 0.1);
+    --btn-primary: linear-gradient(135deg, #a18dff, #7d5fff);
+    --btn-secondary: linear-gradient(135deg, #ff3a8c, #ff6b6b);
+    --btn-hover: brightness(1.05);
+    --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    --hero-gradient: linear-gradient(135deg, #4361ee 0%, #7209b7 30%, #f72585 70%, #ff006e 100%); /* Modified gradient */
+    --grid-color: rgba(0, 0, 0, 0.05);
+    --glow: 0 0 20px rgba(138, 143, 255, 0.4);
+    --hero-text: #ffffff;
+    --hero-text-secondary: rgba(255, 255, 255, 0.8);
+    --header-bg: rgba(255, 255, 255, 0.9);
+    --header-text: #333333;
+    --footer-bg: rgba(255, 255, 255, 0.9);
+    --footer-text: #333333;
+    --scrolled-header-bg: rgba(255, 255, 255, 0.8);
+    --scrolled-header-text: #333333;
+  }
+
+  .dark-mode {
+    /* Keep dark mode exactly the same */
+    --bg: #0a0a14;
+    --text: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.7);
+    --accent: #8a8fff;
+    --accent-secondary: #ff3a8c;
+    --accent-tertiary: #00c2ff;
+    --card-bg: rgba(30, 30, 40, 0.5);
+    --card-border: rgba(255, 255, 255, 0.08);
+    --btn-primary: linear-gradient(135deg, #a18dff, #7d5fff);
+    --btn-secondary: linear-gradient(135deg, #ff3a8c, #ff6b6b);
+    --btn-hover: brightness(1.1);
+    --shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    --hero-gradient: linear-gradient(135deg, #2a8cf4 0%, #2d00b6 25%, #aa046d 70%, #f40039 100%);
+    --grid-color: rgba(255, 255, 255, 0.05);
+    --glow: 0 0 20px rgba(138, 143, 255, 0.4);
+    --hero-text: #ffffff;
+    --hero-text-secondary: rgba(255, 255, 255, 0.8);
+    --header-bg: rgba(10, 10, 20, 0.8);
+    --header-text: #ffffff;
+    --footer-bg: rgba(10, 10, 20, 0.8);
+    --footer-text: #ffffff;
+    --scrolled-header-bg: rgba(10, 10, 20, 0.8);
+    --scrolled-header-text: #ffffff;
+  }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    body:not(.dark-mode) header:not(.scrolled) {
+      --header-text: #ffffff; /* Force black text when at top in light mode */
+      color: var(--header-text);
+    }
+
+    /* Grid background */
+    .grid-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(var(--grid-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+      background-size: 40px 40px;
+      z-index: -2;
+      opacity: 0.4;
+      transition: background-image 0.3s ease;
+    }
+
+    .hero-bg {
+      position: relative;
+      overflow: hidden;
+      padding-bottom: 5rem;
+      max-height: 100vh;
+    }
+
+    .hero-gradient {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        var(--hero-gradient),
+        linear-gradient(180deg, rgba(10, 10, 20, 0) 0%, rgba(10, 10, 20, 0) 40%, var(--bg) 98% );       
+      background-blend-mode: overlay;
+      z-index: -1;
+    }
+
+    header {
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(0px);
+      background-color: transparent;
+      color: var(--header-text);
+    }
+
+    /* And add this to ensure all text elements inside header inherit the color */
+    header * {
+      color: inherit;
+    }
+    /* Specifically target nav links and logo text */
+    header nav a ,
+    header .mobile-menu-btn,
+    header .theme-toggle,
+    header .btn-outline,
+    header .logo-text {
+      color: inherit;
+    }
+
+    mobile-menu-btn .fa-solid.fa-bars {
+      background-color: currentColor;
+    }
+
+    header.scrolled {
+      background-color: var(--scrolled-header-bg);
+      color: var(--scrolled-header-text);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      z-index: 10;
+    }
+
+    .logo {
+      height: 40px;
+      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
+      transition: transform 0.3s ease, filter 0.3s ease;
+    }
+
+    .logo:hover {
+      transform: scale(1.05);
+      filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.4));
+    }
+
+    .logo-text {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--text);
+      margin-left: 0.5rem;
+      transition: color 0.3s ease;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 500;
+      transition: all 0.3s ease;
+      position: relative;
+      padding: 0.5rem 0;
+      font-size: 0.95rem;
+      letter-spacing: 0.5px;
+    }
+
+    nav a:hover {
+      color: var(--accent);
+    }
+
+    nav a::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+
+    nav a:hover::before {
+      width: 100%;
+    }
+
+    .auth-buttons {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 0.8rem 1.6rem;
+      border-radius: 50px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+      border: none;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.7s ease;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary {
+      background: var(--btn-primary);
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .btn-primary:hover {
+      filter: var(--btn-hover);
+      transform: translateY(-2px);
+      box-shadow: var(--glow);
+    }
+
+    .btn-secondary {
+      background: var(--btn-secondary);
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .btn-secondary:hover {
+      filter: var(--btn-hover);
+      transform: translateY(-2px);
+      box-shadow: var(--glow);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: var(--text);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--text);
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .launch-btn {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--text);
+      padding: 0.8rem 1.8rem;
+      border-radius: 50px;
+      font-weight: 600;
+    }
+
+    .launch-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    /* Theme toggle button */
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: var(--text);
+    }
+
+    .theme-toggle:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .theme-toggle i {
+      font-size: 1.2rem;
+      transition: transform 0.3s ease;
+    }
+
+    .dark-mode .theme-toggle i.fa-sun {
+      display: none;
+    }
+
+    .dark-mode .theme-toggle i.fa-moon {
+      display: block;
+    }
+
+    .theme-toggle i.fa-sun {
+      display: block;
+    }
+
+    .theme-toggle i.fa-moon {
+      display: none;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 12rem 1rem 8rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero h1 {
+      font-size: 5rem;
+      line-height: 1.1;
+      color: var(--hero-text); /* Updated to use hero text color */
+      position: relative;
+      display: inline-block;
+      margin-bottom: 1.5rem;
+      font-weight: 800;
+    }
+
+    .hero p {
+      font-size: 1.5rem;
+      max-width: 700px;
+      margin: 0 auto 3rem;
+      color: var(--hero-text-secondary); /* Updated to use hero text color */
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2.5rem;
+      padding: 4rem 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+      position: relative;
+      z-index: 2;
+    }
+
+    .feature-card {
+      background: var(--card-bg);
+      padding: 2.5rem 2rem;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      transition: all 0.4s ease;
+      border: 1px solid var(--card-border);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      min-width: 0;
+      width: 100%;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(to right, var(--accent), var(--accent-secondary));
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+
+    .feature-icon-container {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-icon {
+      font-size: 2.2rem;
+      color: white;
+      position: relative;
+      z-index: 2;
+      transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover .feature-icon {
+      transform: scale(1.2);
+    }
+
+    .feature-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      position: relative;
+      display: inline-block;
+    }
+
+    .feature-card p {
+      color: var(--text-secondary);
+      margin-top: auto;
+    }
+
+    footer {
+      background: var(--footer-bg);
+      color: var(--footer-text);
+      flex-direction: column;
+      text-align: center;
+      gap: 1.5rem;
+      padding: 4rem 2rem;
+      margin-top: 4rem;
+      position: relative;
+      border-top: 1px solid var(--card-border);
+    }
+
+    footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--accent), transparent);
+      opacity: 0.3;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      margin: 2rem 0;
+    }
+
+    .social-links a {
+      color: var(--text);
+      font-size: 1.5rem;
+      transition: all 0.3s ease;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+    }
+
+    .social-links a:hover {
+      color: var(--accent);
+      transform: translateY(-5px);
+      border-color: var(--accent);
+      box-shadow: var(--glow);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 2rem 0;
+    }
+
+    .footer-links a {
+      text-decoration: none;
+      color: var(--footer-text);
+      opacity: 0.8;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .footer-links a::before {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+
+    .footer-links a:hover {
+      opacity: 1;
+      color: var(--accent);
+    }
+
+    .footer-links a:hover::before {
+      width: 100%;
+    }
+
+    /* Mobile Navigation */
+    .mobile-menu-btn {
+      display: none;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--text);
+      font-size: 1.5rem;
+      cursor: pointer;
+      z-index: 1001;
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .mobile-menu-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .mobile-menu-btn .bar {
+      display: block;
+      width: 22px;
+      height: 2px;
+      margin: 4px auto;
+      background: var(--text);
+      transition: all 0.3s ease;
+    }
+
+    .mobile-menu-btn.active .bar:nth-child(1) {
+      transform: translateY(6px) rotate(45deg);
+      background: var(--accent);
+    }
+
+    .mobile-menu-btn.active .bar:nth-child(2) {
+      opacity: 0;
+    }
+
+    .mobile-menu-btn.active .bar:nth-child(3) {
+      transform: translateY(-6px) rotate(-45deg);
+      background: var(--accent);
+    }
+
+    .mobile-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      transition: all 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+
+    .mobile-nav::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        var(--hero-gradient),
+        linear-gradient(180deg, rgba(10, 10, 20, 0) 0%, rgba(10, 10, 20, 0) 70%, var(--bg) 100% );    
+      opacity: 0.8;
+      z-index: -1;
+    }
+
+    .mobile-nav.active {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    .mobile-nav a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 1.5rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      position: relative;
+      padding: 0.5rem 1rem;
+      transform: translateY(20px);
+      opacity: 0;
+    }
+
+    .mobile-nav.active a {
+      transform: translateY(0);
+      opacity: 1;
+      transition-delay: calc(0.1s * var(--i));
+    }
+
+    .mobile-nav a::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+
+    .mobile-nav a:hover {
+      color: var(--accent);
+    }
+
+    .mobile-nav a:hover::before {
+      width: 100%;
+    }
+
+    .close-mobile-menu {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--text);
+      font-size: 1.5rem;
+      cursor: pointer;
+      z-index: 1002;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .close-mobile-menu:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: var(--accent);
+    }
+
+    .mobile-auth-btn {
+      margin-top: 1rem;
+      padding: 0.8rem 1.6rem;
+      font-size: 1rem;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .mobile-nav.active .mobile-auth-btn {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: 0.6s;
+    }
+
+    /* Mobile theme toggle */
+    .mobile-theme-toggle {
+      position: absolute;
+      top: 1.5rem;
+      left: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* Floating images */
+    .floating-image {
+      position: absolute;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      z-index: 1;
+    }
+
+    .floating-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .image-left {
+      width: 300px;
+      height: 400px;
+      top: 20%;
+      left: 5%;
+      transform: rotate(-5deg);
+      animation: float 15s infinite alternate ease-in-out;
+    }
+
+    .image-right {
+      width: 280px;
+      height: 350px;
+      top: 25%;
+      right: 5%;
+      transform: rotate(5deg);
+      animation: float 18s infinite alternate-reverse ease-in-out;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translate(0, 0) rotate(-5deg);
+      }
+      50% {
+        transform: translate(10px, -20px) rotate(-2deg);
+      }
+      100% {
+        transform: translate(-10px, 10px) rotate(-8deg);
+      }
+    }
+
+    /* Responsive styles */
+    @media (max-width: 1200px) {
+      .hero h1 {
+        font-size: 4rem;
+      }
+      
+      .features {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+      }
+      
+      .image-left, .image-right {
+        width: 220px;
+        height: 300px;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .hero h1 {
+        font-size: 3.5rem;
+      }
+      
+      .hero p {
+        font-size: 1.3rem;
+      }
+      
+      .features {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+      }
+      
+      .image-left {
+        left: 2%;
+        width: 180px;
+        height: 240px;
+      }
+      
+      .image-right {
+        right: 2%;
+        width: 180px;
+        height: 240px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero {
+        padding: 8rem 1rem 6rem;
+      }
+      
+      .hero h1 {
+        font-size: 2.8rem;
+      }
+      
+      .hero p {
+        font-size: 1.1rem;
+      }
+      
+      .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+      
+      .cta-buttons .btn {
+        width: 100%;
+        max-width: 300px;
+        justify-content: center;
+      }
+      
+      nav, .auth-buttons {
+        display: none;
+      }
+      
+      .mobile-menu-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .features {
+        grid-template-columns: 1fr !important;
+        padding: 2rem 1rem;
+        gap: 2rem;
+      }
+
+      .header-container {
+        justify-content: space-between;
+      }
+      
+      .footer-links {
+        gap: 1rem;
+      }
+      
+      .image-left, .image-right {
+        display: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+      
+      .hero p {
+        font-size: 1rem;
+      }
+      
+      .feature-card {
+        padding: 1.5rem;
+      }
+      
+      .social-links {
+        gap: 1rem;
+      }
+      
+      .social-links a {
+        color: var(--footer-text);
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+      }
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <nav>
-      <a href="#" class="logo">
-        <div class="logo-icon">
-          <svg width="20" height="15" viewBox="0 0 20 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10 0L20 15H0L10 0Z" fill="white" />
-          </svg>
-        </div>
-        <span>CLASS MATE</span>
-      </a>
-      <div class="nav-links">
-        <a href="#home">HOME</a>
-        <a href="#features">FEATURES</a>
-        <a href="#about">ABOUT</a>
-      </div>
-      <a href="./frontend/pages/Login page.html" class="btn btn-primary">Log In / Sign Up</a>
-    </nav>
-  </header>
+  <!-- Grid background -->
+  <div class="grid-bg"></div>
 
-  <main>
+  <!-- Hero section with gradient background -->
+  <div class="hero-bg">
+    <div class="hero-gradient"></div>
+    
+    <!-- Header -->
+    <header id="mainHeader">
+      <div class="header-container">
+        <div class="logo-container">
+          <img src="logo.png" alt="Classmate AI Logo" class="logo" />
+          <span class="logo-text">ClassmateAI</span>
+        </div>
+        <nav>
+          <a href="#">Features</a>
+          <a href="#">Solutions</a>
+          <a href="#">Learn</a>
+          <a href="#">For Teams</a>
+          <a href="#">For Developers</a>
+          <a href="#">Contact</a>
+        </nav>
+        <div class="auth-buttons">
+          <button class="theme-toggle" id="themeToggleDesktop">
+            <i class="fas fa-sun"></i>
+            <i class="fas fa-moon"></i>
+          </button>
+          <button class="btn btn-outline">
+            <i class="fas fa-sign-in-alt"></i> Login/Signup
+          </button>
+        </div>
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </header>
+
     <!-- Hero Section -->
-    <section id="home" class="hero">
-      <div>
-      <div class="left">
-        <img src="Chat.png" alt="">
-      </div>
-      <div class="right">
-        <h1>Your Personal AI Learning Assistant</h1>
-        <p>ClassMate helps you stay organized, track your progress, and achieve your academic goals with the power of AI.</p>
-        <div class="hero-buttons">
-          <a href="./frontend/pages/Login page.html" class="btn btn-primary">Get Started</a>
-          <a href="#features" class="btn btn-outline">Learn More</a>
-        </div>
-      </div>
+    <section class="hero">
+      <h1>Creativity, Unleashed.</h1>
+      <p>Classmate AI helps you learn smarter, not harder. Get personalized study plans, instant answers to your questions, and intelligent insights to boost your academic performance.</p>
+      <div class="cta-buttons">
+        <button class="btn btn-primary">
+          <i class="fas fa-rocket"></i> Get Started
+        </button>
+        <button class="btn btn-secondary">
+          <i class="fas fa-code"></i> Developer API
+        </button>
       </div>
     </section>
+  </div>
 
-    <!-- ClassMate Info -->
-    <!-- <section class="info-section">
-      <div class="container">
-        <h2>AI-Powered Learning Assistant</h2>
-        <p>ClassMate combines powerful AI technology with intuitive features to enhance your learning experience and boost productivity.</p>      </div>
-    </section> -->
-
-    <!-- Our Work Section -->
-    <section id="about" class="our-work">
-      <div class="container">
-        <h2>How ClassMate Helps Students</h2>
-        <div class="work-grid">
-          <div class="work-card">
-            <img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Smart Study Planning">
-            <div class="work-card-content">
-              <h3>Smart Study Planning</h3>
-              <p>Optimize your study schedule based on your learning habits and goals.</p>
-              <a href="#features" class="btn btn-outline">Learn More</a>
-            </div>
-          </div>
-          <div class="work-card">
-            <img src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Progress Tracking">
-            <div class="work-card-content">
-              <h3>Progress Tracking</h3>
-              <p>Visualize your learning journey and celebrate your achievements.</p>
-              <a href="#features" class="btn btn-outline">Learn More</a>
-            </div>
-          </div>
-          <div class="work-card">
-            <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="AI Assistance">
-            <div class="work-card-content">
-              <h3>AI Assistance</h3>
-              <p>Get intelligent suggestions and answers to your academic questions.</p>
-              <a href="#features" class="btn btn-outline">Learn More</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Features Section -->
-    <!-- <section id="features" class="info-section">
-      <div class="container">
-        <h2>Features</h2>
-        <p>ClassMate offers a comprehensive set of tools designed to enhance your learning experience.</p>
-        <div class="features-grid">
-          <div class="feature-card">
-            <h3>Attendance Calculator</h3>
-            <p>Track and calculate your attendance automatically by entering class dates and absences. Get precise attendance percentage and reminders.</p>
-            <button class="btn btn-primary feature-btn" data-feature="attendance">Try</button>
-          </div>
-          <div class="feature-card">
-            <h3>To-Do List & Smart Notes</h3>
-            <p>Organize your day with a clean and efficient to-do list. Add, edit, and mark tasks with optional color input and deadlines.</p>
-            <button class="btn btn-primary feature-btn" data-feature="todo">Try</button>
-          </div>
-          <div class="feature-card">
-            <h3>Personalized Dashboard</h3>
-            <p>A dynamic homepage showing your tasks, goals, recent notes, and chat history. Designed to help you focus on what matters most each day.</p>
-            <button class="btn btn-primary feature-btn" data-feature="dashboard">Try</button>
-          </div>
-        </div>
-      </div>
-    </section> -->
-
-    <!-- Testimonials -->
-    <section class="testimonials">
-        <div class="container">
-          <h2>What Our Users Say</h2>
-          <div class="testimonial-grid">
-            <div class="testimonial-card">
-              <p class="testimonial-content">"ClassMate helped me improve my grades by 20% in just one semester. The smart scheduling and progress tracking are game changers!"</p>
-              <p class="testimonial-author">Sarah K., University Student</p>
-            </div>
-            <div class="testimonial-card">
-              <p class="testimonial-content">"As a professor, I recommend ClassMate to all my students. It helps them stay organized and engaged with the material."</p>
-              <p class="testimonial-author">Prof. David Johnson</p>
-            </div>
-            <div class="testimonial-card">
-              <p class="testimonial-content">"The AI assistant helps me understand difficult concepts quickly. It's like having a tutor available 24/7."</p>
-              <p class="testimonial-author">Michael T., High School Student</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-    <!-- Contact Section -->
-    <section id="signup" class="contact">
-      <div class="container">
-        <h2>Get Started Today</h2>
-        <p>Sign up for ClassMate or contact us for more information about our platform.</p>
-        <form class="contact-form" id="contactForm">
-          <div class="form-group">
-            <label for="name">Full Name</label>
-            <input type="text" id="name" class="form-control" required>
-          </div>
-          <div class="form-group">
-            <label for="email">Email Address</label>
-            <input type="email" id="email" class="form-control" required>
-          </div>
-          <div class="form-group">
-            <label for="message">Message (Optional)</label>
-            <textarea id="message" class="form-control"></textarea>
-          </div>
-          <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div class="container">
-      <div class="footer-links">
-        <a href="#home">Home</a>
-        <a href="#features">Features</a>
-        <a href="#about">About</a>
-        <a href="#signup">Contact</a>
-      </div>
-      <p class="copyright">© 2025 ClassMate. All rights reserved.</p>
+  <!-- Mobile Navigation -->
+  <div class="mobile-nav" id="mobileNav">
+    <div class="mobile-theme-toggle" id="themeToggleMobile">
+      <button class="theme-toggle">
+        <i class="fas fa-sun"></i>
+        <i class="fas fa-moon"></i>
+      </button>
+      <span id="themeText">Light Mode</span>
     </div>
+    <button class="close-mobile-menu" id="closeMobileMenu">
+      <i class="fas fa-times"></i>
+    </button>
+    <a href="#" style="--i:1">Features</a>
+    <a href="#" style="--i:2">Solutions</a>
+    <a href="#" style="--i:3">Learn</a>
+    <a href="#" style="--i:4">For Teams</a>
+    <a href="#" style="--i:5">For Developers</a>
+    <a href="#" style="--i:6">Contact</a>
+    <button class="btn btn-primary mobile-auth-btn">
+      Launch App
+    </button>
+  </div>
+
+  <!-- Features -->
+  <section class="features">
+    <div class="feature-card">
+      <div class="feature-icon-container">
+        <i class="fas fa-robot feature-icon"></i>
+      </div>
+      <h3>Chatbot AI</h3>
+      <p>Get instant answers to your study questions with our intelligent AI assistant available 24/7.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon-container">
+        <i class="fas fa-comments feature-icon"></i>
+      </div>
+      <h3>AI Mock Interview</h3>
+      <p>Practice interviews with our AI that adapts to your field and provides detailed feedback.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon-container">
+        <i class="fas fa-book feature-icon"></i>
+      </div>
+      <h3>Smart Notes</h3>
+      <p>Organize, search, and highlight your notes with AI-powered suggestions and summaries.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon-container">
+        <i class="fas fa-tasks feature-icon"></i>
+      </div>
+      <h3>Task Manager</h3>
+      <p>Stay on top of assignments and deadlines with intelligent prioritization and reminders.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon-container">
+        <i class="fas fa-percentage feature-icon"></i>
+      </div>
+      <h3>Attendance Calculator</h3>
+      <p>Track your class attendance and get alerts when you're at risk of falling below requirements.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon-container">
+        <i class="fas fa-chart-line feature-icon"></i>
+      </div>
+      <h3>Personal Dashboard</h3>
+      <p>Visualize your academic progress with customizable charts and performance metrics.</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="logo-container">
+      <img src="logo.png" alt="Classmate AI Logo" class="logo" />
+      <span class="logo-text">ClassmateAI</span>
+    </div>
+    <div class="footer-links">
+      <a href="#">About Us</a>
+      <a href="#">Features</a>
+      <a href="#">Pricing</a>
+      <a href="#">Blog</a>
+      <a href="#">Careers</a>
+      <a href="#">Contact</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+    </div>
+    <div class="social-links">
+      <a href="#"><i class="fab fa-twitter"></i></a>
+      <a href="#"><i class="fab fa-facebook"></i></a>
+      <a href="#"><i class="fab fa-instagram"></i></a>
+      <a href="#"><i class="fab fa-linkedin"></i></a>
+      <a href="#"><i class="fab fa-youtube"></i></a>
+    </div>
+    <p>&copy; 2025 Classmate AI. All rights reserved.</p>
   </footer>
 
-  <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
-  <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-  
+  <!-- Script -->
   <script>
-    // Feature buttons functionality
-    document.querySelectorAll('.feature-btn').forEach(button => {
-      button.addEventListener('click', function() {
-        const feature = this.getAttribute('data-feature');
-        alert(`${feature.charAt(0).toUpperCase() + feature.slice(1)} feature coming soon!`);
+    // Mobile navigation
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const closeMobileMenu = document.getElementById('closeMobileMenu');
+    const mobileNav = document.getElementById('mobileNav');
+
+    mobileMenuBtn.addEventListener('click', function() {
+      mobileNav.classList.add('active');
+      this.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+
+    closeMobileMenu.addEventListener('click', function() {
+      mobileNav.classList.remove('active');
+      mobileMenuBtn.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    });
+
+    // Close mobile menu when clicking on links
+    mobileNav.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileNav.classList.remove('active');
+        mobileMenuBtn.classList.remove('active');
+        document.body.style.overflow = 'auto';
       });
     });
 
-    // Form submission
-    document.getElementById('contactForm').addEventListener('submit', function(event) {
-      event.preventDefault();
+    // Sticky header
+    const header = document.getElementById('mainHeader');
+    window.addEventListener('scroll', () => {
+      const header = document.getElementById('mainHeader');
+      const isScrolled = window.scrollY > 50;
       
-      const name = document.getElementById('name').value;
-      const email = document.getElementById('email').value;
-      const message = document.getElementById('message').value;
+      header.classList.toggle('scrolled', isScrolled);
       
-      // Here you would normally send the data to a server
-      console.log('Form submitted:', { name, email, message });
-      
-      // Show success message
-      alert('Thanks for contacting us! We will get back to you soon.');
-      
-      // Reset form
-      this.reset();
-    });
-
-    // Smooth scrolling for navigation links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function(e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          window.scrollTo({
-            top: target.offsetTop,
-            behavior: 'smooth'
-          });
-        }
-      });
-    });
-    // Check if user is already logged in
-  document.addEventListener('DOMContentLoaded', function() {
-    const loginButton = document.querySelector('.btn-primary[href="./frontend/pages/Login page.html"]');
-    
-    if (localStorage.getItem('auth_token')) {
-      // Change login button to dashboard link
-      loginButton.textContent = "Go to Dashboard";
-      loginButton.href = "./frontend/pages/Class Mate Func.html";
-    } else {
-      // Ensure it points to login page
-      loginButton.textContent = "Log In / Sign Up";
-      loginButton.href = "./frontend/pages/Login page.html";
-    }
-  });
-  document.querySelectorAll('.feature-btn').forEach(button => {
-    button.addEventListener('click', function() {
-      if (!localStorage.getItem('auth_token')) {
-        alert('Please log in to access this feature');
-        window.location.href = "./frontend/pages/Login page.html";
-      } else {
-        const feature = this.getAttribute('data-feature');
-        // Redirect to appropriate feature page
-        if (feature === 'todo') {
-          window.location.href = "./frontend/pages/To Do List.html";
+      if (!document.body.classList.contains('dark-mode')) {
+        if (isScrolled) {
+          header.style.setProperty('--header-text', 'var(--text)');
         } else {
-          alert(`${feature.charAt(0).toUpperCase() + feature.slice(1)} feature coming soon!`);
+          header.style.setProperty('--header-text', '#ffffff');
         }
       }
     });
-  }); 
+
+    // Theme toggle functionality
+    const themeToggleDesktop = document.getElementById('themeToggleDesktop');
+    const themeToggleMobile = document.getElementById('themeToggleMobile');
+    const themeText = document.getElementById('themeText');
+    
+    // Check for saved theme preference or use preferred color scheme
+    const currentTheme = localStorage.getItem('theme') || 
+                       (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    
+    // Apply the current theme
+    if (currentTheme === 'dark') {
+      document.body.classList.add('dark-mode');
+      if (themeText) themeText.textContent = 'Dark Mode';
+    } else {
+      document.body.classList.remove('dark-mode');
+      if (themeText) themeText.textContent = 'Light Mode';
+    }
+    
+    // Theme toggle function
+    function toggleTheme() {
+      if (document.body.classList.contains('dark-mode')) {
+        document.body.classList.remove('dark-mode');
+        localStorage.setItem('theme', 'light');
+        if (themeText) themeText.textContent = 'Light Mode';
+      } else {
+        document.body.classList.add('dark-mode');
+        localStorage.setItem('theme', 'dark');
+        if (themeText) themeText.textContent = 'Dark Mode';
+      }
+    }
+    
+    // Add event listeners to both toggle buttons
+    themeToggleDesktop.addEventListener('click', toggleTheme);
+    if (themeToggleMobile) {
+      themeToggleMobile.addEventListener('click', toggleTheme);
+    }
+    
+    // Watch for system theme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+      const newTheme = e.matches ? 'dark' : 'light';
+      localStorage.setItem('theme', newTheme);
+      if (newTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+        if (themeText) themeText.textContent = 'Dark Mode';
+      } else {
+        document.body.classList.remove('dark-mode');
+        if (themeText) themeText.textContent = 'Light Mode';
+      }
+    });
   </script>
 </body>
 </html>
