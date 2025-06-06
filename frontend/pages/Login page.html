@@ -1,257 +1,261 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login & Signup</title>
-    <link rel="stylesheet" href="../css/Login page.css">
-  </head>
-  <body>
-    <div class="container">
-      <!-- Left side with illustration -->
-      <div class="left-panel">
-        <button class="back-button" onclick="window.location.href='ClassMateWeb.html'">Back</button>
-        <div class="illustration-container">
-          <div class="illustration">
-            <img src="../images/Home.png" alt="a conversation illustration" style="max-width: 100%; height: auto;">
-          </div>
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Sign in - Classmate</title>
+        <!-- Tailwind CSS with dark mode enabled -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                darkMode: 'class',
+            }
+        </script>
+        <!-- Font Awesome for icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+        <style>
+            /* Theme toggle button styles */
+            .theme-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                cursor: pointer;
+                transition: all 0.3s ease;
+                color: inherit;
+            }
+            .theme-toggle:hover {
+                background: rgba(255, 255, 255, 0.2);
+                transform: translateY(-2px);
+            }
+            .theme-toggle i {
+                font-size: 1.2rem;
+                transition: transform 0.3s ease;
+            }
+            /* Icon visibility */
+            .theme-toggle i.fa-sun {
+                display: none;
+            }
+            .dark .theme-toggle i.fa-sun {
+                display: block;
+            }
+            .dark .theme-toggle i.fa-moon {
+                display: none;
+            }
+            /* Custom styles for auth card */
+            .auth-card {
+                backdrop-filter: blur(10px);
+            }
+            /* Smooth transitions */
+            html {
+                transition: background-color 0.3s ease, color 0.3s ease;
+            }
+            /* Spinner for loading state */
+            .spinner {
+              display: inline-block;
+              width: 1em;
+              height: 1em;
+              border: 2px solid rgba(255, 255, 255, 0.3);
+              border-radius: 50%;
+              border-top-color: #fff;
+              animation: spin 1s ease-in-out infinite;
+              margin-right: 0.5em;
+              vertical-align: middle;
+            }
+            .spinner-text {
+                vertical-align: middle;
+            }
+            @keyframes spin {
+              to { transform: rotate(360deg); }
+            }
+        </style>
+    </head>
+    <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
+        <div class="container mx-auto px-4 py-6">
+            <!-- Navigation -->
+            <nav class="flex justify-between items-center">
+                <div>
+                    <a href="Classmate Home BL.html" class="font-bold text-xl tracking-tight dark:text-white">CLASSMATE</a>
+                </div>
+                <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode" type="button">
+                    <i class="fas fa-sun"></i>
+                    <i class="fas fa-moon"></i>
+                </button>
+            </nav>
         </div>
-        <div style="height: 3rem;"></div>
-      </div>
-      
-      <!-- Right side with form -->
-      <div class="right-panel">
-        <div class="form-container">
-          <h1 class="form-title" id="form-title">Login</h1>
-          <p class="form-subtitle" id="form-subtitle">Sign in to continue</p>
-          
-          <form id="auth-form">
-            <!-- Changed from name to email for login -->
-            <div class="form-group email-field">
-              <label for="email" class="form-label">EMAIL</label>
-              <input type="email" id="email" class="form-input" placeholder="hello@example.com" required>
+
+        <!-- Login Form -->
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <div class="w-full max-w-lg bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-800 dark:to-gray-700 rounded-2xl shadow-xl p-1">
+                <div class="auth-card w-full bg-white dark:bg-gray-800 rounded-xl p-8 border border-gray-200 dark:border-gray-700">
+                    <div class="flex justify-between items-center mb-8">
+                        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Welcome back</h1>
+                        <p class="text-gray-600 dark:text-gray-400">New here? <a href="signup page.html" class="font-medium text-purple-600 dark:text-purple-400 hover:underline">Sign up</a></p> <!-- Updated link -->
+                    </div>
+
+                    <form id="login-form"> <!-- Added ID -->
+                        <div class="mb-4">
+                            <label for="email" class="block text-gray-900 dark:text-gray-300 font-medium mb-2">Email</label>
+                            <input type="email" id="email" placeholder="Email address"
+                                class="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 dark:bg-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors duration-300"
+                                required> <!-- Added required -->
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <label for="password" class="block text-gray-900 dark:text-gray-300 font-medium">Password</label>
+                                <a href="#" class="text-gray-500 dark:text-gray-400 text-sm hover:underline">Forgot Password?</a>
+                            </div>
+                            <div class="relative">
+                                <input type="password" id="password" placeholder="Password (min. 8 character)"
+                                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 dark:bg-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors duration-300 pr-10"
+                                    required> <!-- Added required -->
+                                <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="flex items-center">
+                                <input type="checkbox" id="rememberMe" 
+                                    class="form-checkbox h-5 w-5 text-purple-600 dark:text-purple-400 focus:ring-purple-500 transition-colors duration-300">
+                                <span class="ml-2 text-gray-900 dark:text-gray-300">Remember me</span>
+                            </label>
+                        </div>
+
+                        <!-- Error Message Placeholder -->
+                        <div id="error-message" class="text-red-500 text-sm mt-2 mb-4" style="display: none;"></div>
+
+                        <button type="submit" id="submit-button" 
+                            class="w-full bg-gradient-to-r from-purple-600 to-blue-500 text-white py-3 rounded-lg font-medium hover:opacity-90 transition duration-300 shadow-md flex items-center justify-center">
+                            Sign in
+                        </button>
+                    </form>
+                </div>
             </div>
-            
-            <div class="form-group">
-              <label for="password" class="form-label">PASSWORD</label>
-              <input type="password" id="password" class="form-input" placeholder="••••••" required>
-            </div>
-            
-            <div class="form-group name-field" style="display: none;">
-              <label for="name" class="form-label">NAME</label>
-              <input type="text" id="name" class="form-input" placeholder="John" >
-            </div>
-            
-            <div class="form-group dob-field" style="display: none;">
-              <label for="dob" class="form-label">DATE OF BIRTH</label>
-              <input type="date" id="dob" class="form-input" s >
-            </div>
-            
-            <div id="error-message" class="error-message" style="display: none;"></div>
-            
-            <button type="submit" class="submit-button" id="submit-button">Log In</button>
-          </form>
-          
-          <div class="form-footer" id="login-footer">
-            <p>Forgot Password?</p>
-            <p><button class="toggle-form" id="toggle-signup">Signup!</button></p>
-          </div>
-          
-          <div class="form-footer" id="signup-footer" style="display: none;">
-            <p><button class="toggle-form" id="toggle-login">Back to Log in</button></p>
-          </div>
         </div>
-      </div>
-    </div>
 
-    <script>
-  // Redirect if already logged in
-  if (localStorage.getItem('auth_token')) {
-    window.location.href = "Class Mate Func.html";
-  }
-  
-  // DOM elements
-  const formTitle = document.getElementById('form-title');
-  const formSubtitle = document.getElementById('form-subtitle');
-  const authForm = document.getElementById('auth-form');
-  const nameField = document.querySelector('.name-field');
-  const emailField = document.querySelector('.email-field');
-  const dobField = document.querySelector('.dob-field');
-  const submitButton = document.getElementById('submit-button');
-  const loginFooter = document.getElementById('login-footer');
-  const signupFooter = document.getElementById('signup-footer');
-  const toggleSignup = document.getElementById('toggle-signup');
-  const toggleLogin = document.getElementById('toggle-login');
-  const errorMessage = document.getElementById('error-message');
-  const serverUrl = "https://classmate1-ffw7.onrender.com"; // Update with your server URL
-  
-  // State
-  let isLogin = true;
-  
-  // Toggle between login and signup forms
-  function toggleForm() {
-    isLogin = !isLogin;
+        <script>
+            // Redirect if already logged in
+            if (localStorage.getItem('auth_token')) {
+                window.location.href = "Class Mate Func.html";
+            }
 
-    if (isLogin) {
-      formTitle.textContent = 'Login';
-      formSubtitle.textContent = 'Sign in to continue';
-      submitButton.textContent = 'Log In';
-      nameField.style.display = 'none';
-      dobField.style.display = 'none';
-      document.getElementById('name').removeAttribute('required');
-      document.getElementById('name').disabled = true;
-      document.getElementById('dob').removeAttribute('required');
-      document.getElementById('dob').disabled = true;
-      loginFooter.style.display = 'block';
-      signupFooter.style.display = 'none';
-    } else {
-      formTitle.textContent = 'Register';
-      formSubtitle.textContent = 'Register to continue';
-      submitButton.textContent = 'Sign up';
-      nameField.style.display = 'block';
-      dobField.style.display = 'block';
-      document.getElementById('name').setAttribute('required', '');
-      document.getElementById('name').disabled = false;
-      document.getElementById('dob').setAttribute('required', '');
-      document.getElementById('dob').disabled = false;
-      loginFooter.style.display = 'none';
-      signupFooter.style.display = 'block';
-    }
+            // DOM elements
+            const loginForm = document.getElementById('login-form');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const submitButton = document.getElementById('submit-button');
+            const errorMessage = document.getElementById('error-message');
+            const togglePassword = document.getElementById('togglePassword');
+            const toggleBtn = document.getElementById('themeToggle');
+            const html = document.documentElement;
+            const serverUrl = "https://classmate1-ffw7.onrender.com"; // Update with your server URL
 
-    errorMessage.style.display = 'none';
-  }
+            // Show error message
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorMessage.style.display = 'block';
+            }
 
-  
-  // Show error message
-  function showError(message) {
-    errorMessage.textContent = message;
-    errorMessage.style.display = 'block';
-  }
-  
-  // Handle successful auth
-  function handleAuthSuccess(token, userData) {
-    // Store the token and user data in localStorage
-    localStorage.setItem('auth_token', token);
-    if (userData && userData.name) {
-      localStorage.setItem('user_name', userData.name);
-    }
+            // Handle successful auth
+            function handleAuthSuccess(token, userData) {
+                // Store the token and user data in localStorage
+                localStorage.setItem('auth_token', token);
+                if (userData && userData.name) {
+                    localStorage.setItem('user_name', userData.name);
+                }
+                // Redirect to the protected page
+                window.location.href = 'Class Mate Func.html';
+            }
+
+            // --- Event Listeners ---
+
+            // Login Form Submission
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                errorMessage.style.display = 'none'; // Hide previous errors
+
+                // Show loading state
+                const originalButtonHTML = submitButton.innerHTML;
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<span class="spinner"></span><span class="spinner-text">Signing In...</span>';
+
+                try {
+                    // Login logic
+                    const email = emailInput.value;
+                    const password = passwordInput.value;
+
+                    const response = await fetch(serverUrl + '/api/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ email, password })
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        // Handle specific error types
+                        if (data.error_type === 'email_not_found') {
+                            showError('Email not registered. Please sign up first.');
+                        } else if (data.error_type === 'wrong_password') {
+                            showError('Incorrect password. Please try again.');
+                        } else {
+                            showError(data.detail || 'Login failed');
+                        }
+                        return; // Stop execution if login failed
+                    }
+
+                    // Handle successful login
+                    handleAuthSuccess(data.token, data.user);
+
+                } catch (error) {
+                    showError('Network error or server issue. Please try again.');
+                    console.error('Error:', error);
+                } finally {
+                    // Restore button state
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = originalButtonHTML;
+                }
+            });
+
+            // Password visibility toggle (Existing)
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                this.querySelector('i').classList.toggle('fa-eye');
+                this.querySelector('i').classList.toggle('fa-eye-slash');
+            });
+
+            // --- Theme Toggling Logic (Existing) ---
+            const savedTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+            if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+                html.classList.add('dark');
+            }
+
+            toggleBtn.addEventListener('click', () => {
+                html.classList.toggle('dark');
+                const isDark = html.classList.contains('dark');
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            });
+
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                if (!localStorage.getItem('theme')) {
+                    html.classList.toggle('dark', e.matches);
+                }
+            });
+        </script>
+    </body>
+    </html>
     
-    // Redirect to the protected page
-    window.location.href = 'Class Mate Func.html';
-  }
-  
-  // Event listeners
-  toggleSignup.addEventListener('click', toggleForm);
-  toggleLogin.addEventListener('click', toggleForm);
-  
-  authForm.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    errorMessage.style.display = 'none';
-    
-    // Show loading state
-    const originalButtonText = submitButton.textContent;
-    submitButton.disabled = true;
-    submitButton.innerHTML = '<span class="spinner"></span><span class="spinner-text">Processing...</span>';
-    
-    try {
-      if (isLogin) {
-        // Login logic
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        
-        const response = await fetch(serverUrl + '/api/login', {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify({ email, password })
-        });
-        
-        const data = await response.json();
-        
-        if (!response.ok) {
-          // Handle specific error types
-          if (data.error_type === 'email_not_found') {
-            showError('Email not registered. Please sign up first.');
-          } else if (data.error_type === 'wrong_password') {
-            showError('Incorrect password. Please try again.');
-          } else {
-            showError(data.detail || 'Login failed');
-          }
-          return;
-        }
-        
-        handleAuthSuccess(data.token, data.user);
-        
-      } else {
-        // Registration logic
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const dob = document.getElementById('dob').value;
-        
-        const response = await fetch(serverUrl + '/api/register', {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify({ 
-            name: name,
-            email: email,
-            password: password,
-            dob: dob
-          })
-        });
-        
-        const data = await response.json();
-        
-        if (!response.ok) {
-          // Handle specific error types
-          if (data.error_type === 'email_exists') {
-            showError('Email already registered. Please log in.');
-          } else {
-            showError(data.detail || 'Registration failed');
-          }
-          return;
-        }
-        
-        // After successful registration, automatically log the user in
-        const loginResponse = await fetch(serverUrl + '/api/login', {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify({ email, password })
-        });
-        
-        const loginData = await loginResponse.json();
-        
-        if (!loginResponse.ok) {
-          showError('Registration successful but automatic login failed. Please log in manually.');
-          toggleForm(); // Switch back to login form
-          return;
-        }
-        
-        handleAuthSuccess(loginData.token, loginData.user);
-      }
-    } catch (error) {
-      showError('Network error. Please try again.');
-      console.error('Error:', error);
-    } finally {
-      // Restore button state
-      submitButton.disabled = false;
-      submitButton.textContent = originalButtonText;
-    }
-  });
-  
-  // Check if user is already logged in
-  if (localStorage.getItem('auth_token')) {
-    // Redirect to protected page if token exists
-    window.location.href = 'Class Mate Func.html';
-  }
-</script>
-  </body>
-</html>
