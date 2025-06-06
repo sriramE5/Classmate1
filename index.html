@@ -30,6 +30,7 @@
     --hero-text-secondary: rgba(255, 255, 255, 0.8);
     --header-bg: rgba(255, 255, 255, 0.9);
     --header-text: #333333;
+    --header-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
     --footer-bg: rgba(255, 255, 255, 0.9);
     --footer-text: #333333;
     --scrolled-header-bg: rgba(255, 255, 255, 0.8);
@@ -38,14 +39,14 @@
 
   .dark-mode {
     /* Keep dark mode exactly the same */
-    --bg: #0a0a14;
+    --bg: #0a0a0a;
     --text: #ffffff;
     --text-secondary: rgba(255, 255, 255, 0.7);
     --accent: #8a8fff;
     --accent-secondary: #ff3a8c;
     --accent-tertiary: #00c2ff;
-    --card-bg: rgba(30, 30, 40, 0.5);
-    --card-border: rgba(255, 255, 255, 0.08);
+    --card-bg: rgba(0, 0, 0, 0.9);
+    --card-border: rgba(255, 255, 255, 0.1);
     --btn-primary: linear-gradient(135deg, #a18dff, #7d5fff);
     --btn-secondary: linear-gradient(135deg, #ff3a8c, #ff6b6b);
     --btn-hover: brightness(1.1);
@@ -55,11 +56,12 @@
     --glow: 0 0 20px rgba(138, 143, 255, 0.4);
     --hero-text: #ffffff;
     --hero-text-secondary: rgba(255, 255, 255, 0.8);
-    --header-bg: rgba(10, 10, 20, 0.8);
+    --header-bg: rgba(0, 0, 0, 0.9);
     --header-text: #ffffff;
-    --footer-bg: rgba(10, 10, 20, 0.8);
+    --header-shadow: 0 4px 30px rgba(255, 255, 255, 0.15);
+    --footer-bg: rgba(0, 0, 0, 0.9);
     --footer-text: #ffffff;
-    --scrolled-header-bg: rgba(10, 10, 20, 0.8);
+    --scrolled-header-bg: rgba(0, 0, 0, 0.9);
     --scrolled-header-text: #ffffff;
   }
 
@@ -121,7 +123,8 @@
     }
 
     header {
-      padding: 1.5rem 2rem;
+      padding: 0.75rem 1.5rem;
+      height: auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -157,7 +160,7 @@
       background-color: var(--scrolled-header-bg);
       color: var(--scrolled-header-text);
       backdrop-filter: blur(10px);
-      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      box-shadow: var(--header-shadow);
     }
 
     .header-container {
@@ -178,7 +181,7 @@
     }
 
     .logo {
-      height: 60px;
+      height: 50px;
       filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
       transition: transform 0.3s ease, filter 0.3s ease;
     }
@@ -1357,7 +1360,7 @@
   <!-- Footer -->
   <footer>
     <div class="logo-container">
-      <img src="logo.png" alt="Classmate AI Logo" class="logo" />
+      <img src="frontend/logos/logo.png" alt="Classmate AI Logo" class="logo" />
       <span class="logo-text">ClassmateAI</span>
     </div>
     <div class="footer-links">
