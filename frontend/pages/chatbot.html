@@ -470,8 +470,8 @@
       display: flex;
       flex-direction: column;
       padding: 1rem 1.5rem;
-      background-color: var(--bg-secondary);
-      border-top: 1px solid var(--border-color);
+      background-color: #ffffff00;
+      border-top: 1px solid #ffffff00;
       width: 100%;
       position: relative;
       bottom: 0;
@@ -965,6 +965,19 @@ Phase 2: [e.g., Data Structures and Control Flow]
 (Add more phases and tasks as appropriate for the user\'s request)
 
 Remember to break your goals into phases and tasks.`;
+        function checkForQueryParameters() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const query = urlParams.get("query");
+        
+        if (query) {
+            // Set the query in the input field
+            userInput.value = decodeURIComponent(query);
+            userInput.dispatchEvent(new Event("input")); // Adjust height
+            
+            // Optional: Auto-send the message
+            // setTimeout(() => sendMessage(), 500);
+        }
+    }
 
     // Function to check if we\'re in mobile/tablet view
     function isMobileView() {
@@ -1285,7 +1298,7 @@ Remember to break your goals into phases and tasks.`;
         }
         console.log("Started new chat:", newChatId);
     }
-
+    
     function switchChat(chatId) {
         if (!allChats[chatId]) {
             console.error("Chat ID not found:", chatId);
@@ -1444,7 +1457,7 @@ Remember to break your goals into phases and tasks.`;
             copyItem.addEventListener("click", (e) => {
                 e.stopPropagation();
                 navigator.clipboard.writeText(contentDiv.innerText).then(() => {
-                    showToast("Bot reply copied!");
+                    showToast("copied!");
                 }).catch(err => console.error("Copy failed", err));
                 dropdown.classList.remove("show");
             });
@@ -1511,7 +1524,7 @@ Remember to break your goals into phases and tasks.`;
         chatContainer.appendChild(messageDiv);
         chatContainer.scrollTop = chatContainer.scrollHeight; // Scroll to bottom
     }
-
+    
     function saveMessage(sender, content) {
         if (!currentChatId || !allChats[currentChatId]) {
             console.error("Cannot save message, no active chat selected.");
@@ -1631,7 +1644,7 @@ Remember to break your goals into phases and tasks.`;
 
         } catch (error) {
             console.error("Error sending message:", error);
-            const errorMsg = `Sorry, there was an error connecting to the assistant. Please try again later. (${error.message})`;
+            const errorMsg = `Sorry, there was an error connecting to the assistant , please make sure your device connected to a network. Please try again later. (${error.message})`;
             addMessageToUI("bot", errorMsg);
             saveMessage("bot", errorMsg);
         } finally {
@@ -1765,6 +1778,8 @@ Remember to break your goals into phases and tasks.`;
         userInput.dispatchEvent(new Event("input")); // Adjust input height initially
         sendButton.disabled = true; // Send button disabled initially
         isInitialLoad = false; // Mark initial load as complete
+
+        checkForQueryParameters();
     }
 
     // Handle window resize to adjust sidebar behavior
