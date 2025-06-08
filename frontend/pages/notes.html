@@ -32,6 +32,8 @@
             --input-bg: #ffffff;
             --input-border: #ddd;
             --input-text: #333333;
+            --note-card-highlight-bg: #fff8e1; /* Light yellow background for highlighted notes */
+            --note-card-highlight-border: #ffc107; /* Yellow accent border */
             --menu-bg: #ffffff;
             --menu-hover: rgba(138, 143, 255, 0.1);
             --attachment-bg: #f9f9f9;
@@ -61,6 +63,8 @@
             --glow: 0 0 20px rgba(138, 143, 255, 0.4);
             --header-bg: rgba(0, 0, 0, 0.9);
             --header-text: #ffffff;
+            --note-card-highlight-bg: #3a2f1a; /* Light yellow background for highlighted notes */
+            --note-card-highlight-border: #ffca28; /* Yellow accent border */
             --header-shadow: 0 4px 30px rgba(255, 255, 255, 0.15);
             --input-bg: #1a1a1a;
             --input-border: #333;
@@ -225,8 +229,8 @@
         }
         
         .note-card.highlighted {
-            background-color: #fff8e1; /* Light yellow background for highlighted notes */
-            border-left: 3px solid #ffc107; /* Yellow accent border */
+            background-color: var(--note-card-highlight-bg); /* Light yellow background for highlighted notes   #fff8e1 */
+            border-left: 3px solid var(--note-card-highlight-border); /* Yellow accent border  #ffc107 */
         }
 
         .note-card:hover {
