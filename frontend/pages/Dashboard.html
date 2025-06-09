@@ -9,328 +9,437 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
   />
   <style>
-    /* [Include your existing CSS here...] */
-    /* Reset, vertical panel, expanded view, main content styles, etc. */
-    /* ... */
+    /* Reset and base styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+
+    body {
+        background-color: #f5f5f7;
+        overflow-x: hidden;
+    }
+
     body.dark-mode {
       background-color: #1f2937;
       color: #e5e7eb;
     }
+
+    .app-container {
+        display: flex;
+        min-height: 100vh;
+        width: 100%;
+    }
+
+    /* Vertical Panel - Narrow Version */
+    .vertical-panel-narrow {
+        width: 80px;
+        background-color: #ffffff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 16px 0;
+        height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 10;
+        transition: width 0.3s ease;
+    }
+
+    body.dark-mode .vertical-panel-narrow,
+    body.dark-mode .vertical-panel-expanded {
+        background-color: #1f2937;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .logo-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        margin-bottom: 16px;
+        width: 100%;
+    }
+
+    .logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #ffffff;
+        border: 1px solid #000000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    body.dark-mode .logo {
+        background-color: #374151;
+        border-color: #e5e7eb;
+    }
+
+    .logo i {
+        font-size: 18px;
+        color: #000000;
+    }
+
+    body.dark-mode .logo i {
+        color: #e5e7eb;
+    }
+
+    .expand-button {
+        position: absolute;
+        right: -15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9ca3af;
+        cursor: pointer;
+        width: 16px;
+        height: 16px;
+    }
+
+    .expand-button i {
+        font-size: 20px;
+        background-color: rgb(216, 216, 216);
+        padding: 20px 5px;
+        border-radius: 0px 10px 10px 0px;
+    }
+
+    body.dark-mode .expand-button i {
+        background-color: #4b5563;
+    }
+
+    .nav-item {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 16px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .nav-item i {
+        font-size: 16px;
+        color: #6b7280;
+    }
+
+    body.dark-mode .nav-item i {
+        color: #9ca3af;
+    }
+
+    .nav-item.active {
+        background-color: #ecfdf5;
+    }
+
+    body.dark-mode .nav-item.active {
+        background-color: #064e3b;
+    }
+
+    .nav-item.active i {
+        color: #0045e7;
+    }
+
+    body.dark-mode .nav-item.active i {
+        color: #3b82f6;
+    }
+
+    .nav-item:hover:not(.active) {
+        background-color: #f3f4f6;
+    }
+
+    body.dark-mode .nav-item:hover:not(.active) {
+        background-color: #374151;
+    }
+
+    .spacer {
+        flex-grow: 1;
+    }
+
+    .user-profile {
+        margin-bottom: 16px;
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    /* Vertical Panel - Expanded Version */
+    .vertical-panel-expanded {
+        width: 240px;
+        background-color: #ffffff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-direction: column;
+        padding: 16px 0;
+        height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 10;
+        display: none;
+        transition: width 0.3s ease;
+    }
+
+    .panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 16px;
+        margin-bottom: 24px;
+    }
+
+    .logo-text {
+        color: #0045e7;
+        font-weight: 500;
+        font-size: 18px;
+        margin-left: 8px;
+    }
+
+    body.dark-mode .logo-text {
+        color: #3b82f6;
+    }
+
+    .collapse-button {
+        background: none;
+        border: none;
+        color: #9ca3af;
+        cursor: pointer;
+        width: 20px;
+        height: 20px;
+        padding: 0;
+    }
+
+    .collapse-button i {
+        font-size: 16px;
+    }
+
+    .panel-section {
+        margin-bottom: 24px;
+    }
+
+    .section-header {
+        color: #9ca3af;
+        font-size: 12px;
+        font-weight: 500;
+        padding: 0 16px;
+        margin-bottom: 8px;
+    }
+
+    .nav-item-expanded {
+        display: flex;
+        align-items: center;
+        padding: 8px 16px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        position: relative;
+    }
+
+    .nav-item-expanded.active {
+        background-color: #ecfdf5;
+    }
+
+    body.dark-mode .nav-item-expanded.active {
+        background-color: #064e3b;
+    }
+
+    .nav-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .nav-icon i {
+        font-size: 16px;
+        color: #6b7280;
+    }
+
+    body.dark-mode .nav-icon i {
+        color: #9ca3af;
+    }
+
+    .nav-item-expanded.active .nav-icon i {
+        color: #0045e7;
+    }
+
+    body.dark-mode .nav-item-expanded.active .nav-icon i {
+        color: #3b82f6;
+    }
+
+    .nav-item-expanded.active .nav-text {
+        color: #0045e7;
+        font-weight: 500;
+    }
+
+    body.dark-mode .nav-item-expanded.active .nav-text {
+        color: #3b82f6;
+    }
+
+    .nav-text {
+        color: #4b5563;
+        font-size: 14px;
+    }
+
+    body.dark-mode .nav-text {
+        color: #e5e7eb;
+    }
+
+    .nav-item-expanded:hover:not(.active) {
+        background-color: #f3f4f6;
+    }
+
+    body.dark-mode .nav-item-expanded:hover:not(.active) {
+        background-color: #374151;
+    }
+
+    .dropdown-icon {
+        margin-left: auto;
+    }
+
+    .dropdown-icon i {
+        font-size: 12px;
+        color: #9ca3af;
+    }
+
+    .toggle-switch {
+        width: 40px;
+        height: 20px;
+        background-color: #e5e7eb;
+        border-radius: 10px;
+        margin-left: auto;
+        position: relative;
+        padding: 2px;
+        cursor: pointer;
+    }
+
+    body.dark-mode .toggle-switch {
+        background-color: #4b5563;
+    }
+
+    .toggle-knob {
+        width: 16px;
+        height: 16px;
+        background-color: #ffffff;
+        border-radius: 50%;
+        transition: transform 0.2s ease;
+    }
+
+    .toggle-switch.active {
+        background-color: #10b981;
+    }
+
+    .toggle-switch.active .toggle-knob {
+        transform: translateX(20px);
+    }
+
+    .user-profile-expanded {
+        display: flex;
+        align-items: center;
+        padding: 8px 16px;
+        margin-bottom: 8px;
+    }
+
+    .user-info {
+        margin-left: 12px;
+    }
+
+    .user-name {
+        color: #4b5563;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    body.dark-mode .user-name {
+        color: #e5e7eb;
+    }
+
+    .user-role {
+        color: #9ca3af;
+        font-size: 12px;
+    }
+
+    /* Main Content */
     .main-content {
-      padding: 24px;
-      background-color: #f5f5f7;
-      height: 100%;
-      overflow-y: auto;
+        flex-grow: 1;
+        padding: 24px;
+        background-color: #f5f5f7;
+        margin-left: 80px;
+        transition: margin-left 0.3s ease;
+        min-height: 100vh;
     }
+
     body.dark-mode .main-content {
-      background-color: #374151;
+        background-color: #374151;
     }
-  </style>
-  <style>
-   /* Reset and base styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        }
 
-        body {
-            background-color: #f5f5f7;
-        }
+    .main-content-expanded {
+        margin-left: 240px;
+    }
 
-        .app-container {
-            display: flex;
-            height: 100vh;
-        }
+    .main-content h1 {
+        font-size: 24px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 16px;
+    }
 
-        /* Vertical Panel - Narrow Version */
+    body.dark-mode .main-content h1 {
+        color: #f9fafb;
+    }
+
+    .main-content p {
+        color: #4b5563;
+        line-height: 1.6;
+    }
+
+    body.dark-mode .main-content p {
+        color: #d1d5db;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
         .vertical-panel-narrow {
-            width: 80px;
-            background-color: #ffffff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 16px 0;
-            height: 100vh;
-            position: relative;
-            z-index: 10;
+            width: 60px;
         }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            margin-bottom: 16px;
-            width: 100%;
-        }
-
-        .logo {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: #ffffff;
-            border: 1px solid #000000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .logo i {
-            font-size: 18px;
-            color: #000000;
-        }
-
-        .expand-button {
-            position: absolute;
-            right: -15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #9ca3af;
-            cursor: pointer;
-            width: 16px;
-            height: 16px;
-        }
-
-        .expand-button i {
-            font-size: 20px;
-            background-color: rgb(216, 216, 216);
-            padding: 20px 5px;
-            border-radius: 0px 10px 10px 0px;
-        }
-
-
-
-        .nav-item {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 16px;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-        }
-
-        .nav-item i {
-            font-size: 16px;
-            color: #6b7280;
-        }
-
-        .nav-item.active {
-            background-color: #ecfdf5;
-        }
-
-        .nav-item.active i {
-            color: #0045e7;
-        }
-
-        .nav-item:hover:not(.active) {
-            background-color: #f3f4f6;
-        }
-
-        .spacer {
-            flex-grow: 1;
-        }
-
-        .user-profile {
-            margin-bottom: 16px;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        /* Vertical Panel - Expanded Version */
+        
         .vertical-panel-expanded {
-            width: 240px;
-            background-color: #ffffff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-            display: flex;
-            flex-direction: column;
-            padding: 16px 0;
-            height: 100vh;
-            position: relative;
-            z-index: 5;
-            display: none; /* Hidden by default, shown via JS */
+            width: 200px;
         }
-
-        .panel-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 16px;
-            margin-bottom: 24px;
-        }
-
-        .logo-text {
-            color: #0045e7;
-            font-weight: 500;
-            font-size: 18px;
-            margin-left: 8px;
-        }
-
-        .collapse-button {
-            background: none;
-            border: none;
-            color: #9ca3af;
-            cursor: pointer;
-            width: 20px;
-            height: 20px;
-            padding: 0;
-        }
-
-        .collapse-button i {
-            font-size: 16px;
-        }
-
-        .panel-section {
-            margin-bottom: 24px;
-        }
-
-        .section-header {
-            color: #9ca3af;
-            font-size: 12px;
-            font-weight: 500;
-            padding: 0 16px;
-            margin-bottom: 8px;
-        }
-
-        .nav-item-expanded {
-            display: flex;
-            align-items: center;
-            padding: 8px 16px;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-            position: relative;
-        }
-
-        .nav-item-expanded.active {
-            background-color: #ecfdf5;
-        }
-
-        .nav-icon {
-            width: 20px;
-            height: 20px;
-            margin-right: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .nav-icon i {
-            font-size: 16px;
-            color: #6b7280;
-        }
-
-        .nav-item-expanded.active .nav-icon i {
-            color: #0045e7;
-        }
-
-        .nav-item-expanded.active .nav-text {
-            color: #0045e7;
-            font-weight: 500;
-        }
-
-        .nav-text {
-            color: #4b5563;
-            font-size: 14px;
-        }
-
-        .nav-item-expanded:hover:not(.active) {
-            background-color: #f3f4f6;
-        }
-
-        .dropdown-icon {
-            margin-left: auto;
-        }
-
-        .dropdown-icon i {
-            font-size: 12px;
-            color: #9ca3af;
-        }
-
-        .toggle-switch {
-            width: 40px;
-            height: 20px;
-            background-color: #e5e7eb;
-            border-radius: 10px;
-            margin-left: auto;
-            position: relative;
-            padding: 2px;
-            cursor: pointer;
-        }
-
-        .toggle-knob {
-            width: 16px;
-            height: 16px;
-            background-color: #ffffff;
-            border-radius: 50%;
-            transition: transform 0.2s ease;
-        }
-
-        .toggle-switch.active {
-            background-color: #10b981;
-        }
-
-        .toggle-switch.active .toggle-knob {
-            transform: translateX(20px);
-        }
-
-        .user-profile-expanded {
-            display: flex;
-            align-items: center;
-            padding: 8px 16px;
-            margin-bottom: 8px;
-        }
-
-        .user-info {
-            margin-left: 12px;
-        }
-
-        .user-name {
-            color: #4b5563;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .user-role {
-            color: #9ca3af;
-            font-size: 12px;
-        }
-
-        /* Main Content */
+        
         .main-content {
-            flex-grow: 1;
-            padding: 24px;
-            background-color: #f5f5f7;
+            margin-left: 60px;
+            padding: 16px;
         }
+        
+        .main-content-expanded {
+            margin-left: 200px;
+        }
+        
+        .expand-button i {
+            padding: 15px 4px;
+        }
+    }
 
-        .main-content h1 {
-            font-size: 24px;
-            font-weight: 700;
-            color: #111827;
-            margin-bottom: 16px;
+    @media (max-width: 480px) {
+        .vertical-panel-expanded {
+            width: 180px;
         }
-
-        .main-content p {
-            color: #4b5563;
+        
+        .main-content-expanded {
+            margin-left: 180px;
         }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .vertical-panel-expanded {
-                position: absolute;
-                left: 0;
-                top: 0;
-            }
-        }
+    }
   </style>
 </head>
 <body>
@@ -342,7 +451,7 @@
         <div class="expand-button"><i class="fas fa-chevron-right"></i></div>
       </div>
 
-      <div class="nav-item active" data-page="updated_index_v3.html">
+      <div class="nav-item active" data-page="index.html">
         <i class="fas fa-th-large" title="Dashboard"></i>
       </div>
       <div class="nav-item" data-page="chatbot.html">
@@ -351,13 +460,13 @@
       <div class="nav-item" data-page="notes.html">
         <i class="fas fa-sticky-note" title="Notes"></i>
       </div>
-      <div class="nav-item" data-page="Classmate Login.html">
+      <div class="nav-item" data-page="To Do List Front End.html">
         <i class="fas fa-tasks" title="To-do List"></i>
       </div>
-      <div class="nav-item" data-page="Classmate Home BL.html ">
+      <div class="nav-item" data-page="attendance.html">
         <i class="fas fa-user-clock" title="Attendance Calculator"></i>
       </div>
-      <div class="nav-item" data-page="interview.html">
+      <div class="nav-item" data-page="interviewer.html">
         <i class="fas fa-microphone-alt" title="AI Mock Interview"></i>
       </div>
       <div class="nav-item" data-page="settings.html">
@@ -391,7 +500,7 @@
 
       <div class="panel-section">
         <div class="section-header">MENU</div>
-        <div class="nav-item-expanded active" data-page="updated_index_v3.1.html">
+        <div class="nav-item-expanded active" data-page="index.html">
           <div class="nav-icon"><i class="fas fa-th-large"></i></div>
           <span class="nav-text">Dashboard</span>
         </div>
@@ -411,7 +520,7 @@
           <div class="nav-icon"><i class="fas fa-user-clock"></i></div>
           <span class="nav-text">Attendance</span>
         </div>
-        <div class="nav-item-expanded" data-page="interview.html">
+        <div class="nav-item-expanded" data-page="interviewer.html">
           <div class="nav-icon"><i class="fas fa-microphone-alt"></i></div>
           <span class="nav-text">Mock Interview</span>
         </div>
@@ -454,6 +563,23 @@
       <!-- Initial Dashboard or default content -->
       <h1>Dashboard</h1>
       <p>Welcome! Select a menu item to get started.</p>
+      
+      <!-- Sample content to demonstrate layout -->
+      <div style="margin-top: 20px;">
+        <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <h2>Recent Activity</h2>
+          <p>No recent activity to display.</p>
+        </div>
+        
+        <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <h2>Quick Actions</h2>
+          <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+            <button style="padding: 10px 15px; background: #0045e7; color: white; border: none; border-radius: 5px; cursor: pointer;">New Note</button>
+            <button style="padding: 10px 15px; background: #0045e7; color: white; border: none; border-radius: 5px; cursor: pointer;">New Task</button>
+            <button style="padding: 10px 15px; background: #0045e7; color: white; border: none; border-radius: 5px; cursor: pointer;">Start Chat</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -470,18 +596,31 @@
       const darkToggleExp = document.getElementById("darkToggleExpanded");
       const main = document.getElementById("mainContent");
 
-      expandBtn.addEventListener("click", () => {
+      // Function to handle panel expansion
+      const expandPanel = () => {
         narrow.style.display = "none";
         expanded.style.display = "flex";
-      });
-      collapseBtn.addEventListener("click", () => {
+        main.classList.add("main-content-expanded");
+      };
+
+      // Function to handle panel collapse
+      const collapsePanel = () => {
         expanded.style.display = "none";
         narrow.style.display = "flex";
-      });
+        main.classList.remove("main-content-expanded");
+      };
+
+      expandBtn.addEventListener("click", expandPanel);
+      collapseBtn.addEventListener("click", collapsePanel);
 
       // Navigation click and AJAX loader
       navItems.forEach((item) => {
-        item.addEventListener("click", () => {
+        item.addEventListener("click", (e) => {
+          // Don't process click if it's the dark mode toggle
+          if (item.id === "darkToggle" || item.id === "darkToggleExpanded") {
+            return;
+          }
+          
           // highlight
           navItems.forEach((i) => i.classList.remove("active"));
           item.classList.add("active");
@@ -496,6 +635,13 @@
               .then((html) => {
                 main.innerHTML = html;
                 document.body.scrollTop = 0;
+                
+                // Re-apply expanded class if needed
+                if (expanded.style.display === "flex") {
+                  main.classList.add("main-content-expanded");
+                } else {
+                  main.classList.remove("main-content-expanded");
+                }
               })
               .catch((err) => {
                 main.innerHTML =
@@ -510,20 +656,42 @@
       // Dark mode toggle
       const toggleDark = () => {
         document.body.classList.toggle("dark-mode");
-        if (darkToggleExp)
-          darkToggleExp
-            .querySelector(".toggle-switch")
-            .classList.toggle("active");
+        if (darkToggleExp) {
+          const toggleSwitch = darkToggleExp.querySelector(".toggle-switch");
+          toggleSwitch.classList.toggle("active");
+          
+          // Store preference in localStorage
+          const isDark = document.body.classList.contains("dark-mode");
+          localStorage.setItem("darkMode", isDark ? "enabled" : "disabled");
+        }
       };
+      
+      // Check for saved dark mode preference
+      if (localStorage.getItem("darkMode") === "enabled") {
+        document.body.classList.add("dark-mode");
+        if (darkToggleExp) {
+          darkToggleExp.querySelector(".toggle-switch").classList.add("active");
+        }
+      }
+      
       darkToggle.addEventListener("click", toggleDark);
       if (darkToggleExp) darkToggleExp.addEventListener("click", toggleDark);
 
-      // (Optional) Logout button
+      // Logout button
       document.querySelectorAll("#logoutBtn, #logoutBtn2").forEach((btn) => {
         btn.addEventListener("click", () => {
           alert("Logging out...");
           // Add your real logout logic here
         });
+      });
+      
+      // Close expanded panel when clicking outside on mobile
+      window.addEventListener("click", (e) => {
+        if (window.innerWidth <= 768 && expanded.style.display === "flex") {
+          if (!expanded.contains(e.target) && !expandBtn.contains(e.target)) {
+            collapsePanel();
+          }
+        }
       });
     });
   </script>
