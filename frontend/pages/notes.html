@@ -349,7 +349,8 @@
             z-index: 10;
             display: none;
             overflow: hidden;
-            max-width: 150px; /* Increased width */
+            max-width: 200px; /* Increased width */
+            min-width: 100px; /* Increased min-width */
             border: 1px solid var(--card-border);
 
         }
@@ -377,21 +378,21 @@
             background-color: var(--menu-hover);
         }
 
-        .menu-item .icon-svg {
+        .menu-item .icon {
             width: 18px;
             height: 18px;
             margin-right: 12px; /* Increased spacing */
             fill: var(--text);
         }
-        .edit-icon .icon-svg {
+        .edit-icon .icon {
             fill: var(--accent);
         }
 
-        .delete-icon .icon-svg {
+        .delete-icon .icon {
             fill: #ea4335;
         }
-        
-        .highlight-icon .icon-svg {
+
+        .highlight-icon .icon {
             fill: #ffc107; /* Yellow color for highlight icon */
         }
         
@@ -1451,14 +1452,14 @@
                 statusIcons.className = "note-card-status";
                 if (note.pinned) {
                     const pinIcon = document.createElement("i");
-                    pinIcon.className = "fas fa-thumbtack";
+                    pinIcon.className = "fas fa-thumbtack icon";
                     pinIcon.style.marginLeft = "8px";
                     pinIcon.style.color = "var(--accent)";
                     statusIcons.appendChild(pinIcon);
                 }
                 if (note.highlighted) {
                     const highlightIcon = document.createElement("i");
-                    highlightIcon.className = "fas fa-star";
+                    highlightIcon.className = "fas fa-star icon";
                     highlightIcon.style.marginLeft = "8px";
                     highlightIcon.style.color = "#ffc107";
                     statusIcons.appendChild(highlightIcon);
@@ -1739,7 +1740,7 @@
               
               const editItem = document.createElement("div");
               editItem.className = "menu-item edit-icon";
-              editItem.innerHTML = '<i class="fas fa-edit"></i> Edit';
+              editItem.innerHTML = '<i class="fas fa-edit icon"></i> Edit';
               editItem.addEventListener("click", () => {
                   openEditModal(index);
                   document.body.removeChild(menu);
@@ -1748,8 +1749,8 @@
               const pinItem = document.createElement("div");
               pinItem.className = "menu-item pin-icon";
               pinItem.innerHTML = notes[index].pinned ? 
-                  '<i class="fas fa-thumbtack"></i> Unpin' : 
-                  '<i class="fas fa-thumbtack"></i> Pin';
+                  '<i class="fas fa-thumbtack icon"></i> Unpin' : 
+                  '<i class="fas fa-thumbtack icon"></i> Pin';
               pinItem.addEventListener("click", () => {
                   notes[index].pinned = !notes[index].pinned;
                   localStorage.setItem("notes", JSON.stringify(notes));
@@ -1760,8 +1761,8 @@
               const highlightItem = document.createElement("div");
               highlightItem.className = "menu-item highlight-icon";
               highlightItem.innerHTML = notes[index].highlighted ? 
-                  '<i class="fas fa-star"></i> Remove Highlight' : 
-                  '<i class="fas fa-star"></i> Highlight';
+                  '<i class="fas fa-star icon"></i> Remove Highlight' : 
+                  '<i class="fas fa-star icon"></i> Highlight';
               highlightItem.addEventListener("click", () => {
                   notes[index].highlighted = !notes[index].highlighted;
                   localStorage.setItem("notes", JSON.stringify(notes));
@@ -1771,7 +1772,7 @@
               
               const deleteItem = document.createElement("div");
               deleteItem.className = "menu-item delete-icon";
-              deleteItem.innerHTML = '<i class="fas fa-trash-alt"></i> Delete';
+              deleteItem.innerHTML = '<i class="fas fa-trash-alt icon"></i> Delete';
               deleteItem.addEventListener("click", () => {
                   if (confirm("Are you sure you want to delete this note?")) {
                       notes.splice(index, 1);
