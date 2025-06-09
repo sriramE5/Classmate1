@@ -106,7 +106,7 @@
         white-space: nowrap;
     }
     .new-chat-btn:hover {
-        background-color: #313030;
+        background-color: #010bbd;
     }
     .chat-history-list {
         flex-grow: 1;
@@ -470,8 +470,8 @@
       display: flex;
       flex-direction: column;
       padding: 1rem 1.5rem;
-      background-color: var(--bg-secondary);
-      border-top: 1px solid var(--border-color);
+      background-color: #ffffff00;
+      border-top: 1px solid #ffffff00;
       width: 100%;
       position: relative;
       bottom: 0;
@@ -850,6 +850,123 @@
         border-color: var(--accent-primary);
         box-shadow: 0 0 0 2px rgba(21, 67, 206, 0.2);
     }
+
+    /* Custom Dialog Modal Styles */
+.dialog-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.dialog-modal.show {
+    display: flex;
+    opacity: 1;
+}
+
+.dialog-content {
+    background-color: var(--bg-primary);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    width: 90%;
+    max-width: 400px;
+    padding: 1.5rem;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+.dialog-modal.show .dialog-content {
+    transform: translateY(0);
+}
+
+.dialog-header {
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dialog-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--text-primary);
+}
+
+.dialog-body {
+    margin-bottom: 1.5rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.dialog-btn {
+    padding: 0.5rem 1rem;
+    border-radius: calc(var(--border-radius) / 2);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border: 1px solid transparent;
+}
+
+.dialog-btn-primary {
+    background-color: var(--accent-primary);
+    color: white;
+    border-color: var(--accent-primary);
+}
+
+.dialog-btn-primary:hover {
+    background-color: var(--accent-secondary);
+    border-color: var(--accent-secondary);
+}
+
+.dialog-btn-secondary {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+.dialog-btn-secondary:hover {
+    background-color: var(--bg-tertiary);
+}
+
+.dialog-btn-danger {
+    background-color: #e53935;
+    color: white;
+    border-color: #e53935;
+}
+
+.dialog-btn-danger:hover {
+    background-color: #c62828;
+    border-color: #c62828;
+}
+
+.dialog-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: calc(var(--border-radius) / 2);
+    font-family: var(--font-family);
+    font-size: 1rem;
+    margin-top: 0.5rem;
+}
+
+.dialog-input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 2px rgba(21, 67, 206, 0.2);
+}
   </style>
 </head>
 <body>
@@ -913,6 +1030,39 @@
 </div>
 <!-- Toast notification element -->
 <div class="toast" id="toast"></div>
+
+<!-- Rename Chat Dialog -->
+<div class="dialog-modal" id="rename-dialog">
+    <div class="dialog-content">
+        <div class="dialog-header">
+            <h3><i class="fa-solid fa-pen-to-square"></i>Rename Chat</h3>
+        </div>
+        <div class="dialog-body">
+            <p>Enter a new name for this chat:</p>
+            <input type="text" class="dialog-input" id="rename-input" maxlength="50" placeholder="Chat name...">
+        </div>
+        <div class="dialog-footer">
+            <button class="dialog-btn dialog-btn-secondary" id="rename-cancel-btn">Cancel</button>
+            <button class="dialog-btn dialog-btn-primary" id="rename-confirm-btn">Rename</button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Chat Dialog -->
+<div class="dialog-modal" id="delete-dialog">
+    <div class="dialog-content">
+        <div class="dialog-header">
+            <h3><i class="fa-solid fa-trash"></i> Delete Chat</h3>
+        </div>
+        <div class="dialog-body">
+            <p id="delete-confirm-text">Are you sure you want to delete this chat? This action cannot be undone.</p>
+        </div>
+        <div class="dialog-footer">
+            <button class="dialog-btn dialog-btn-secondary" id="delete-cancel-btn">Cancel</button>
+            <button class="dialog-btn dialog-btn-danger" id="delete-confirm-btn">Delete</button>
+        </div>
+    </div>
+</div>
 <script>
     const chatContainer = document.getElementById("chat-container");
     const userInput = document.getElementById("user-input");
@@ -943,6 +1093,8 @@
     let messageBeingSent = false; // Flag to prevent duplicate messages
     let isInitialLoad = true; // Flag to track initial page load
     let resizeTimeout; // For debouncing resize events
+    let chatToRename = null;
+    let chatToDelete = null;
 
     let promptBase = `You are ClassMate, a smart academic assistant for students.
     You help them manage goals, generate to-do lists, explain concepts with code and tables, and reply in an organized, friendly format.
@@ -965,6 +1117,19 @@ Phase 2: [e.g., Data Structures and Control Flow]
 (Add more phases and tasks as appropriate for the user\'s request)
 
 Remember to break your goals into phases and tasks.`;
+        function checkForQueryParameters() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const query = urlParams.get("query");
+        
+        if (query) {
+            // Set the query in the input field
+            userInput.value = decodeURIComponent(query);
+            userInput.dispatchEvent(new Event("input")); // Adjust height
+            
+            // Optional: Auto-send the message
+            // setTimeout(() => sendMessage(), 500);
+        }
+    }
 
     // Function to check if we\'re in mobile/tablet view
     function isMobileView() {
@@ -1285,7 +1450,7 @@ Remember to break your goals into phases and tasks.`;
         }
         console.log("Started new chat:", newChatId);
     }
-
+    
     function switchChat(chatId) {
         if (!allChats[chatId]) {
             console.error("Chat ID not found:", chatId);
@@ -1315,34 +1480,98 @@ Remember to break your goals into phases and tasks.`;
     }
 
     function renameChat(chatId) {
-        const chat = allChats[chatId];
-        if (!chat) return;
-        const newTitle = prompt("Enter new name for this chat:", chat.title || `Chat ${chatId.substring(0, 4)}`);
-        if (newTitle && newTitle.trim() !== "") {
-            chat.title = newTitle.trim();
-            saveChats();
+    chatToRename = chatId;
+    const chat = allChats[chatId];
+    const dialog = document.getElementById('rename-dialog');
+    const input = document.getElementById('rename-input');
+    
+    // Set current title as input value
+    input.value = chat.title || `Chat ${chatId.substring(0, 4)}`;
+    
+    // Show dialog
+    dialog.classList.add('show');
+    
+    // Focus and select all text
+    setTimeout(() => {
+        input.focus();
+        input.select();
+    }, 100);
+}
+
+    // Enhanced delete function with modal dialog
+function deleteChat(chatId) {
+    chatToDelete = chatId;
+    const chat = allChats[chatId];
+    const dialog = document.getElementById('delete-dialog');
+    const textElement = document.getElementById('delete-confirm-text');
+    
+    // Update confirmation text with chat title
+    textElement.textContent = `Are you sure you want to delete "${chat.title || 'this chat permanently'}"?`;
+    
+    // Show dialog
+    dialog.classList.add('show');
+}
+
+// Dialog event handlers
+document.getElementById('rename-cancel-btn').addEventListener('click', () => {
+    document.getElementById('rename-dialog').classList.remove('show');
+    chatToRename = null;
+});
+
+document.getElementById('rename-confirm-btn').addEventListener('click', () => {
+    const newTitle = document.getElementById('rename-input').value.trim();
+    if (newTitle && chatToRename && allChats[chatToRename]) {
+        allChats[chatToRename].title = newTitle;
+        saveChats();
+        renderChatHistory();
+    }
+    document.getElementById('rename-dialog').classList.remove('show');
+    chatToRename = null;
+});
+
+document.getElementById('delete-cancel-btn').addEventListener('click', () => {
+    document.getElementById('delete-dialog').classList.remove('show');
+    chatToDelete = null;
+});
+
+document.getElementById('delete-confirm-btn').addEventListener('click', () => {
+    if (chatToDelete && allChats[chatToDelete]) {
+        delete allChats[chatToDelete];
+        saveChats();
+        
+        // If deleting the current chat, switch to another or start new
+        if (currentChatId === chatToDelete) {
+            const remainingChatIds = Object.keys(allChats);
+            if (remainingChatIds.length > 0) {
+                switchChat(remainingChatIds[0]);
+            } else {
+                startNewChat();
+            }
+        } else {
             renderChatHistory();
         }
     }
+    document.getElementById('delete-dialog').classList.remove('show');
+    chatToDelete = null;
+});
 
-    function deleteChat(chatId) {
-        if (!allChats[chatId]) return;
-        if (confirm(`Are you sure you want to delete "${allChats[chatId].title || "this chat"}"?`)) {
-            delete allChats[chatId];
-            saveChats();
-            // If deleting the current chat, switch to another or start new
-            if (currentChatId === chatId) {
-                const remainingChatIds = Object.keys(allChats);
-                if (remainingChatIds.length > 0) {
-                    switchChat(remainingChatIds[0]); // Switch to the first remaining
-                } else {
-                    startNewChat(); // Start a new one if none left
-                }
-            } else {
-                renderChatHistory(); // Just re-render if deleting non-active chat
-            }
-        }
+// Allow Enter key to confirm rename
+document.getElementById('rename-input').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        document.getElementById('rename-confirm-btn').click();
     }
+});
+
+// Close dialogs when clicking on overlay
+document.querySelectorAll('.dialog-modal').forEach(dialog => {
+    dialog.addEventListener('click', (e) => {
+        if (e.target === dialog) {
+            dialog.classList.remove('show');
+            chatToRename = null;
+            chatToDelete = null;
+        }
+    });
+});
 
     newChatBtn.addEventListener("click", () => {
         startNewChat();
@@ -1444,7 +1673,7 @@ Remember to break your goals into phases and tasks.`;
             copyItem.addEventListener("click", (e) => {
                 e.stopPropagation();
                 navigator.clipboard.writeText(contentDiv.innerText).then(() => {
-                    showToast("Bot reply copied!");
+                    showToast("copied!");
                 }).catch(err => console.error("Copy failed", err));
                 dropdown.classList.remove("show");
             });
@@ -1511,7 +1740,7 @@ Remember to break your goals into phases and tasks.`;
         chatContainer.appendChild(messageDiv);
         chatContainer.scrollTop = chatContainer.scrollHeight; // Scroll to bottom
     }
-
+    
     function saveMessage(sender, content) {
         if (!currentChatId || !allChats[currentChatId]) {
             console.error("Cannot save message, no active chat selected.");
@@ -1631,7 +1860,7 @@ Remember to break your goals into phases and tasks.`;
 
         } catch (error) {
             console.error("Error sending message:", error);
-            const errorMsg = `Sorry, there was an error connecting to the assistant. Please try again later. (${error.message})`;
+            const errorMsg = `Sorry, there was an error connecting to the assistant , please make sure your device connected to a network. Please try again later. (${error.message})`;
             addMessageToUI("bot", errorMsg);
             saveMessage("bot", errorMsg);
         } finally {
@@ -1765,6 +1994,8 @@ Remember to break your goals into phases and tasks.`;
         userInput.dispatchEvent(new Event("input")); // Adjust input height initially
         sendButton.disabled = true; // Send button disabled initially
         isInitialLoad = false; // Mark initial load as complete
+
+        checkForQueryParameters();
     }
 
     // Handle window resize to adjust sidebar behavior
