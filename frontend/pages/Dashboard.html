@@ -3,152 +3,529 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Class Mate Dashboard</title>
-  <link rel="stylesheet" href="Class Mate Css.css">
+  <title>Vertical Nav Panel with Dynamic Content</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
   <style>
-    * {
-      box-sizing: border-box;
+    /* [Include your existing CSS here...] */
+    /* Reset, vertical panel, expanded view, main content styles, etc. */
+    /* ... */
+    body.dark-mode {
+      background-color: #1f2937;
+      color: #e5e7eb;
     }
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #fff;
-    }
-    /* header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem 2rem;
-      background: white;
-      border-bottom: 1px solid #ccc;
-    }
-    header .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    header .logo img {
-      height: 30px;
-    }
-    nav {
-      display: flex;
-      gap: 2rem;
-      font-weight: bold;
-    }
-    .logout-btn {
-      background: #9f7;
-      padding: 0.5rem 1.5rem;
-      border-radius: 25px;
-      font-weight: bold;
-      border: none;
-      cursor: pointer;
-    } */
-    .dashboard {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: auto auto;
-      gap: 1.5rem;
-      padding: 2rem;
-      background: rgb(255, 255, 255);
-      min-height: 100vh;
-    }
-    .card {
-      background: #9f7;
-      border-radius: 30px;
-      padding: 1rem;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-    .profile {
-      grid-row: span 2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .profile img {
-      max-width: 100%;
-      border-radius: 20px;
-    }
-    .name-list {
-      background: white;
-      margin-top: 1rem;
-      padding: 1rem;
-      border-radius: 20px;
-      width: 90%;
-    }
-    .name-list p {
-      margin: 0.5rem 0;
-      font-weight: bold;
-    }
-    .chart, .graph {
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    .main-content {
+      padding: 24px;
+      background-color: #f5f5f7;
       height: 100%;
+      overflow-y: auto;
     }
-    .big-card {
-      grid-column: span 2;
-      min-height: 200px;
+    body.dark-mode .main-content {
+      background-color: #374151;
     }
-    
+  </style>
+  <style>
+   /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f7;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Vertical Panel - Narrow Version */
+        .vertical-panel-narrow {
+            width: 80px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 0;
+            height: 100vh;
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-bottom: 16px;
+            width: 100%;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            border: 1px solid #000000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo i {
+            font-size: 18px;
+            color: #000000;
+        }
+
+        .expand-button {
+            position: absolute;
+            right: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+        }
+
+        .expand-button i {
+            font-size: 20px;
+            background-color: rgb(216, 216, 216);
+            padding: 20px 5px;
+            border-radius: 0px 10px 10px 0px;
+        }
+
+
+
+        .nav-item {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .nav-item i {
+            font-size: 16px;
+            color: #6b7280;
+        }
+
+        .nav-item.active {
+            background-color: #ecfdf5;
+        }
+
+        .nav-item.active i {
+            color: #0045e7;
+        }
+
+        .nav-item:hover:not(.active) {
+            background-color: #f3f4f6;
+        }
+
+        .spacer {
+            flex-grow: 1;
+        }
+
+        .user-profile {
+            margin-bottom: 16px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Vertical Panel - Expanded Version */
+        .vertical-panel-expanded {
+            width: 240px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            padding: 16px 0;
+            height: 100vh;
+            position: relative;
+            z-index: 5;
+            display: none; /* Hidden by default, shown via JS */
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            margin-bottom: 24px;
+        }
+
+        .logo-text {
+            color: #0045e7;
+            font-weight: 500;
+            font-size: 18px;
+            margin-left: 8px;
+        }
+
+        .collapse-button {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            padding: 0;
+        }
+
+        .collapse-button i {
+            font-size: 16px;
+        }
+
+        .panel-section {
+            margin-bottom: 24px;
+        }
+
+        .section-header {
+            color: #9ca3af;
+            font-size: 12px;
+            font-weight: 500;
+            padding: 0 16px;
+            margin-bottom: 8px;
+        }
+
+        .nav-item-expanded {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            position: relative;
+        }
+
+        .nav-item-expanded.active {
+            background-color: #ecfdf5;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-icon i {
+            font-size: 16px;
+            color: #6b7280;
+        }
+
+        .nav-item-expanded.active .nav-icon i {
+            color: #0045e7;
+        }
+
+        .nav-item-expanded.active .nav-text {
+            color: #0045e7;
+            font-weight: 500;
+        }
+
+        .nav-text {
+            color: #4b5563;
+            font-size: 14px;
+        }
+
+        .nav-item-expanded:hover:not(.active) {
+            background-color: #f3f4f6;
+        }
+
+        .dropdown-icon {
+            margin-left: auto;
+        }
+
+        .dropdown-icon i {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .toggle-switch {
+            width: 40px;
+            height: 20px;
+            background-color: #e5e7eb;
+            border-radius: 10px;
+            margin-left: auto;
+            position: relative;
+            padding: 2px;
+            cursor: pointer;
+        }
+
+        .toggle-knob {
+            width: 16px;
+            height: 16px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            transition: transform 0.2s ease;
+        }
+
+        .toggle-switch.active {
+            background-color: #10b981;
+        }
+
+        .toggle-switch.active .toggle-knob {
+            transform: translateX(20px);
+        }
+
+        .user-profile-expanded {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            margin-bottom: 8px;
+        }
+
+        .user-info {
+            margin-left: 12px;
+        }
+
+        .user-name {
+            color: #4b5563;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .user-role {
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex-grow: 1;
+            padding: 24px;
+            background-color: #f5f5f7;
+        }
+
+        .main-content h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 16px;
+        }
+
+        .main-content p {
+            color: #4b5563;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .vertical-panel-expanded {
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
+        }
   </style>
 </head>
 <body>
+  <div class="app-container">
+    <!-- Narrow (icon-only) panel -->
+    <div class="vertical-panel-narrow" id="narrowPanel">
+      <div class="logo-container">
+        <div class="logo"><i class="fas fa-robot"></i></div>
+        <div class="expand-button"><i class="fas fa-chevron-right"></i></div>
+      </div>
 
-  <!-- <header>
-    <div class="logo">
-      <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="cap icon" />
-      <span>CLASS MATE</span>
+      <div class="nav-item active" data-page="updated_index_v3.html">
+        <i class="fas fa-th-large" title="Dashboard"></i>
+      </div>
+      <div class="nav-item" data-page="chatbot.html">
+        <i class="fas fa-comment-dots" title="AI Chatbot"></i>
+      </div>
+      <div class="nav-item" data-page="notes.html">
+        <i class="fas fa-sticky-note" title="Notes"></i>
+      </div>
+      <div class="nav-item" data-page="Classmate Login.html">
+        <i class="fas fa-tasks" title="To-do List"></i>
+      </div>
+      <div class="nav-item" data-page="Classmate Home BL.html ">
+        <i class="fas fa-user-clock" title="Attendance Calculator"></i>
+      </div>
+      <div class="nav-item" data-page="interview.html">
+        <i class="fas fa-microphone-alt" title="AI Mock Interview"></i>
+      </div>
+      <div class="nav-item" data-page="settings.html">
+        <i class="fas fa-cog" title="Settings"></i>
+      </div>
+      <div class="nav-item" id="darkToggle">
+        <i class="fas fa-moon" title="Dark Mode"></i>
+      </div>
+      <div class="spacer"></div>
+      <div class="user-profile">
+        <img
+          src="https://randomuser.me/api/portraits/men/32.jpg"
+          alt="User"
+          class="user-avatar"
+        />
+      </div>
+      <div class="nav-item logout" id="logoutBtn">
+        <i class="fas fa-sign-out-alt"></i>
+      </div>
     </div>
-    <nav>
-      <div>HOME</div>
-      <div>FEATURES</div>
-      <div>ABOUT</div>
-    </nav>
-    <button class="logout-btn">Log Out</button>
-  </header> -->
-  <header>
-    <nav>
-      <a href="#" class="logo">
-        <div class="logo-icon">
-          <svg width="20" height="15" viewBox="0 0 20 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10 0L20 15H0L10 0Z" fill="white" />
-          </svg>
+
+    <!-- Expanded (text + icons) panel -->
+    <div class="vertical-panel-expanded" id="expandedPanel">
+      <div class="panel-header">
+        <div class="logo-container">
+          <div class="logo"><i class="fas fa-robot"></i></div>
+          <span class="logo-text">Classmate</span>
         </div>
-        <span>CLASS MATE</span>
-      </a>
-      <div class="nav-links">
-        <a href="Class Mate Func.html">HOME</a>
-        <a href="#features">FEATURES</a>
-        <a href="Dashboard.html" id="dashboard">DASHBOARD</a>
-        <a href="#about">ABOUT</a>
+        <button class="collapse-button"><i class="fas fa-chevron-left"></i></button>
       </div>
-      <a href="ClassMateWeb.html" class="btn btn-primary">Log Out</a>
-    </nav>
-  </header>
 
-  <div class="dashboard">
-    <div class="card profile">
-      <img src="https://via.placeholder.com/250x250.png?text=Avatar" alt="Avatar"/>
-      <div class="name-list">
-        <p>Name</p>
-        <p>Name</p>
-        <p>Name</p>
-        <p>Name</p>
+      <div class="panel-section">
+        <div class="section-header">MENU</div>
+        <div class="nav-item-expanded active" data-page="updated_index_v3.1.html">
+          <div class="nav-icon"><i class="fas fa-th-large"></i></div>
+          <span class="nav-text">Dashboard</span>
+        </div>
+        <div class="nav-item-expanded" data-page="chatbot.html">
+          <div class="nav-icon"><i class="fas fa-comment-dots"></i></div>
+          <span class="nav-text">AI Chatbot</span>
+        </div>
+        <div class="nav-item-expanded" data-page="notes.html">
+          <div class="nav-icon"><i class="fas fa-sticky-note"></i></div>
+          <span class="nav-text">Notes</span>
+        </div>
+        <div class="nav-item-expanded" data-page="todo.html">
+          <div class="nav-icon"><i class="fas fa-tasks"></i></div>
+          <span class="nav-text">To‑do List</span>
+        </div>
+        <div class="nav-item-expanded" data-page="attendance.html">
+          <div class="nav-icon"><i class="fas fa-user-clock"></i></div>
+          <span class="nav-text">Attendance</span>
+        </div>
+        <div class="nav-item-expanded" data-page="interview.html">
+          <div class="nav-icon"><i class="fas fa-microphone-alt"></i></div>
+          <span class="nav-text">Mock Interview</span>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-header">SYSTEM</div>
+        <div class="nav-item-expanded" data-page="settings.html">
+          <div class="nav-icon"><i class="fas fa-cog"></i></div>
+          <span class="nav-text">Settings</span>
+        </div>
+        <div class="nav-item-expanded" id="darkToggleExpanded">
+          <div class="nav-icon"><i class="fas fa-moon"></i></div>
+          <span class="nav-text">Dark mode</span>
+          <div class="toggle-switch"><div class="toggle-knob"></div></div>
+        </div>
+      </div>
+
+      <div class="spacer"></div>
+
+      <div class="user-profile-expanded">
+        <img
+          src="https://randomuser.me/api/portraits/men/32.jpg"
+          alt="User"
+          class="user-avatar"
+        />
+        <div class="user-info">
+          <div class="user-name">Harper Nelson</div>
+          <div class="user-role">Admin Manager</div>
+        </div>
+      </div>
+      <div class="nav-item-expanded logout" id="logoutBtn2">
+        <div class="nav-icon"><i class="fas fa-sign-out-alt"></i></div>
+        <span class="nav-text">Log out</span>
       </div>
     </div>
 
-    <div class="card chart">
-      <img src="https://via.placeholder.com/200x200.png?text=Pie+Chart" alt="Pie Chart"/>
-    </div>
-
-    <div class="card graph">
-      <img src="https://via.placeholder.com/200x200.png?text=Bar+Graph" alt="Bar Graph"/>
-    </div>
-
-    <div class="card big-card">
-      <!-- Additional content area -->
+    <!-- Main Content Area -->
+    <div class="main-content" id="mainContent">
+      <!-- Initial Dashboard or default content -->
+      <h1>Dashboard</h1>
+      <p>Welcome! Select a menu item to get started.</p>
     </div>
   </div>
 
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const narrow = document.getElementById("narrowPanel");
+      const expanded = document.getElementById("expandedPanel");
+      const expandBtn = narrow.querySelector(".expand-button");
+      const collapseBtn = expanded.querySelector(".collapse-button");
+      const navItems = document.querySelectorAll(
+        ".nav-item, .nav-item-expanded"
+      );
+      const darkToggle = document.getElementById("darkToggle");
+      const darkToggleExp = document.getElementById("darkToggleExpanded");
+      const main = document.getElementById("mainContent");
+
+      expandBtn.addEventListener("click", () => {
+        narrow.style.display = "none";
+        expanded.style.display = "flex";
+      });
+      collapseBtn.addEventListener("click", () => {
+        expanded.style.display = "none";
+        narrow.style.display = "flex";
+      });
+
+      // Navigation click and AJAX loader
+      navItems.forEach((item) => {
+        item.addEventListener("click", () => {
+          // highlight
+          navItems.forEach((i) => i.classList.remove("active"));
+          item.classList.add("active");
+
+          const page = item.dataset.page;
+          if (page) {
+            fetch(page)
+              .then((res) => {
+                if (!res.ok) throw new Error(res.statusText);
+                return res.text();
+              })
+              .then((html) => {
+                main.innerHTML = html;
+                document.body.scrollTop = 0;
+              })
+              .catch((err) => {
+                main.innerHTML =
+                  "<h1>Error</h1><p>Could not load the page: " +
+                  err.message +
+                  "</p>";
+              });
+          }
+        });
+      });
+
+      // Dark mode toggle
+      const toggleDark = () => {
+        document.body.classList.toggle("dark-mode");
+        if (darkToggleExp)
+          darkToggleExp
+            .querySelector(".toggle-switch")
+            .classList.toggle("active");
+      };
+      darkToggle.addEventListener("click", toggleDark);
+      if (darkToggleExp) darkToggleExp.addEventListener("click", toggleDark);
+
+      // (Optional) Logout button
+      document.querySelectorAll("#logoutBtn, #logoutBtn2").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          alert("Logging out...");
+          // Add your real logout logic here
+        });
+      });
+    });
+  </script>
 </body>
 </html>
