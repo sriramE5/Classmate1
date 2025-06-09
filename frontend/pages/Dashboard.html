@@ -560,26 +560,7 @@
 
     <!-- Main Content Area -->
     <div class="main-content" id="mainContent">
-      <!-- Initial Dashboard or default content -->
-      <h1>Dashboard</h1>
-      <p>Welcome! Select a menu item to get started.</p>
-      
-      <!-- Sample content to demonstrate layout -->
-      <div style="margin-top: 20px;">
-        <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-          <h2>Recent Activity</h2>
-          <p>No recent activity to display.</p>
-        </div>
-        
-        <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-          <h2>Quick Actions</h2>
-          <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-            <button style="padding: 10px 15px; background: #0045e7; color: white; border: none; border-radius: 5px; cursor: pointer;">New Note</button>
-            <button style="padding: 10px 15px; background: #0045e7; color: white; border: none; border-radius: 5px; cursor: pointer;">New Task</button>
-            <button style="padding: 10px 15px; background: #0045e7; color: white; border: none; border-radius: 5px; cursor: pointer;">Start Chat</button>
-          </div>
-        </div>
-      </div>
+      <iframe id="contentFrame" src="index.html" frameborder="0" style="width:100%; height:100%; min-height: 90vh;"></iframe>
     </div>
   </div>
 
@@ -613,7 +594,7 @@
       expandBtn.addEventListener("click", expandPanel);
       collapseBtn.addEventListener("click", collapsePanel);
 
-      // Navigation click and AJAX loader
+      // Navigation click and iframe loader
       navItems.forEach((item) => {
         item.addEventListener("click", (e) => {
           // Don't process click if it's the dark mode toggle
@@ -627,28 +608,8 @@
 
           const page = item.dataset.page;
           if (page) {
-            fetch(page)
-              .then((res) => {
-                if (!res.ok) throw new Error(res.statusText);
-                return res.text();
-              })
-              .then((html) => {
-                main.innerHTML = html;
-                document.body.scrollTop = 0;
-                
-                // Re-apply expanded class if needed
-                if (expanded.style.display === "flex") {
-                  main.classList.add("main-content-expanded");
-                } else {
-                  main.classList.remove("main-content-expanded");
-                }
-              })
-              .catch((err) => {
-                main.innerHTML =
-                  "<h1>Error</h1><p>Could not load the page: " +
-                  err.message +
-                  "</p>";
-              });
+            const iframe = document.getElementById('contentFrame');
+            iframe.src = page;
           }
         });
       });
@@ -656,14 +617,11 @@
       // Dark mode toggle
       const toggleDark = () => {
         document.body.classList.toggle("dark-mode");
-        if (darkToggleExp) {
-          const toggleSwitch = darkToggleExp.querySelector(".toggle-switch");
-          toggleSwitch.classList.toggle("active");
-          
-          // Store preference in localStorage
-          const isDark = document.body.classList.contains("dark-mode");
-          localStorage.setItem("darkMode", isDark ? "enabled" : "disabled");
-        }
+        const isDark = document.body.classList.contains("dark-mode");
+        localStorage.setItem("darkMode", isDark ? "enabled" : "disabled");
+
+        // Notify iframes about the theme change
+        window.dispatchEvent(new CustomEvent('themeChange', { detail: { darkMode: isDark } }));
       };
       
       // Check for saved dark mode preference
