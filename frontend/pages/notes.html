@@ -2122,6 +2122,23 @@
             }
           });
           
+          // Set initial theme based on localStorage
+          if (localStorage.getItem("darkMode") === "enabled") {
+            document.body.classList.add("dark-mode");
+          }
+
+          // Listen for changes to the darkMode key in localStorage
+          window.addEventListener('storage', (e) => {
+            if (e.key === 'darkMode') {
+              document.body.classList.toggle("dark-mode", e.newValue === "enabled");
+            }
+          });
+
+          // Listen for custom theme change events
+          window.addEventListener('themeChange', (e) => {
+            document.body.classList.toggle("dark-mode", e.detail.darkMode);
+          });
+          
           // Initial render
           renderNotes();
       });
