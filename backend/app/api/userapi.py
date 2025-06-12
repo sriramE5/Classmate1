@@ -1,3 +1,5 @@
+# app/api/userapi.py
+
 from fastapi import APIRouter,FastAPI, HTTPException, Depends, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer
@@ -8,12 +10,12 @@ from pymongo.errors import ConnectionFailure
 import certifi
 from jose import jwt, JWTError
 from bson import ObjectId
-from dotenv import load_dotenv # Ensure this import is present
+from dotenv import load_dotenv 
 import os
 from datetime import datetime, timedelta
 
 # ---------------- Load Environment Variables ----------------
-load_dotenv() # Call after import
+load_dotenv() 
 MONGO_URI = os.getenv("MONGO_URI")
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
@@ -22,7 +24,7 @@ ALGORITHM = "HS256"
 router = APIRouter()
 
 # ---------------- Security & Hashing Setup ----------------
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/login") # Assuming login is at /api/login
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/login") 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # ---------------- MongoDB Connection ----------------
@@ -33,9 +35,9 @@ try:
         serverSelectionTimeoutMS=5000,
         tlsCAFile=certifi.where()
     )
-    client.admin.command('ping') # Verify connection
-    db = client["classmate"] # Use your database name
-    users_collection = db["users"] # Use your collection name
+    client.admin.command('ping') 
+    db = client["classmate"] 
+    users_collection = db["users"] 
     print("✅ Connected to MongoDB Atlas with TLS")
 except ConnectionFailure as e:
     print(f"❌ MongoDB Connection Error: {e}")
@@ -50,13 +52,13 @@ except Exception as e:
 # ---------------- Models ----------------
 class RegisterModel(BaseModel):
     name: str
-    email: EmailStr # Use Pydantic's EmailStr for validation
+    email: EmailStr 
     password: str
-    dob: str  # "YYYY-MM-DD"
+    dob: str
 
     @validator("password")
     def validate_password(cls, v):
-        if len(v) < 6: # Password length consistency
+        if len(v) < 6: 
             raise ValueError("Password must be at least 6 characters")
         return v
 
@@ -69,12 +71,22 @@ class UserResponse(BaseModel):
     email: EmailStr
     dob: str
     bio: str | None = None
-    avatar: str | None = None # URL or base64 string
+    avatar: str | None = None
+    chatbot_nickname: str | None = ""
+    chatbot_tone: str | None = "friendly_supportive"
+    chatbot_custom_instructions: str | None = ""
+    chatbot_user_context: str | None = ""
+
 
 class UpdateProfileModel(BaseModel):
     name: str | None = None
     bio: str | None = None
     avatar: str | None = None
+    chatbot_nickname: str | None = None
+    chatbot_tone: str | None = None
+    chatbot_custom_instructions: str | None = None
+    chatbot_user_context: str | None = None
+
 
 class ChangePasswordModel(BaseModel):
     current_password: str
@@ -88,7 +100,7 @@ class ChangePasswordModel(BaseModel):
 
 # ---------------- Utils ----------------
 def create_jwt_token(user_id: str) -> str:
-    payload = {"id": user_id, "exp": datetime.utcnow() + timedelta(days=1)} # Standard expiration
+    payload = {"id": user_id, "exp": datetime.utcnow() + timedelta(days=1)} 
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
@@ -105,10 +117,10 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         user_id_str: str | None = payload.get("id")
         if user_id_str is None:
             raise credentials_exception
-        user_id = ObjectId(user_id_str) # Convert to ObjectId
+        user_id = ObjectId(user_id_str) 
     except JWTError:
         raise credentials_exception
-    except Exception: # Catch potential ObjectId conversion errors
+    except Exception: 
         raise credentials_exception
         
     user = users_collection.find_one({"_id": user_id})
@@ -122,7 +134,7 @@ async def register(user: RegisterModel):
     if users_collection is None:
         raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Database service not available")
 
-    if users_collection.find_one({"email": user.email.lower()}): # Store and check email in lowercase
+    if users_collection.find_one({"email": user.email.lower()}): 
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered")
 
     hashed_pw = pwd_context.hash(user.password)
@@ -131,15 +143,18 @@ async def register(user: RegisterModel):
         "email": user.email.lower(),
         "password": hashed_pw,
         "dob": user.dob,
-        "bio": "", # Initialize bio
-        "avatar": "", # Initialize avatar (e.g., default avatar URL or empty)
+        "bio": "", 
+        "avatar": "", 
+        "chatbot_nickname": "",
+        "chatbot_tone": "friendly_supportive",
+        "chatbot_custom_instructions": "",
+        "chatbot_user_context": "",
         "created_at": datetime.utcnow()
     }
     result = users_collection.insert_one(user_data)
     
-    # Fetch the inserted document to include all fields in UserResponse
     created_user = users_collection.find_one({"_id": result.inserted_id})
-    if not created_user: # Should not happen if insert was successful
+    if not created_user: 
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to retrieve created user")
 
     return UserResponse(
@@ -147,11 +162,15 @@ async def register(user: RegisterModel):
         email=created_user["email"], 
         dob=created_user["dob"],
         bio=created_user.get("bio", ""),
-        avatar=created_user.get("avatar", "")
+        avatar=created_user.get("avatar", ""),
+        chatbot_nickname=created_user.get("chatbot_nickname", ""),
+        chatbot_tone=created_user.get("chatbot_tone", "friendly_supportive"),
+        chatbot_custom_instructions=created_user.get("chatbot_custom_instructions", ""),
+        chatbot_user_context=created_user.get("chatbot_user_context", "")
     )
 
 @router.post("/api/login")
-async def login(form_data: LoginModel): # Use form_data for clarity with OAuth2PasswordRequestForm if used later
+async def login(form_data: LoginModel): 
     if users_collection is None:
         raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Database service not available")
 
@@ -164,12 +183,16 @@ async def login(form_data: LoginModel): # Use form_data for clarity with OAuth2P
     return {
         "message": "Login successful",
         "token": token,
-        "token_type": "bearer", # Common practice
+        "token_type": "bearer", 
         "user": {
             "name": db_user["name"],
             "email": db_user["email"],
             "bio": db_user.get("bio", ""),
-            "avatar": db_user.get("avatar", "")
+            "avatar": db_user.get("avatar", ""),
+            "chatbot_nickname": db_user.get("chatbot_nickname", ""),
+            "chatbot_tone": db_user.get("chatbot_tone", "friendly_supportive"),
+            "chatbot_custom_instructions": db_user.get("chatbot_custom_instructions", ""),
+            "chatbot_user_context": db_user.get("chatbot_user_context", "")
         }
     }
 
@@ -179,8 +202,12 @@ async def get_me(current_user: dict = Depends(get_current_user)):
         name=current_user.get("name"),
         email=current_user.get("email"),
         dob=current_user.get("dob"),
-        bio=current_user.get("bio"),
-        avatar=current_user.get("avatar")
+        bio=current_user.get("bio", ""),
+        avatar=current_user.get("avatar", ""),
+        chatbot_nickname=current_user.get("chatbot_nickname", ""),
+        chatbot_tone=current_user.get("chatbot_tone", "friendly_supportive"),
+        chatbot_custom_instructions=current_user.get("chatbot_custom_instructions", ""),
+        chatbot_user_context=current_user.get("chatbot_user_context", "")
     )
 
 @router.patch("/api/me", response_model=UserResponse)
@@ -188,18 +215,17 @@ async def update_me(profile_data: UpdateProfileModel, current_user: dict = Depen
     if users_collection is None:
         raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Database service not available")
 
-    update_fields = profile_data.model_dump(exclude_unset=True) # Pydantic v2 style
+    update_fields = profile_data.model_dump(exclude_unset=True) 
 
     if not update_fields:
-        # Return current user data if no update fields provided, or raise error
-        # For PATCH, it's common to return 200 OK with current data if nothing changed.
-        # Or 304 Not Modified, but that requires ETag handling.
-        # Or 400 if an update was expected. Let's return current for now.
          return UserResponse(
             name=current_user.get("name"), email=current_user.get("email"), dob=current_user.get("dob"),
-            bio=current_user.get("bio"), avatar=current_user.get("avatar")
+            bio=current_user.get("bio", ""), avatar=current_user.get("avatar", ""),
+            chatbot_nickname=current_user.get("chatbot_nickname", ""),
+            chatbot_tone=current_user.get("chatbot_tone", "friendly_supportive"),
+            chatbot_custom_instructions=current_user.get("chatbot_custom_instructions", ""),
+            chatbot_user_context=current_user.get("chatbot_user_context", "")
         )
-
 
     users_collection.update_one(
         {"_id": current_user["_id"]},
@@ -211,8 +237,12 @@ async def update_me(profile_data: UpdateProfileModel, current_user: dict = Depen
         name=updated_user_doc.get("name"),
         email=updated_user_doc.get("email"),
         dob=updated_user_doc.get("dob"),
-        bio=updated_user_doc.get("bio"),
-        avatar=updated_user_doc.get("avatar")
+        bio=updated_user_doc.get("bio", ""),
+        avatar=updated_user_doc.get("avatar", ""),
+        chatbot_nickname=updated_user_doc.get("chatbot_nickname", ""),
+        chatbot_tone=updated_user_doc.get("chatbot_tone", "friendly_supportive"),
+        chatbot_custom_instructions=updated_user_doc.get("chatbot_custom_instructions", ""),
+        chatbot_user_context=updated_user_doc.get("chatbot_user_context", "")
     )
 
 @router.post("/api/password/change")
@@ -222,8 +252,6 @@ async def change_password(password_data: ChangePasswordModel, current_user: dict
 
     if not pwd_context.verify(password_data.current_password, current_user["password"]):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect current password")
-
-    # new_password validation is handled by Pydantic model
 
     hashed_new_password = pwd_context.hash(password_data.new_password)
     users_collection.update_one(
@@ -242,16 +270,14 @@ async def delete_me(current_user: dict = Depends(get_current_user)):
     if delete_result.deleted_count == 0:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found for deletion")
         
-    # Consider additional cleanup: e.g., if user data is stored elsewhere related by user_id.
     return {"message": "Account deleted successfully"}
 
-# Health check - ensure it's at the end or doesn't conflict with /api
-@router.get("/api/health") # Changed path to avoid conflict with root if main.py has one
+@router.get("/api/health") 
 async def health_check():
     db_status = "Disconnected"
     if db and users_collection is not None:
         try:
-            client.admin.command('ping') # Check connection
+            client.admin.command('ping') 
             db_status = "Connected"
         except Exception:
             db_status = "Connection Error"
