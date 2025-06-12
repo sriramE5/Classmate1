@@ -72,6 +72,7 @@ class UserResponse(BaseModel):
     dob: str
     bio: str | None = None
     avatar: str | None = None
+    chatbot_customization_enabled: bool | None = True # New field
     chatbot_nickname: str | None = ""
     chatbot_tone: str | None = "friendly_supportive"
     chatbot_custom_instructions: str | None = ""
@@ -82,6 +83,7 @@ class UpdateProfileModel(BaseModel):
     name: str | None = None
     bio: str | None = None
     avatar: str | None = None
+    chatbot_customization_enabled: bool | None = None # New field
     chatbot_nickname: str | None = None
     chatbot_tone: str | None = None
     chatbot_custom_instructions: str | None = None
@@ -145,6 +147,7 @@ async def register(user: RegisterModel):
         "dob": user.dob,
         "bio": "", 
         "avatar": "", 
+        "chatbot_customization_enabled": True, # Default to True
         "chatbot_nickname": "",
         "chatbot_tone": "friendly_supportive",
         "chatbot_custom_instructions": "",
@@ -163,6 +166,7 @@ async def register(user: RegisterModel):
         dob=created_user["dob"],
         bio=created_user.get("bio", ""),
         avatar=created_user.get("avatar", ""),
+        chatbot_customization_enabled=created_user.get("chatbot_customization_enabled", True),
         chatbot_nickname=created_user.get("chatbot_nickname", ""),
         chatbot_tone=created_user.get("chatbot_tone", "friendly_supportive"),
         chatbot_custom_instructions=created_user.get("chatbot_custom_instructions", ""),
@@ -189,6 +193,7 @@ async def login(form_data: LoginModel):
             "email": db_user["email"],
             "bio": db_user.get("bio", ""),
             "avatar": db_user.get("avatar", ""),
+            "chatbot_customization_enabled": db_user.get("chatbot_customization_enabled", True),
             "chatbot_nickname": db_user.get("chatbot_nickname", ""),
             "chatbot_tone": db_user.get("chatbot_tone", "friendly_supportive"),
             "chatbot_custom_instructions": db_user.get("chatbot_custom_instructions", ""),
@@ -204,6 +209,7 @@ async def get_me(current_user: dict = Depends(get_current_user)):
         dob=current_user.get("dob"),
         bio=current_user.get("bio", ""),
         avatar=current_user.get("avatar", ""),
+        chatbot_customization_enabled=current_user.get("chatbot_customization_enabled", True),
         chatbot_nickname=current_user.get("chatbot_nickname", ""),
         chatbot_tone=current_user.get("chatbot_tone", "friendly_supportive"),
         chatbot_custom_instructions=current_user.get("chatbot_custom_instructions", ""),
@@ -221,6 +227,7 @@ async def update_me(profile_data: UpdateProfileModel, current_user: dict = Depen
          return UserResponse(
             name=current_user.get("name"), email=current_user.get("email"), dob=current_user.get("dob"),
             bio=current_user.get("bio", ""), avatar=current_user.get("avatar", ""),
+            chatbot_customization_enabled=current_user.get("chatbot_customization_enabled", True),
             chatbot_nickname=current_user.get("chatbot_nickname", ""),
             chatbot_tone=current_user.get("chatbot_tone", "friendly_supportive"),
             chatbot_custom_instructions=current_user.get("chatbot_custom_instructions", ""),
@@ -239,11 +246,14 @@ async def update_me(profile_data: UpdateProfileModel, current_user: dict = Depen
         dob=updated_user_doc.get("dob"),
         bio=updated_user_doc.get("bio", ""),
         avatar=updated_user_doc.get("avatar", ""),
+        chatbot_customization_enabled=updated_user_doc.get("chatbot_customization_enabled", True),
         chatbot_nickname=updated_user_doc.get("chatbot_nickname", ""),
         chatbot_tone=updated_user_doc.get("chatbot_tone", "friendly_supportive"),
         chatbot_custom_instructions=updated_user_doc.get("chatbot_custom_instructions", ""),
         chatbot_user_context=updated_user_doc.get("chatbot_user_context", "")
     )
+
+# ... (rest of userapi.py remains the same: change_password, delete_me, health_check) ...
 
 @router.post("/api/password/change")
 async def change_password(password_data: ChangePasswordModel, current_user: dict = Depends(get_current_user)):
