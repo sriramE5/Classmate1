@@ -8,49 +8,79 @@
 <style>
   /* Modern CSS Reset & Base Styles */
   :root {
-    --primary: linear-gradient(to right, #d9138a, #5e0f7b);
-    --primary-light: #818cf8;
-    --primary-dark: #4338ca;
-    --secondary: #10b981;
-    --secondary-light: #34d399;
-    --secondary-dark: #059669;
-    --accent: #8b5cf6;
-    --accent-light: #a78bfa;
-    --accent-dark: #7c3aed;
-    --highlight: #f59e0b;
-    --highlight-light: #fbbf24;
-    --highlight-dark: #d97706;
-    --checkbox: #4338ca;
-    --progress: linear-gradient(to right, #d9138a, #5e0f7b);
-    --neutral-50: #fafafa;
-    --neutral-100: #f5f5f5;
-    --neutral-200: #e5e5e5;
-    --neutral-300: #d4d4d4;
-    --neutral-400: #a3a3a3;
-    --neutral-500: #737373;
-    --neutral-600: #525252;
-    --neutral-700: #404040;
-    --neutral-800: #262626;
-    --neutral-900: #171717;
+    /* THEME VARIABLES from notes.html - Clean and minimal */
+    --bg: #f5f5f5;
+    --text: #333333;
+    --text-secondary: rgba(51, 51, 51, 0.7);
+    --accent: #2a8cf4;
+    --accent-secondary: #ff3a8c;
+    --accent-tertiary: #00c2ff;
+    --accent-dark: #284cff;
+    --card-bg: rgba(255, 255, 255, 0.9);
+    --card-border: rgba(0, 0, 0, 0.1);
+    --btn-primary: linear-gradient(135deg, #a18dff, #7d5fff);
+    --btn-secondary: linear-gradient(135deg, #ff3a8c, #ff6b6b);
+    --btn-hover: brightness(1.05);
+    --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    --hero-gradient: linear-gradient(135deg, #4361ee 0%, #7209b7 30%, #f72585 70%, #ff006e 100%);
+    --hero-gradient-dark: linear-gradient(135deg, #2a8cf4 0%, #2d00b6 25%, #aa046d 70%, #f40039 100%);
+    --grid-color: rgba(0, 0, 0, 0.05);
+    --glow: 0 0 20px rgba(138, 143, 255, 0.4);
+    --header-bg: rgba(255, 255, 255, 0.9);
+    --header-text: #333333;
+    --header-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+    --input-bg: #ffffff;
+    --input-border: #ddd;
+    --input-text: #333333;
+    --note-card-highlight-bg: #fff8e1;
+    --note-card-pinned-bg: #eaf0f6;
+    --note-card-highlight-border: #ffc107;
+    --menu-bg: #ffffff;
+    --menu-hover: rgba(138, 143, 255, 0.1);
+    --modal-bg: #ffffff;
     --danger: #ef4444;
     --danger-dark: #b91c1c;
     --success: #22c55e;
     --warning: #f59e0b;
     --info: #3b82f6;
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    --radius-sm: 0.125rem;
-    --radius: 0.25rem;
-    --radius-md: 0.375rem;
-    --radius-lg: 0.5rem;
-    --radius-xl: 0.75rem;
-    --radius-2xl: 1rem;
-    --radius-full: 9999px;
+    --progress-gradient: linear-gradient(to right, var(--accent), var(--accent-secondary));
   }
-
+  
+  .dark-mode {
+    /* dark mode colors - matching notes.html */
+    --bg: #0a0a0a;
+    --text: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.7);
+    --accent: #284cff;
+    --accent-secondary: #ff3a8c;
+    --accent-tertiary: #00c2ff;
+    --accent-dark: #2a8cf4;
+    --card-bg: rgba(0, 0, 0, 0.9);
+    --card-border: rgba(255, 255, 255, 0.1);
+    --btn-primary: linear-gradient(135deg, #a18dff, #7d5fff);
+    --btn-secondary: linear-gradient(135deg, #ff3a8c, #ff6b6b);
+    --btn-hover: brightness(1.1);
+    --shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    --hero-gradient: linear-gradient(135deg, #2a8cf4 0%, #2d00b6 25%, #aa046d 70%, #f40039 100%);
+    --hero-gradient-dark: linear-gradient(135deg, #4361ee 0%, #7209b7 30%, #f72585 70%, #ff006e 100%);
+    --grid-color: rgba(255, 255, 255, 0.05);
+    --glow: 0 0 20px rgba(138, 143, 255, 0.4);
+    --header-bg: rgba(0, 0, 0, 0.9);
+    --header-text: #ffffff;
+    --header-shadow: 0 4px 30px rgba(255, 255, 255, 0.15);
+    --input-bg: #1a1a1a;
+    --input-border: #333;
+    --input-text: #ffffff;
+    --note-card-highlight-bg: #3a2f1a;
+    --note-card-pinned-bg: #161722;
+    --note-card-highlight-border: #ffca28;
+    --menu-bg: #1a1a1a;
+    --menu-hover: rgba(138, 143, 255, 0.2);
+    --modal-bg: #1a1a1a;
+    --progress-gradient: linear-gradient(to right, var(--accent), var(--accent-secondary));
+    /*--header-shadow not req. as it is suitable for dark mode */
+  }
+  
   * {
     margin: 0;
     padding: 0;
@@ -58,17 +88,28 @@
   }
 
   body {
-    background-color: var(--neutral-100);
-    color: var(--neutral-800);
+    background-color: var(--bg);
+    color: var(--text);
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    line-height: 1.5;
+    line-height: 1.6;
     min-height: 100vh;
-    padding: 1rem;
+    transition: background 0.3s ease, color 0.3s ease;
+    padding-top: 70px; /* Space for fixed header */
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .grid-bg {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-image: 
+      linear-gradient(var(--grid-color) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: 40px 40px; z-index: -2; opacity: 0.4;
   }
 
   /* Typography */
   h1, h2, h3, h4, h5, h6 {
-    color: var(--neutral-900);
+    color: var(--text);
     font-weight: 700;
     line-height: 1.2;
   }
@@ -90,34 +131,26 @@
 
   /* Container */
   .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    background: white;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
-    overflow: hidden;
+    width: 100%;
+    max-width: 100%;
+    padding: 1rem;
   }
 
-  /* Header */
+  /* Header - Updated to match notes.html with theme toggle */
   .app-header {
-    background: var(--primary);
-    color: white;
-    padding: 1.5rem 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    padding: 0.75rem 1.5rem; height: 70px;
+    display: flex; justify-content: space-between; align-items: center;
+    position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+    background-color: var(--header-bg); color: var(--header-text);
+    backdrop-filter: blur(10px); box-shadow: var(--header-shadow);
+    border-bottom: 1px solid var(--card-border);
   }
 
   .app-title {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    color: white;
-    margin: 0;
-  }
-
-  .app-logo {
-    font-size: 1.75rem;
+    font-size: 1.5rem; font-weight: 600; margin: 0;
+    background: linear-gradient(to right, var(--accent-dark), var(--accent-secondary));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    padding-bottom: 10px;
   }
 
   /* Main content */
@@ -125,230 +158,126 @@
     padding: 1.5rem 2rem 2rem;
   }
 
-  /* Collapsible panel for input */
+  .header-actions { display: flex; align-items: center; gap: 1rem; }
+  .header-btn.theme-toggle, #themeToggle { display: none !important; }
+
+  /* Collapsible panel for input - Updated styling */
   .collapsible {
-    border: 1px solid var(--neutral-200);
-    border-radius: var(--radius-md);
-    margin-bottom: 2rem;
-    overflow: hidden;
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: 8px; box-shadow: var(--shadow); margin-bottom: 2rem;
+    overflow: hidden; backdrop-filter: blur(10px);
   }
 
-  .collapsible-header {
-    background: var(--neutral-50);
-    padding: 1rem 1.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-    user-select: none;
-    border-bottom: 1px solid transparent;
-    transition: background-color 0.2s ease;
+  .collapsible-header { 
+    padding: 1rem 1.5rem; display: flex; justify-content: space-between; 
+    align-items: center; cursor: pointer; user-select: none; 
+    transition: background-color 0.2s ease; 
   }
-
-  .collapsible-header:hover {
-    background: var(--neutral-100);
-  }
-
-  .collapsible-header h3 {
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .collapsible-toggle {
-    font-size: 1.25rem;
-    transition: transform 0.3s ease;
-  }
-
-  .collapsible-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease-out;
-  }
-
-  .collapsible.open .collapsible-content {
-    max-height: 800px;
-  }
-
-  .collapsible.open .collapsible-header {
-    border-bottom: 1px solid var(--neutral-200);
-  }
-
-  .collapsible.open .collapsible-toggle {
-    transform: rotate(225deg);
-  }
-
-  .input-container {
-    padding: 1.5rem;
-  }
+  .collapsible-header:hover { background: var(--menu-hover); }
+  .collapsible-header h3 { margin: 0; display: flex; align-items: center; gap: 0.75rem; }
+  .collapsible-toggle { font-size: 1.25rem; transition: transform 0.3s ease; }
+  .collapsible-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+  .collapsible.open .collapsible-content { max-height: 800px; }
+  .collapsible.open .collapsible-header { border-bottom: 1px solid var(--card-border); }
+  .collapsible.open .collapsible-toggle { transform: rotate(225deg); }
+  .input-container { padding: 1.5rem; }
 
   /* Form elements */
   textarea {
     width: 100%;
     padding: 1rem;
-    border: 1px solid var(--neutral-300);
-    border-radius: var(--radius-md);
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
     font-size: 1rem;
     font-family: inherit;
     resize: vertical;
     min-height: 150px;
-    background-color: var(--neutral-50);
+    background-color: var(--input-bg);
+    color: var(--input-text);
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
   textarea:focus {
     outline: none;
-    border-color: var(--primary-light);
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(138, 143, 255, 0.2);
   }
 
-  .button {
+  .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
     padding: 0.75rem 1.5rem;
     border: none;
-    border-radius: var(--radius-md);
+    border-radius: 50px;
     font-weight: 600;
     font-size: 1rem;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
   }
 
-  .button-primary {
-    background: var(--primary);
+  .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.7s ease;
+    }
+
+  .btn:hover::before {
+      left: 100%;
+    }
+
+  .btn-primary {
+    background: var(--btn-primary);
+    color: white;
+    box-shadow: var(--shadow);
+  }
+
+  .btn-primary:hover {
+    filter: var(--btn-hover);
+    transform: translateY(-2px); 
+    box-shadow: var(--glow);
+  }
+
+  .btn-secondary {
+    background: var(--btn-secondary);
     color: white;
   }
 
-  .button-primary:hover {
-    background-color: var(--primary-dark);
+  .btn-secondary:hover {
+    filter: var(--btn-hover);
+    transform: translateY(-2px);
   }
 
-  .button-secondary {
-    background-color: var(--secondary);
-    color: white;
-  }
-
-  .button-secondary:hover {
-    background-color: var(--secondary-dark);
-  }
-
-  .button-accent {
+  .btn-accent {
     background-color: var(--accent);
     color: white;
   }
 
-  .button-accent:hover {
-    background-color: var(--accent-dark);
+  .btn-accent:hover {
+    background-color: var(--accent-secondary);
+    transform: translateY(-2px);
   }
 
-  .button-danger {
+  .btn-danger {
     background-color: var(--danger);
     color: white;
   }
 
-  .button-danger:hover {
+  .btn-danger:hover {
     background-color: var(--danger-dark);
+    transform: translateY(-2px);
   }
 
-  .button-icon {
+  .btn-icon {
     font-size: 1.25rem;
-  }
-
-  /* Task tabs */
-  .tabs-container {
-    margin-bottom: 1.5rem;
-    position: relative;
-  }
-
-  .tabs-scroll {
-    overflow-x: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--neutral-400) transparent;
-    padding-bottom: 0.25rem;
-  }
-
-  .tabs-scroll::-webkit-scrollbar {
-    height: 6px;
-  }
-
-  .tabs-scroll::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .tabs-scroll::-webkit-scrollbar-thumb {
-    background-color: var(--neutral-400);
-    border-radius: var(--radius-full);
-  }
-
-  .tabs {
-    display: flex;
-    gap: 0.5rem;
-    border-bottom: 1px solid var(--neutral-200);
-    padding-bottom: 0.25rem;
-    min-width: min-content;
-  }
-
-  .tab {
-    position: relative;
-    padding: 0.75rem 1.25rem 0.75rem 1rem;
-    background-color: var(--neutral-200);
-    color: var(--neutral-700);
-    border-radius: var(--radius-md) var(--radius-md) 0 0;
-    font-weight: 600;
-    border: none;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .tab.selected {
-    background-color: var(--primary-light);
-    color: white;
-  }
-
-  .tab.pinned {
-    background-color: var(--secondary);
-    color: white;
-  }
-
-  .tab.pinned.selected {
-    background-color: var(--secondary-light);
-  }
-
-  .tab:hover:not(.selected) {
-    background-color: var(--neutral-300);
-  }
-
-  .tab-delete {
-    position: absolute;
-    top: 0.25rem;
-    right: 0.25rem;
-    background: transparent;
-    border: none;
-    color: var(--danger);
-    font-size: 1rem;
-    line-height: 1;
-    cursor: pointer;
-    opacity: 0;
-    transition: opacity 0.2s ease, color 0.2s ease;
-    padding: 0.25rem;
-    border-radius: var(--radius-full);
-  }
-
-  .tab:hover .tab-delete {
-    opacity: 1;
-  }
-
-  .tab-delete:hover {
-    color: var(--danger-dark);
-    background-color: rgba(255, 255, 255, 0.2);
   }
 
   /* Task cards grid */
@@ -363,16 +292,16 @@
     grid-column: 1 / -1;
     text-align: center;
     padding: 3rem 1rem;
-    color: var(--neutral-500);
-    background-color: var(--neutral-50);
-    border-radius: var(--radius-lg);
-    border: 2px dashed var(--neutral-300);
+    color: var(--text-secondary);
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    border: 2px dashed var(--card-border);
   }
 
   .empty-state-icon {
     font-size: 3rem;
     margin-bottom: 1rem;
-    color: var(--neutral-400);
+    color: var(--text-secondary);
   }
 
   .empty-state-text {
@@ -380,56 +309,69 @@
     margin-bottom: 1.5rem;
   }
 
-  /* Task card */
+  /* Task card - Updated to match notes.html style */
   .task-card {
-    background-color: white;
-    border: 1px solid var(--neutral-200);
-    border-radius: var(--radius-lg);
-    padding: 1.25rem;
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 16px;
+    break-inside: avoid;
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: var(--shadow);
     cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
     transition: all 0.2s ease;
-    box-shadow: var(--shadow-sm);
-    height: 100%;
     position: relative;
+    overflow: hidden;
+    border: 1px solid var(--card-border);
+    height: fit-content;
+  }
+
+  .task-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--hero-gradient-dark);
+    opacity: 0.7;
   }
 
   .task-card:hover {
-    box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
-    border-color: var(--primary-light);
+    transform: translateY(-3px);
+    box-shadow: var(--glow);
   }
 
   .task-card.pinned {
-    background-color: rgba(16, 185, 129, 0.1);
-    border-color: var(--secondary);
+    border-top: 3px solid var(--accent);
+    background-color: var(--note-card-pinned-bg);
   }
 
   .task-card.highlighted {
-    background-color: rgba(245, 158, 11, 0.1);
-    border-color: var(--highlight);
+    background-color: var(--note-card-highlight-bg);
+    border-left: 3px solid var(--note-card-highlight-border);
   }
 
   .task-card.pinned.highlighted {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);
-    border-color: var(--secondary);
-    box-shadow: 0 0 0 1px var(--highlight);
+    background: linear-gradient(135deg, var(--note-card-pinned-bg) 0%, var(--note-card-highlight-bg) 100%);
+    border-top: 3px solid var(--accent);
+    border-left: 3px solid var(--note-card-highlight-border);
   }
 
   .task-card-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    margin-bottom: 8px;
   }
 
   .task-card-title {
-    font-weight: 700;
-    font-size: 1.125rem;
-    color: var(--neutral-900);
+    font-weight: 500;
+    font-size: 1.1em;
+    color: var(--text);
     word-break: break-word;
-    padding-right: 2rem;
+    margin-right: 24px;
   }
 
   .task-card-actions {
@@ -437,31 +379,31 @@
   }
 
   .task-card-menu-btn {
-    background: transparent;
+    color: var(--text);
+    background: none;
     border: none;
-    font-size: 1.25rem;
     cursor: pointer;
-    color: var(--neutral-500);
-    transition: color 0.2s ease;
-    padding: 0.25rem;
-    border-radius: var(--radius-full);
-    flex-shrink: 0;
+    padding: 8px;
+    line-height: 1;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+    z-index: 5;
   }
 
   .task-card-menu-btn:hover {
-    color: var(--neutral-700);
-    background-color: var(--neutral-100);
+    background-color: var(--menu-hover);
   }
 
   .dropdown-menu {
     position: fixed;
-    background-color: white;
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-lg);
+    background-color: var(--menu-bg);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
     min-width: 150px;
     z-index: 1000;
     overflow: hidden;
     display: none;
+    border: 1px solid var(--card-border);
   }
 
   .dropdown-menu.open {
@@ -473,13 +415,14 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.75rem 1rem;
+    padding: 10px 16px;
     cursor: pointer;
     transition: background-color 0.2s ease;
+    color: var(--text);
   }
 
   .dropdown-menu-item:hover {
-    background-color: var(--neutral-100);
+    background-color: var(--menu-hover);
   }
 
   .dropdown-menu-item i {
@@ -489,15 +432,15 @@
   }
 
   .dropdown-menu-item.pin i {
-    color: var(--secondary);
+    color: var(--accent);
   }
 
   .dropdown-menu-item.highlight i {
-    color: var(--highlight);
+    color: var(--note-card-highlight-border);
   }
 
   .dropdown-menu-item.edit i {
-    color: var(--primary);
+    color: var(--accent);
   }
 
   .dropdown-menu-item.delete i {
@@ -505,13 +448,17 @@
   }
 
   .task-card-summary {
-    font-size: 0.9375rem;
-    line-height: 1.4;
-    color: var(--neutral-700);
+    font-size: 0.95em;
+    max-height: 60px;
     overflow: hidden;
+    text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
+    word-break: break-word;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    padding-bottom: 70px;
   }
 
   .task-card-progress {
@@ -521,57 +468,57 @@
 
   .progress-bar {
     height: 6px;
-    background-color: var(--neutral-200);
-    border-radius: var(--radius-full);
+    background-color: var(--card-border);
+    border-radius: 50px;
     overflow: hidden;
   }
 
   .progress-fill {
     height: 100%;
-    background: var(--progress);
-    border-radius: var(--radius-full);
+    background: var(--progress-gradient);
+    border-radius: 50px;
     transition: width 0.3s ease;
-  }
-
-  .task-card.pinned .progress-fill {
-    background-color: var(--secondary);
-  }
-
-  .task-card.highlighted .progress-fill {
-    background-color: var(--highlight);
   }
 
   .progress-text {
     font-size: 0.75rem;
-    color: var(--neutral-600);
+    color: var(--text-secondary);
     margin-top: 0.25rem;
     text-align: right;
   }
 
-  /* Modal */
+  /* Modal - Updated to match notes.html */
   .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.4);
     display: none;
     justify-content: center;
     align-items: center;
     z-index: 1000;
     padding: 1rem;
     backdrop-filter: blur(4px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .modal-overlay.show {
+    opacity: 1;
   }
 
   .modal {
-    background-color: white;
-    border-radius: var(--radius-lg);
+    background-color: var(--modal-bg);
+    border: 1px solid var(--card-border);
+    box-shadow: var(--shadow);
+    border-radius: 8px;
     max-width: 650px;
-    width: 100%;
+    width: 90%;
+    max-width: 600px;
     max-height: 85vh;
     overflow-y: auto;
-    box-shadow: var(--shadow-xl);
     position: relative;
     animation: modalFadeIn 0.3s ease;
   }
@@ -587,37 +534,41 @@
     }
   }
 
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
   .modal-header {
-    padding: 1.5rem 1.5rem 1rem;
+    padding: 24px 24px 16px;
     position: sticky;
     top: 0;
-    background: white;
+    background: var(--modal-bg);
     z-index: 1;
-    border-bottom: 1px solid var(--neutral-200);
+    border-bottom: 1px solid var(--card-border);
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
   }
 
   .modal.pinned .modal-header {
-    background-color: rgba(16, 185, 129, 0.1);
-    border-bottom-color: var(--secondary-light);
+    background-color: var(--note-card-pinned-bg);
   }
 
   .modal.highlighted .modal-header {
-    background-color: rgba(245, 158, 11, 0.1);
-    border-bottom-color: var(--highlight-light);
+    background-color: var(--note-card-highlight-bg);
   }
 
   .modal.pinned.highlighted .modal-header {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);
-    border-bottom-color: var(--secondary-light);
+    background: linear-gradient(135deg, var(--note-card-pinned-bg) 0%, var(--note-card-highlight-bg) 100%);
   }
 
   .modal-title {
     margin: 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text);
     padding-right: 2rem;
-    color: var(--neutral-900);
   }
 
   .modal-close {
@@ -628,23 +579,24 @@
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
-    color: var(--neutral-500);
-    transition: color 0.2s ease;
-    width: 2rem;
-    height: 2rem;
+    color: var(--text-secondary);
+    width: 2.5rem;
+    height: 2.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--radius-full);
+    border-radius: 50%;
+    transition: all 0.2s ease;
   }
 
   .modal-close:hover {
-    color: var(--neutral-900);
-    background-color: var(--neutral-100);
+    color: var(--text);
+    background-color: var(--menu-hover);
   }
 
   .modal-body {
-    padding: 1rem 1.5rem 1.5rem;
+    padding: 24px;
+    overflow-y: auto;
   }
 
   .modal-actions {
@@ -655,46 +607,48 @@
   }
 
   .modal-menu-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     background: transparent;
-    border: 1px solid var(--neutral-300);
-    color: var(--neutral-700);
+    border: 1px solid var(--card-border);
+    color: var(--text);
     width: 2.5rem;
     height: 2.5rem;
-    border-radius: var(--radius-md);
+    border-radius: 50%;
     font-size: 1.25rem;
     cursor: pointer;
     transition: all 0.2s ease;
-    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .modal-menu-btn:hover {
-    background-color: var(--neutral-100);
-    border-color: var(--neutral-400);
+    background-color: var(--menu-hover);
+    border-color: var(--accent);
   }
 
-  /* Phase blocks */
   .phase {
-    background-color: var(--neutral-50);
-    border: 1px solid var(--neutral-200);
-    border-radius: var(--radius-md);
+    background-color: rgba(0,0,0,0.02);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
     padding: 1.25rem;
     margin-bottom: 1.25rem;
   }
 
+  .dark-mode .phase {
+    background-color: rgba(255,255,255,0.02);
+  }
+
   .modal.pinned .phase {
-    border-color: var(--secondary-light);
+    border-color: var(--accent);
   }
 
   .modal.highlighted .phase {
-    border-color: var(--highlight-light);
+    border-color: var(--note-card-highlight-border);
   }
 
   .phase-title {
     font-weight: 600;
-    color: var(--primary-dark);
+    color: var(--accent);
     margin-bottom: 1rem;
     display: flex;
     align-items: center;
@@ -702,11 +656,11 @@
   }
 
   .modal.pinned .phase-title {
-    color: var(--secondary-dark);
+    color: var(--accent);
   }
 
   .modal.highlighted .phase-title {
-    color: var(--highlight-dark);
+    color: var(--warning);
   }
 
   .task-item {
@@ -715,7 +669,7 @@
     gap: 0.75rem;
     margin-bottom: 0.75rem;
     padding-bottom: 0.75rem;
-    border-bottom: 1px solid var(--neutral-200);
+    border-bottom: 1px solid var(--card-border);
     position: relative;
   }
 
@@ -728,8 +682,8 @@
   .task-checkbox {
     width: 1.25rem;
     height: 1.25rem;
-    border-radius: var(--radius-sm);
-    border: 2px solid var(--neutral-400);
+    border-radius: 4px;
+    border: 2px solid var(--text-secondary);
     appearance: none;
     cursor: pointer;
     position: relative;
@@ -739,18 +693,18 @@
   }
 
   .task-checkbox:checked {
-    background: var(--checkbox);
-    border: var(--primary);
+    background: var(--accent);
+    border: var(--accent);
   }
 
   .modal.pinned .task-checkbox:checked {
-    background-color: var(--secondary);
-    border-color: var(--secondary);
+    background-color: var(--accent);
+    border-color: var(--accent);
   }
 
   .modal.highlighted .task-checkbox:checked {
-    background-color: var(--highlight);
-    border-color: var(--highlight);
+    background-color: var(--warning);
+    border-color: var(--warning);
   }
 
   .task-checkbox:checked::after {
@@ -777,7 +731,7 @@
   }
 
   .task-checkbox:checked + .task-label {
-    color: var(--neutral-500);
+    color: var(--text-secondary);
     text-decoration: line-through;
   }
 
@@ -795,11 +749,11 @@
   .task-action-btn {
     background: transparent;
     border: none;
-    color: var(--neutral-500);
+    color: var(--text-secondary);
     font-size: 1rem;
     cursor: pointer;
     padding: 0.25rem;
-    border-radius: var(--radius-full);
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -819,8 +773,8 @@
   }
 
   .task-item.highlighted {
-    background-color: rgba(245, 158, 11, 0.1);
-    border-radius: var(--radius-md);
+    background-color: var(--note-card-highlight-bg);
+    border-radius: 8px;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
   }
@@ -844,7 +798,7 @@
 
   .form-label {
     font-weight: 600;
-    color: var(--neutral-700);
+    color: var(--text-secondary);
   }
 
   .form-actions {
@@ -866,6 +820,7 @@
 
     .main-content {
       padding: 1rem 1.25rem 1.5rem;
+      margin-top : 50px;
     }
 
     .tasks-grid {
@@ -910,12 +865,174 @@
   .toast.show {
     opacity: 1;
   }
+
+  /* Professional Dialog Box Styles */
+  .dialog-modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(30, 34, 90, 0.25);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    backdrop-filter: blur(6px);
+  }
+  .dialog-modal.show {
+    display: flex;
+    opacity: 1;
+  }
+  .dialog-content {
+    background: rgba(255,255,255,0.95);
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(42,140,244,0.13), 0 2px 12px rgba(0,0,0,0.09);
+    max-width: 370px;
+    width: 90%;
+    padding: 2rem 1.5rem 1.25rem 1.5rem;
+    position: relative;
+    animation: modalFadeIn 0.3s;
+    color: var(--text);
+  }
+  .dark-mode .dialog-content {
+    background: rgba(24, 26, 40, 0.98);
+    color: #fff;
+  }
+  .dialog-header {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .dark-mode .dialog-header {
+    color: var(--accent-secondary);
+  }
+  .dialog-body {
+    color: var(--text-secondary);
+    margin-bottom: 1.25rem;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  .dark-mode .dialog-body {
+    color: #e0e0e0;
+  }
+  .dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+  }
+  .dialog-btn {
+    padding: 0.5rem 1.2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    background: var(--btn-primary);
+    color: #fff;
+    transition: background 0.2s;
+  }
+  .dialog-btn.cancel {
+    background: var(--card-bg);
+    color: var(--text-secondary);
+    border: 1px solid var(--card-border);
+  }
+  .dark-mode .dialog-btn.cancel {
+    background: #23243a;
+    color: #bdbdbd;
+    border: 1px solid #333;
+  }
+  .dialog-btn.cancel:hover {
+    background: var(--menu-hover);
+    color: var(--text);
+  }
+  .dark-mode .dialog-btn.cancel:hover {
+    background: #2a2b3d;
+    color: #fff;
+  }
+  .dialog-btn.confirm {
+    background: var(--accent);
+    color: #fff;
+  }
+  .dialog-btn.confirm:hover {
+    background: var(--accent-secondary);
+  }
+  @keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .search-bar-container {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.7);
+    border-radius: 30px;
+    border: 1.5px solid var(--accent);
+    box-shadow: 0 2px 12px rgba(42,140,244,0.08);
+    padding: 0.25rem 1rem;
+    margin-left: 1.5rem;
+    transition: background 0.3s, border 0.3s;
+    max-width: 320px;
+    width: 100%;
+  }
+  .dark-mode .search-bar-container {
+    background: rgba(24,26,40,0.95);
+    border-color: var(--accent-secondary);
+  }
+  .search-bar-input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 1rem;
+    color: var(--text);
+    flex: 1;
+    padding: 0.5rem 0.5rem 0.5rem 0;
+  }
+  .search-bar-input::placeholder {
+    color: var(--text-secondary);
+    opacity: 1;
+  }
+  .search-bar-btn {
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0 0.25rem;
+    display: flex;
+    align-items: center;
+  }
+  @media (max-width: 700px) {
+    .search-bar-container {
+        max-width: 100%;
+        margin-left: 0.5rem;
+        padding: 0.15rem 0.5rem;
+    }
+    .app-title {
+        font-size: 1.1rem;
+    }
+  }
+
+  .theme-toggle-btn { display: none; }
+  @media (max-width: 700px) {
+    .theme-toggle-btn { display: inline-flex; }
+  }
 </style>
 </head>
 <body>
+<div class="grid-bg"></div>
+
 <div class="container">
   <header class="app-header">
     <h1 class="app-title"><span class="app-logo"><i class="fa-solid fa-list-check"></i></span> Task Manager</h1>
+    <div class="header-actions">
+      <button class="theme-toggle" id="themeToggle">
+        <i class="fa-solid fa-sun"></i>
+        <i class="fa-solid fa-moon"></i>
+      </button>
+    </div>
   </header>
 
   <main class="main-content">
@@ -936,18 +1053,11 @@ Phase 2:
 - JavaScript DOM
 - React Basics"></textarea>
           <div style="margin-top: 1rem; text-align: right;">
-            <button class="button button-primary" id="saveGoalBtn">
-              <span class="button-icon"><i class="fa-solid fa-floppy-disk"></i></span>
+            <button class="btn btn-primary" id="saveGoalBtn">
+              <span class="btn-icon"><i class="fa-solid fa-floppy-disk"></i></span>
             </button>
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- Task tabs -->
-    <div class="tabs-container">
-      <div class="tabs-scroll">
-        <div class="tabs" id="taskTabs"></div>
       </div>
     </div>
 
@@ -995,8 +1105,8 @@ Phase 2:
 - React Basics"></textarea>
         </div>
         <div class="form-actions">
-          <button class="button button-secondary" id="editCancelBtn"><i class="fa-solid fa-xmark"></i></button>
-          <button class="button button-primary" id="editSaveBtn"><i class="fa-solid fa-floppy-disk"></i></button>
+          <button class="btn btn-secondary" id="editCancelBtn"><i class="fa-solid fa-xmark"></i></button>
+          <button class="btn btn-primary" id="editSaveBtn"><i class="fa-solid fa-floppy-disk"></i></button>
         </div>
       </div>
     </div>
@@ -1025,16 +1135,28 @@ Phase 2:
 <!-- Hidden iframe for ClassMate AI communication -->
 <iframe id="classmateFrame" style="display:none;"></iframe>
 
+<!-- Professional Dialog Modal (hidden by default) -->
+<div class="dialog-modal" id="proDialogModal">
+  <div class="dialog-content">
+    <div class="dialog-header" id="proDialogHeader">Dialog Title</div>
+    <div class="dialog-body" id="proDialogBody">Dialog message goes here.</div>
+    <div class="dialog-footer">
+      <button class="dialog-btn cancel" id="proDialogCancel">Cancel</button>
+      <button class="dialog-btn confirm" id="proDialogConfirm">OK</button>
+    </div>
+  </div>
+</div>
+
 <script>
   // DOM Elements
   const inputPanel = document.getElementById('inputPanel');
   const inputPanelHeader = document.getElementById('inputPanelHeader');
   const inputText = document.getElementById('inputText');
   const saveGoalBtn = document.getElementById('saveGoalBtn');
-  const taskTabs = document.getElementById('taskTabs');
   const tasksGrid = document.getElementById('tasksGrid');
   const toast = document.getElementById('toast');
   const classmateFrame = document.getElementById('classmateFrame');
+  const themeToggle = document.getElementById('themeToggle'); // This is the ToDo list's theme toggle
   
   // Task Modal Elements
   const modalOverlay = document.getElementById('modalOverlay');
@@ -1064,6 +1186,45 @@ Phase 2:
   let activeDropdownMenu = null;
   let lastClickedMenuButton = null;
 
+  // --- START OF THEME SYNCHRONIZATION LOGIC ---
+  function applyThemeSynchronized() {
+      const parentDarkModeSetting = localStorage.getItem("darkMode"); // Use the SHARED key
+      const isNowDark = parentDarkModeSetting === "enabled";
+      document.body.classList.toggle("dark-mode", isNowDark);
+      // CSS handles the display of sun/moon icons based on body.dark-mode class
+  }
+
+  // 1. Initial theme application on load
+  applyThemeSynchronized();
+
+  // 2. Listen for 'storage' events (when localStorage.darkMode changes elsewhere)
+  window.addEventListener('storage', (e) => {
+      if (e.key === 'darkMode') {
+          applyThemeSynchronized();
+      }
+  });
+
+  // 3. Listen for 'themeChange' custom event dispatched by the parent to this iframe
+  window.addEventListener('themeChange', (e) => {
+      if (e.detail && typeof e.detail.darkMode === 'boolean') {
+          document.body.classList.toggle("dark-mode", e.detail.darkMode);
+          // CSS handles icon changes
+      }
+  });
+
+  // 4. Handle the ToDo list page's own theme toggle button
+  if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+          const bodyIsDarkNow = document.body.classList.toggle('dark-mode');
+          // Update the shared 'darkMode' localStorage item
+          localStorage.setItem('darkMode', bodyIsDarkNow ? 'enabled' : 'disabled');
+          // The parent's 'storage' event listener will pick this up.
+          // CSS handles local icon changes.
+      });
+  }
+  // --- END OF THEME SYNCHRONIZATION LOGIC ---
+
+
   // Toggle collapsible panel
   inputPanelHeader.addEventListener('click', () => {
     inputPanel.classList.toggle('open');
@@ -1074,11 +1235,9 @@ Phase 2:
     tasks = JSON.parse(localStorage.getItem('tasks')) || [];
     checkboxStates = JSON.parse(localStorage.getItem('checkboxStates')) || {};
     
-    // Sort tasks to ensure pinned tasks are at the top
     sortTasks();
   }
   
-  // Sort tasks with pinned tasks at the top
   function sortTasks() {
     tasks.sort((a, b) => {
       if (a.pinned && !b.pinned) return -1;
@@ -1087,17 +1246,14 @@ Phase 2:
     });
   }
 
-  // Save tasks to localStorage
   function saveData() {
     localStorage.setItem('tasks', JSON.stringify(tasks));
   }
 
-  // Save checkbox states
   function saveCheckboxStates() {
     localStorage.setItem('checkboxStates', JSON.stringify(checkboxStates));
   }
 
-  // Get task completion percentage for a specific task
   function getTaskCompletionPercentage(taskIndex) {
     const task = tasks[taskIndex];
     if (!task) return 0;
@@ -1108,13 +1264,12 @@ Phase 2:
     
     phases.forEach((phaseBlock, phaseIndex) => {
       const lines = phaseBlock.trim().split('\n').map(l => l.trim()).filter(Boolean);
-      if (lines.length <= 1) return; // Skip if only phase title or empty
+      if (lines.length <= 1) return; 
       
       const phaseTasks = lines.slice(1);
       totalTasks += phaseTasks.length;
       
       phaseTasks.forEach((_, taskItemIndex) => {
-        // Create a unique ID that includes the goal index to isolate tasks per goal
         const checkboxId = `task_${taskIndex}_phase_${phaseIndex}_item_${taskItemIndex}`;
         if (checkboxStates[checkboxId]) {
           completedTasks++;
@@ -1125,7 +1280,6 @@ Phase 2:
     return totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
   }
 
-  // Save new task(s) from textarea input
   function saveGoal() {
     const input = inputText.value.trim();
     if (!input) return;
@@ -1135,540 +1289,306 @@ Phase 2:
       if (block) tasks.push({ text: block, pinned: false, highlighted: false });
     });
     
-    // Sort tasks to ensure pinned tasks are at the top
     sortTasks();
     saveData();
     inputText.value = '';
     inputPanel.classList.remove('open');
-    renderTaskTabs();
     renderTaskCards();
     
-    // Show success toast
     showToast("Tasks saved successfully!");
   }
 
-  // Delete task with confirmation
   function deleteTask(index) {
-    if (!confirm('Are you sure you want to delete this task?')) return;
-    
-    tasks.splice(index, 1);
-    saveData();
-    
-    // Close modal if open on this task
-    if (modalOpenIndex === index) closeModal();
-    
-    // Reset selection if needed
-    if (selectedTaskIndex === index) selectedTaskIndex = -1;
-    
-    renderTaskTabs();
-    renderTaskCards();
+    showProDialog({
+      title: "Delete Task",
+      message: "Are you sure you want to delete this task?",
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      onConfirm: () => {
+        tasks.splice(index, 1);
+        saveData();
+        if (modalOpenIndex === index) closeModal();
+        if (selectedTaskIndex === index) selectedTaskIndex = -1;
+        renderTaskCards();
+      },
+      onCancel: () => {}
+    });
   }
 
-  // Toggle pin/unpin a task
   function togglePin(index) {
     tasks[index].pinned = !tasks[index].pinned;
-    
-    // Sort tasks to ensure pinned tasks are at the top
     sortTasks();
     saveData();
-    renderTaskTabs();
     renderTaskCards();
-    
-    // Update modal if open
     if (modalOpenIndex === index) {
       taskModal.classList.toggle('pinned', tasks[index].pinned);
     }
   }
 
-  // Toggle highlight/unhighlight a task
   function toggleHighlight(index) {
     tasks[index].highlighted = !tasks[index].highlighted;
     saveData();
-    renderTaskTabs();
     renderTaskCards();
-    
-    // Update modal if open
     if (modalOpenIndex === index) {
       taskModal.classList.toggle('highlighted', tasks[index].highlighted);
     }
   }
 
-  // Open edit modal for a task
-  function openEditModal(index) {
+  function editTask(index) {
     editingTaskIndex = index;
     editTaskText.value = tasks[index].text;
     editModalOverlay.style.display = 'flex';
-    setTimeout(() => {
-      editTaskText.focus();
-    }, 100);
+    setTimeout(() => editModalOverlay.classList.add('show'), 10);
   }
 
-  // Close edit modal
-  function closeEditModal() {
-    editingTaskIndex = -1;
-    editModalOverlay.style.display = 'none';
+  function showToast(message) {
+    toast.textContent = message;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
   }
 
-  // Save edited task
-  function saveEditedTask() {
-    const newText = editTaskText.value.trim();
-    if (!newText) return;
-    
-    tasks[editingTaskIndex].text = newText;
-    saveData();
-    
-    // Update UI
-    renderTaskTabs();
-    renderTaskCards();
-    
-    // Update modal if open
-    if (modalOpenIndex === editingTaskIndex) {
-      modalTitle.textContent = newText.split('\n')[0].trim();
-      renderModalPhases(editingTaskIndex);
-    }
-    
-    closeEditModal();
-  }
-
-  // Close all dropdown menus
-  function closeAllDropdownMenus() {
-    const openMenus = document.querySelectorAll('.dropdown-menu.open');
-    openMenus.forEach(menu => {
-      menu.classList.remove('open');
-      document.body.removeChild(menu);
-    });
-    activeDropdownMenu = null;
-  }
-
-  // Create and show dropdown menu
-  function showDropdownMenu(button, taskIndex) {
-    // Check if the same button was clicked and a menu is already open
-    if (button === lastClickedMenuButton && activeDropdownMenu) {
-      closeAllDropdownMenus();
-      return;
-    }
-    
-    // Close any open menus first
-    closeAllDropdownMenus();
-    
-    // Create a new dropdown menu
-    const menu = dropdownMenuTemplate.cloneNode(true);
-    menu.removeAttribute('id');
-    document.body.appendChild(menu);
-    
-    // Update menu items based on task state
-    const pinItem = menu.querySelector('[data-action="pin"]');
-    pinItem.innerHTML = `<i class="fas fa-thumbtack"></i> ${tasks[taskIndex].pinned ? 'Unpin' : 'Pin'}`;
-    
-    const highlightItem = menu.querySelector('[data-action="highlight"]');
-    highlightItem.innerHTML = `<i class="fas fa-highlighter"></i> ${tasks[taskIndex].highlighted ? 'Unhighlight' : 'Highlight'}`;
-    
-    // Position the menu relative to the button
-    const buttonRect = button.getBoundingClientRect();
-    menu.style.top = `${buttonRect.bottom + 5}px`;
-    
-    // Ensure menu doesn't go off-screen to the right
-    const menuWidth = 150; // Approximate width of menu
-    if (buttonRect.right + menuWidth > window.innerWidth) {
-      menu.style.right = `${window.innerWidth - buttonRect.right}px`;
-    } else {
-      menu.style.left = `${buttonRect.left}px`;
-    }
-    
-    // Add event listeners to menu items
-    menu.querySelectorAll('.dropdown-menu-item').forEach(item => {
-      item.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const action = item.getAttribute('data-action');
-        
-        switch (action) {
-          case 'pin':
-            togglePin(taskIndex);
-            break;
-          case 'highlight':
-            toggleHighlight(taskIndex);
-            break;
-          case 'edit':
-            openEditModal(taskIndex);
-            break;
-          case 'delete':
-            deleteTask(taskIndex);
-            break;
-        }
-        
-        closeAllDropdownMenus();
-      });
-    });
-    
-    // Show the menu
-    menu.classList.add('open');
-    activeDropdownMenu = menu;
-    lastClickedMenuButton = button;
-    
-    // Add click outside listener
-    setTimeout(() => {
-      document.addEventListener('click', handleOutsideClick);
-    }, 0);
-  }
-
-  // Handle clicks outside of menus
-  function handleOutsideClick(e) {
-    if (!e.target.closest('.dropdown-menu') && !e.target.closest('.task-card-menu-btn') && !e.target.closest('.modal-menu-btn')) {
-      closeAllDropdownMenus();
-      document.removeEventListener('click', handleOutsideClick);
-    }
-  }
-
-  // Render task tabs
-  function renderTaskTabs() {
-    taskTabs.innerHTML = '';
-
-    tasks.forEach((task, index) => {
-      const tab = document.createElement('button');
-      tab.className = 'tab';
-      if (task.pinned) tab.classList.add('pinned');
-      if (task.highlighted) tab.classList.add('highlighted');
-      if (selectedTaskIndex === index) tab.classList.add('selected');
-      
-      const title = task.text.split('\n')[0].trim();
-      tab.innerHTML = `${task.pinned ? '<i class="fas fa-thumbtack"></i> ' : ''}${title}`;
-      tab.title = title;
-      
-      // On click select tab
-      tab.onclick = () => {
-        selectedTaskIndex = index;
-        renderTaskTabs();
-        renderTaskCards();
-      };
-
-      // Delete button on tab
-      const deleteBtn = document.createElement('button');
-      deleteBtn.className = 'tab-delete';
-      deleteBtn.title = 'Delete Task';
-      deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
-      deleteBtn.onclick = (e) => {
-        e.stopPropagation();
-        deleteTask(index);
-      };
-      
-      tab.appendChild(deleteBtn);
-      taskTabs.appendChild(tab);
-    });
-  }
-
-  // Send task to ClassMate AI via URL parameter
-  function sendToClassMateAI(taskText) {
-    // Encode the task text to be safe for URL
-    const encodedTaskText = encodeURIComponent(taskText);
-    
-    // Construct the URL with the query parameter
-    const chatbotUrl = `chatbot.html?query=${encodedTaskText}`;
-    
-    // Show a toast notification in Task Master
-    showToast("Opening ClassMate AI with task...");
-    
-    // Open ClassMate AI in a new tab with the parameter
-    window.open(chatbotUrl, "_blank");
-  }
-
-  // Render task cards
   function renderTaskCards() {
-    tasksGrid.innerHTML = '';
-
+    tasksGrid.innerHTML = "";
     if (tasks.length === 0) {
-      const emptyState = document.createElement('div');
-      emptyState.className = 'empty-state';
-      emptyState.innerHTML = `
-        <div class="empty-state-icon"><i class="fas fa-clipboard-list"></i></div>
-        <div class="empty-state-text">No tasks yet. Create your first task!</div>
-        <button class="button button-primary" id="createFirstTaskBtn">
-          <span class="button-icon"><i class="fas fa-plus"></i></span> Create Task
-        </button>
-      `;
-      tasksGrid.appendChild(emptyState);
-      
-      // Add event listener to the create button
-      document.getElementById('createFirstTaskBtn').addEventListener('click', () => {
-        inputPanel.classList.add('open');
-        inputText.focus();
-      });
-      
-      return;
+        tasksGrid.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">
+              <i class="fa-solid fa-clipboard-list"></i>
+            </div>
+            <div class="empty-state-text">No tasks yet</div>
+            <p>Create your first task using the input above!</p>
+          </div>
+        `;
+        return;
+    }
+    tasksGrid.innerHTML = tasks.map((task, index) => {
+        const completion = getTaskCompletionPercentage(index);
+        const cardClasses = ['task-card'];
+        if (task.pinned) cardClasses.push('pinned');
+        if (task.highlighted) cardClasses.push('highlighted');
+        return `
+          <div class="${cardClasses.join(' ')}" onclick="openModal(${index})">
+            <div class="task-card-header">
+              <div class="task-card-title">${task.text.split('\n')[0]}</div>
+              <div class="task-card-actions">
+                <button class="task-card-menu-btn" onclick="event.stopPropagation(); showDropdownMenu(event, ${index});" title="Task Options">
+                  <i class="fas fa-ellipsis-vertical"></i>
+                </button>
+              </div>
+            </div>
+            <div class="task-card-summary">${task.text.split('\n').slice(1, 4).join('<br>')}</div>
+            <div class="task-card-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: ${completion}%"></div>
+              </div>
+              <div class="progress-text">${completion}% completed</div>
+            </div>
+          </div>
+        `;
+    }).join('');
+  }
+
+  function showDropdownMenu(event, index) {
+    if (activeDropdownMenu) {
+      activeDropdownMenu.remove();
+      activeDropdownMenu = null;
     }
 
-    tasks.forEach((task, index) => {
-      const card = document.createElement('div');
-      card.className = 'task-card fade-in';
-      if (task.pinned) card.classList.add('pinned');
-      if (task.highlighted) card.classList.add('highlighted');
-      if (selectedTaskIndex === index) card.classList.add('selected');
+    const menu = dropdownMenuTemplate.cloneNode(true);
+    menu.id = `dropdown-${index}`;
+    menu.style.display = 'block';
+    menu.classList.add('open');
 
-      // Calculate completion percentage for this specific task
-      const completionPercentage = getTaskCompletionPercentage(index);
+    const rect = event.target.getBoundingClientRect();
+    menu.style.position = 'fixed';
+    menu.style.left = `${rect.left}px`;
+    menu.style.top = `${rect.bottom + 5}px`;
 
-      // Title and menu button
-      const header = document.createElement('div');
-      header.className = 'task-card-header';
-
-      const title = document.createElement('h3');
-      title.className = 'task-card-title';
-      title.textContent = task.text.split('\n')[0].trim();
-      header.appendChild(title);
-
-      const actionsDiv = document.createElement('div');
-      actionsDiv.className = 'task-card-actions';
-      
-      const menuBtn = document.createElement('button');
-      menuBtn.className = 'task-card-menu-btn';
-      menuBtn.title = 'Task Options';
-      menuBtn.innerHTML = '<i class="fas fa-ellipsis-vertical"></i>';
-      
-      menuBtn.onclick = (e) => {
-        e.stopPropagation();
-        showDropdownMenu(menuBtn, index);
-      };
-      
-      actionsDiv.appendChild(menuBtn);
-      header.appendChild(actionsDiv);
-      card.appendChild(header);
-
-      // Show a short summary of first 2 phases and tasks
-      const phases = task.text.split(/Phase\s*\d*:/i).slice(1);
-      let summaryText = '';
-      phases.slice(0, 2).forEach((phaseBlock, i) => {
-        const lines = phaseBlock.trim().split('\n').map(l => l.trim()).filter(Boolean);
-        if (lines.length === 0) return;
-        
-        const phaseName = lines[0];
-        const tasks = lines.slice(1).map(t => t.replace(/^\-\s*/, ''));
-        
-        if (i > 0) summaryText += '\n';
-        summaryText += `${phaseName}: ${tasks.join(', ')}`;
-      });
-
-      const summary = document.createElement('div');
-      summary.className = 'task-card-summary';
-      summary.textContent = summaryText || '(No checklist items)';
-      card.appendChild(summary);
-
-      // Progress bar
-      const progressContainer = document.createElement('div');
-      progressContainer.className = 'task-card-progress';
-      
-      const progressBar = document.createElement('div');
-      progressBar.className = 'progress-bar';
-      
-      const progressFill = document.createElement('div');
-      progressFill.className = 'progress-fill';
-      progressFill.style.width = `${completionPercentage}%`;
-      
-      const progressText = document.createElement('div');
-      progressText.className = 'progress-text';
-      progressText.textContent = `${completionPercentage}% completed`;
-      
-      progressBar.appendChild(progressFill);
-      progressContainer.appendChild(progressBar);
-      progressContainer.appendChild(progressText);
-      card.appendChild(progressContainer);
-
-      // Clicking task card opens modal with checklist
-      card.onclick = () => openModal(index);
-
-      tasksGrid.appendChild(card);
-    });
-  }
-
-  // Render phases and tasks in the modal
-  function renderModalPhases(index) {
-    modalPhases.innerHTML = '';
-    const task = tasks[index];
+    const pinItem = menu.querySelector('.pin');
+    const highlightItem = menu.querySelector('.highlight');
     
-    // Split phases
-    const phases = task.text.split(/Phase\s*\d*:/i).slice(1);
-    phases.forEach((phaseBlock, phaseIndex) => {
-      const lines = phaseBlock.trim().split('\n').map(l => l.trim()).filter(Boolean);
-      if (lines.length === 0) return;
-      
-      const phaseName = lines[0];
-      const phaseTasks = lines.slice(1);
+    pinItem.innerHTML = `<i class="fas fa-thumbtack"></i> ${tasks[index].pinned ? 'Unpin' : 'Pin'}`;
+    highlightItem.innerHTML = `<i class="fas fa-highlighter"></i> ${tasks[index].highlighted ? 'Unhighlight' : 'Highlight'}`;
 
-      const phaseDiv = document.createElement('div');
-      phaseDiv.className = 'phase';
-
-      const phaseTitle = document.createElement('h3');
-      phaseTitle.className = 'phase-title';
-      phaseTitle.innerHTML = `<i class="fas fa-layer-group"></i> ${phaseName}`;
-      phaseDiv.appendChild(phaseTitle);
-
-      phaseTasks.forEach((taskText, taskItemIndex) => {
-        // Create a unique ID that includes the goal index to isolate tasks per goal
-        const checkboxId = `task_${index}_phase_${phaseIndex}_item_${taskItemIndex}`;
-        
-        const taskItem = document.createElement('div');
-        taskItem.className = 'task-item';
-        if (checkboxStates[`${checkboxId}_highlighted`]) {
-          taskItem.classList.add('highlighted');
-        }
-
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.id = checkboxId;
-        checkbox.className = 'task-checkbox';
-        checkbox.checked = !!checkboxStates[checkboxId];
-
-        checkbox.addEventListener('change', () => {
-          checkboxStates[checkboxId] = checkbox.checked;
-          saveCheckboxStates();
-          
-          // Update progress on the card if visible
-          renderTaskCards();
-        });
-
-        const label = document.createElement('label');
-        label.htmlFor = checkboxId;
-        label.className = 'task-label';
-        label.textContent = taskText.replace(/^\-\s*/, '');
-
-        // Task actions container
-        const taskActions = document.createElement('div');
-        taskActions.className = 'task-actions';
-
-        // Ask AI button for individual task
-        const askAiBtn = document.createElement('button');
-        askAiBtn.className = 'task-action-btn ask-ai';
-        askAiBtn.title = 'Ask ClassMate AI';
-        askAiBtn.innerHTML = '<i class="fas fa-robot"></i>';
-        
-        // Add click handler for Ask ClassMate AI button
-        askAiBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          e.preventDefault();
-          
-          // Get the task text without the bullet point
-          const taskTextClean = taskText.replace(/^\-\s*/, '');
-          
-          // Send to ClassMate AI
-          sendToClassMateAI(taskTextClean);
-        });
-        
-        taskActions.appendChild(askAiBtn);
-        taskItem.appendChild(checkbox);
-        taskItem.appendChild(label);
-        taskItem.appendChild(taskActions);
-        phaseDiv.appendChild(taskItem);
-      });
-
-      modalPhases.appendChild(phaseDiv);
+    menu.addEventListener('click', (e) => {
+      const action = e.target.closest('.dropdown-menu-item')?.dataset.action;
+      if (action) {
+        handleDropdownAction(action, index);
+        menu.remove();
+        activeDropdownMenu = null;
+      }
     });
+
+    document.body.appendChild(menu);
+    activeDropdownMenu = menu;
+    lastClickedMenuButton = event.target;
   }
 
-  // Open modal with task details
+  function handleDropdownAction(action, index) {
+    switch (action) {
+      case 'pin':
+        togglePin(index);
+        break;
+      case 'highlight':
+        toggleHighlight(index);
+        break;
+      case 'edit':
+        editTask(index);
+        break;
+      case 'delete':
+        deleteTask(index);
+        break;
+    }
+  }
+
   function openModal(index) {
     modalOpenIndex = index;
     const task = tasks[index];
+    modalTitle.textContent = task.text.split('\n')[0];
     
-    modalTitle.textContent = task.text.split('\n')[0].trim();
-    taskModal.classList.toggle('pinned', task.pinned);
-    taskModal.classList.toggle('highlighted', task.highlighted);
-
-    // Render phases and tasks
+    taskModal.className = 'modal';
+    if (task.pinned) taskModal.classList.add('pinned');
+    if (task.highlighted) taskModal.classList.add('highlighted');
+    
     renderModalPhases(index);
-
-    // Set up modal menu button
-    modalMenuBtn.onclick = (e) => {
-      e.stopPropagation();
-      showDropdownMenu(modalMenuBtn, index);
-    };
-
-    // Show modal
     modalOverlay.style.display = 'flex';
+    setTimeout(() => modalOverlay.classList.add('show'), 10);
   }
 
-  // Close modal
   function closeModal() {
-    modalOpenIndex = -1;
-    modalOverlay.style.display = 'none';
-    closeAllDropdownMenus();
-  }
-  
-  // Show toast notification
-  function showToast(message, duration = 3000) {
-    toast.textContent = message;
-    toast.classList.add('show');
-    
+    modalOverlay.classList.remove('show');
     setTimeout(() => {
-      toast.classList.remove('show');
-    }, duration);
-  }
-  
-  // Process and save tasks from ClassMate AI
-  function processTasksFromClassMateAI(aiResponse) {
-    // Check if the response is in the expected format
-    if (aiResponse && aiResponse.trim().startsWith("Goal:")) {
-      // Set the input text to the AI response
-      inputText.value = aiResponse.trim();
-      
-      // Open the input panel
-      inputPanel.classList.add('open');
-      
-      // Focus on the input text
-      inputText.focus();
-      
-      // Show toast notification
-      showToast("To-do list received from ClassMate AI. Review and save it.");
-    } else {
-      console.error("Invalid format from ClassMate AI");
-      showToast("Error: Invalid to-do list format received from ClassMate AI", 5000);
-    }
+      modalOverlay.style.display = 'none';
+      modalOpenIndex = -1;
+    }, 300);
   }
 
-  // Listen for messages from ClassMate AI
-  window.addEventListener('message', function(event) {
-    // Verify the origin for security
-    if (event.data && event.data.type === 'todoList') {
-      processTasksFromClassMateAI(event.data.content);
-    }
-  });
-
-  // Check for saved to-do list from ClassMate AI on page load
-  function checkForSavedTodoList() {
-    const savedTodoList = localStorage.getItem('classmateAiTodoList');
-    if (savedTodoList) {
-      // Process the saved to-do list
-      processTasksFromClassMateAI(savedTodoList);
+  function renderModalPhases(taskIndex) {
+    const task = tasks[taskIndex];
+    const phases = task.text.split(/Phase\s*\d*:/i);
+    
+    let html = '';
+    
+    phases.slice(1).forEach((phaseBlock, phaseIndex) => {
+      const lines = phaseBlock.trim().split('\n').map(l => l.trim()).filter(Boolean);
+      if (lines.length === 0) return;
       
-      // Clear the saved to-do list from localStorage
-      localStorage.removeItem('classmateAiTodoList');
-    }
+      const phaseTitle = lines[0] || `Phase ${phaseIndex + 1}`;
+      const phaseTasks = lines.slice(1);
+      
+      html += `
+        <div class="phase">
+          <h3 class="phase-title">
+            <i class="fa-solid fa-layer-group"></i>
+            ${phaseTitle}
+          </h3>
+      `;
+      
+      phaseTasks.forEach((taskText, taskItemIndex) => {
+        const checkboxId = `task_${taskIndex}_phase_${phaseIndex}_item_${taskItemIndex}`;
+        const isChecked = checkboxStates[checkboxId] || false;
+        const safeTaskText = taskText.replace(/'/g, "&#39;").replace(/"/g, '&quot;');
+        html += `
+          <div class="task-item">
+            <input type="checkbox" class="task-checkbox" 
+                   id="${checkboxId}" 
+                   ${isChecked ? 'checked' : ''} 
+                   onchange="toggleCheckbox('${checkboxId}')">
+            <label for="${checkboxId}" class="task-label">${taskText.replace(/^[-•*]\s*/, '')}</label>
+            <div class="task-actions">
+              <button class="task-action-btn ask-ai" title="Ask AI for help" onclick="askAIForHelp('${safeTaskText}')">
+                <i class="fa-solid fa-robot"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      });
+      
+      html += '</div>';
+    });
+    
+    modalPhases.innerHTML = html;
   }
 
-  // Event listeners
+  function toggleCheckbox(checkboxId) {
+    checkboxStates[checkboxId] = !checkboxStates[checkboxId];
+    saveCheckboxStates();
+    renderTaskCards(); 
+  }
+
+  // Add this function globally so it can be called from HTML
+  window.askAIForHelp = function(taskText) {
+    // Open chatbot.html in a new tab with a query param for prefill (must use 'query' for compatibility)
+    const url = `chatbot.html?query=${encodeURIComponent(taskText)}`;
+    window.open(url, '_blank');
+  }
+
   saveGoalBtn.addEventListener('click', saveGoal);
   modalCloseBtn.addEventListener('click', closeModal);
-  modalOverlay.addEventListener('click', (e) => {
-    if (e.target === modalOverlay) closeModal();
+  editModalCloseBtn.addEventListener('click', () => {
+    editModalOverlay.classList.remove('show');
+    setTimeout(() => editModalOverlay.style.display = 'none', 300);
   });
-  
-  // Edit modal event listeners
-  editModalCloseBtn.addEventListener('click', closeEditModal);
-  editCancelBtn.addEventListener('click', closeEditModal);
-  editSaveBtn.addEventListener('click', saveEditedTask);
-  editModalOverlay.addEventListener('click', (e) => {
-    if (e.target === editModalOverlay) closeEditModal();
+  editCancelBtn.addEventListener('click', () => {
+    editModalOverlay.classList.remove('show');
+    setTimeout(() => editModalOverlay.style.display = 'none', 300);
+  });
+  editSaveBtn.addEventListener('click', () => {
+    if (editingTaskIndex >= 0) {
+      tasks[editingTaskIndex].text = editTaskText.value;
+      saveData();
+      renderTaskCards();
+      if (modalOpenIndex === editingTaskIndex) {
+        renderModalPhases(editingTaskIndex);
+      }
+      editModalOverlay.classList.remove('show');
+      setTimeout(() => editModalOverlay.style.display = 'none', 300);
+      showToast("Task updated successfully!");
+    }
   });
 
-  // Handle window resize to close menus
-  window.addEventListener('resize', () => {
-    closeAllDropdownMenus();
+  modalMenuBtn.addEventListener('click', (event) => {
+    if (modalOpenIndex >= 0) {
+      showDropdownMenu(event, modalOpenIndex);
+    }
   });
 
-  // Initialize on load
-  window.onload = () => {
-    loadData();
-    renderTaskTabs();
-    renderTaskCards();
-    checkForSavedTodoList();
-  };
+  document.addEventListener('click', (event) => {
+    if (activeDropdownMenu && !activeDropdownMenu.contains(event.target) && event.target !== lastClickedMenuButton) {
+      activeDropdownMenu.remove();
+      activeDropdownMenu = null;
+      lastClickedMenuButton = null;
+    }
+  });
+
+  modalOverlay.addEventListener('click', (event) => {
+    if (event.target === modalOverlay) closeModal();
+  });
+
+  editModalOverlay.addEventListener('click', (event) => {
+    if (event.target === editModalOverlay) {
+      editModalOverlay.classList.remove('show');
+      setTimeout(() => editModalOverlay.style.display = 'none', 300);
+    }
+  });
+
+  loadData();
+  renderTaskCards();
+
+  // Professional dialog show/hide utility
+  function showProDialog({title, message, onConfirm, onCancel, confirmText = 'OK', cancelText = 'Cancel'}) {
+    const modal = document.getElementById('proDialogModal');
+    document.getElementById('proDialogHeader').textContent = title;
+    document.getElementById('proDialogBody').textContent = message;
+    const confirmBtn = document.getElementById('proDialogConfirm');
+    const cancelBtn = document.getElementById('proDialogCancel');
+    confirmBtn.textContent = confirmText;
+    cancelBtn.textContent = cancelText;
+    modal.classList.add('show');
+    confirmBtn.onclick = () => { modal.classList.remove('show'); if (onConfirm) onConfirm(); };
+    cancelBtn.onclick = () => { modal.classList.remove('show'); if (onCancel) onCancel(); };
+    modal.onclick = (e) => { if (e.target === modal) { modal.classList.remove('show'); if (onCancel) onCancel(); } };
+  }
 </script>
 </body>
 </html>
