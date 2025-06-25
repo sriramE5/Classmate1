@@ -3,152 +3,1137 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Class Mate Dashboard</title>
-  <link rel="stylesheet" href="Class Mate Css.css">
+  <title>Classmate</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
+    /* Modern CSS Reset & Base Styles */
+    :root {
+      /* THEME VARIABLES from first code - Clean and minimal */
+      --bg: #f5f5f5;
+      --text: #333333;
+      --text-secondary: rgba(51, 51, 51, 0.7);
+      --accent: #2a8cf4;
+      --accent-secondary: #ff3a8c;
+      --accent-tertiary: #00c2ff;
+      --accent-dark: #284cff;
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --card-border: rgba(0, 0, 0, 0.1);
+      --btn-primary: linear-gradient(135deg, #a18dff, #7d5fff);
+      --btn-secondary: linear-gradient(135deg, #ff3a8c, #ff6b6b);
+      --btn-hover: brightness(1.05);
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      --hero-gradient: linear-gradient(135deg, #4361ee 0%, #7209b7 30%, #f72585 70%, #ff006e 100%);
+      --hero-gradient-dark: linear-gradient(135deg, #2a8cf4 0%, #2d00b6 25%, #aa046d 70%, #f40039 100%);
+      --grid-color: rgba(0, 0, 0, 0.05);
+      --glow: 0 0 20px rgba(138, 143, 255, 0.4);
+      --header-bg: rgba(255, 255, 255, 0.9);
+      --header-text: #333333;
+      --header-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+      --input-bg: #ffffff;
+      --input-border: #ddd;
+      --input-text: #333333;
+      --menu-bg: #ffffff;
+      --menu-hover: rgba(138, 143, 255, 0.1);
+      --modal-bg: #ffffff;
+      --danger: #ef4444;
+      --danger-dark: #b91c1c;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+    }
+    
+    .dark-mode {
+      /* dark mode colors - matching first code */
+      --bg: #0a0a0a;
+      --text: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.7);
+      --accent: #284cff; 
+      --accent-secondary: #ff3a8c;
+      --accent-tertiary: #00c2ff;
+      --accent-dark: #2a8cf4; 
+      --card-bg: rgba(0, 0, 0, 0.9); 
+      --card-border: rgba(255, 255, 255, 0.1);
+      --btn-primary: linear-gradient(135deg, #a18dff, #7d5fff);
+      --btn-secondary: linear-gradient(135deg, #ff3a8c, #ff6b6b);
+      --btn-hover: brightness(1.1);
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      --hero-gradient: linear-gradient(135deg, #2a8cf4 0%, #2d00b6 25%, #aa046d 70%, #f40039 100%);
+      --hero-gradient-dark: linear-gradient(135deg, #4361ee 0%, #7209b7 30%, #f72585 70%, #ff006e 100%);
+      --grid-color: rgba(255, 255, 255, 0.05);
+      --glow: 0 0 20px rgba(138, 143, 255, 0.4);
+      --header-bg: rgba(0, 0, 0, 0.9);
+      --header-text: #ffffff;
+      --header-shadow: 0 4px 30px rgba(255, 255, 255, 0.15);
+      --input-bg: #1a1a1a; 
+      --input-border: #333; 
+      --input-text: #ffffff;
+      --menu-bg: #1a1a1a; 
+      --menu-hover: rgba(138, 143, 255, 0.2); 
+      --modal-bg: #1a1a1a;
+    }
+
     * {
-      box-sizing: border-box;
-    }
-    body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #fff;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     }
-    /* header {
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      transition: background-color 0.3s ease, color 0.3s ease; 
+      overflow-x: hidden;
+    }
+
+    .grid-bg {
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%;
+      background-image: 
+        linear-gradient(var(--grid-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+      background-size: 40px 40px; 
+      z-index: -2; 
+      opacity: 0.4;
+    }
+
+    .app-container {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem 2rem;
-      background: white;
-      border-bottom: 1px solid #ccc;
-    }
-    header .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    header .logo img {
-      height: 30px;
-    }
-    nav {
-      display: flex;
-      gap: 2rem;
-      font-weight: bold;
-    }
-    .logout-btn {
-      background: #9f7;
-      padding: 0.5rem 1.5rem;
-      border-radius: 25px;
-      font-weight: bold;
-      border: none;
-      cursor: pointer;
-    } */
-    .dashboard {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: auto auto;
-      gap: 1.5rem;
-      padding: 2rem;
-      background: rgb(255, 255, 255);
       min-height: 100vh;
+      width: 100%;
     }
-    .card {
-      background: #9f7;
-      border-radius: 30px;
-      padding: 1rem;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-    .profile {
-      grid-row: span 2;
+
+    /* Vertical Panel - Narrow Version */
+    .vertical-panel-narrow {
+      width: 80px;
+      background-color: var(--card-bg);
+      box-shadow: var(--shadow);
       display: flex;
       flex-direction: column;
       align-items: center;
+      padding: 16px 0;
+      height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 10;
+      transition: width 0.35s cubic-bezier(0.4, 0.2, 0.2, 1), opacity 0.25s;
+      border-right: 1px solid var(--card-border);
+      opacity: 1;
     }
-    .profile img {
-      max-width: 100%;
-      border-radius: 20px;
-    }
-    .name-list {
-      background: white;
-      margin-top: 1rem;
-      padding: 1rem;
-      border-radius: 20px;
-      width: 90%;
-    }
-    .name-list p {
-      margin: 0.5rem 0;
-      font-weight: bold;
-    }
-    .chart, .graph {
+
+    .logo-container {
       display: flex;
-      justify-content: center;
       align-items: center;
-      height: 100%;
+      justify-content: center;
+      position: relative;
+      margin-bottom: 16px;
+      width: 100%;
     }
-    .big-card {
-      grid-column: span 2;
-      min-height: 200px;
+
+    .logo {
+      height: 50px;
+      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
+      transition: transform 0.3s ease, filter 0.3s ease;
     }
+
     
+
+    .expand-button {
+      position: absolute;
+      right: -15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+      cursor: pointer;
+      width: 16px;
+      height: 16px;
+      
+    }
+
+    .expand-button i {
+      font-size: 20px;
+      background-color: var(--card-border); 
+      padding: 20px 5px;
+      border-radius: 0px 10px 10px 0px;
+      color: var(--text);
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .nav-item {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .nav-item i {
+      font-size: 16px;
+      color: var(--text-secondary);
+    }
+
+    .nav-item.active {
+      background-color: var(--menu-hover);
+    }
+
+    .nav-item.active i {
+      color: var(--accent);
+    }
+
+    .nav-item:hover:not(.active) {
+      background-color: var(--menu-hover);
+      transform: translateY(-2px);
+    }
+    .nav-item a { 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        color: inherit; 
+        text-decoration: none;
+    }
+
+
+    .spacer {
+      flex-grow: 1;
+    }
+
+    .user-profile {
+      margin-bottom: 16px;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--accent);
+      transition: opacity 0.2s ease-in-out; /* Added for loading state */
+    }
+
+    /* Style for avatar loading state */
+    .user-avatar.avatar-loading-placeholder {
+      opacity: 0.6;
+      background-color: var(--card-border); /* Placeholder background */
+    }
+
+
+    /* Vertical Panel - Expanded Version */
+    .vertical-panel-expanded {
+      width: 240px;
+      background-color: var(--card-bg);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      padding: 16px 0;
+      height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 10;
+      display: none;
+      transition: width 0.35s cubic-bezier(0.4, 0.2, 0.2, 1), opacity 0.25s;
+      border-right: 1px solid var(--card-border);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      margin-bottom: 24px;
+    }
+
+    .logo-text {
+      font-weight: 600;
+      font-size: 18px;
+      margin-left: 8px;
+      background: linear-gradient(to right, var(--accent-dark), var(--accent-secondary)); 
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .collapse-button {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      width: 20px;
+      height: 20px;
+      padding: 0;
+      transition: all 0.2s ease;
+    }
+
+    .collapse-button:hover {
+      color: var(--accent);
+      transform: translateX(-2px);
+    }
+
+    .collapse-button i {
+      font-size: 16px;
+    }
+
+    .panel-section {
+      margin-bottom: 24px;
+    }
+
+    .section-header {
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 0 16px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-item-expanded {
+      display: flex;
+      align-items: center;
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      border-radius: 6px;
+      margin: 0 8px;
+    }
+    .nav-item-expanded a { 
+        display: flex;
+        align-items: center;
+        width: 100%;
+        text-decoration: none;
+    }
+
+
+    .nav-item-expanded.active {
+      background-color: var(--menu-hover);
+    }
+
+    .nav-item-expanded.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--accent);
+      border-radius: 0 3px 3px 0;
+    }
+
+    .nav-icon {
+      width: 20px;
+      height: 20px;
+      margin-right: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-icon i {
+      font-size: 16px;
+      color: var(--text-secondary);
+    }
+
+    .nav-item-expanded.active .nav-icon i {
+      color: var(--accent);
+    }
+
+    .nav-item-expanded.active .nav-text {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .nav-text {
+      color: var(--text);
+      font-size: 14px;
+      transition: color 0.2s ease;
+    }
+
+    .nav-item-expanded:hover:not(.active) {
+      background-color: var(--menu-hover);
+    }
+
+    .nav-item-expanded:hover:not(.active) .nav-icon i,
+    .nav-item-expanded:hover:not(.active) .nav-text { 
+      color: var(--accent);
+    }
+
+
+    .dropdown-icon {
+      margin-left: auto;
+    }
+
+    .dropdown-icon i {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .toggle-switch {
+      width: 40px;
+      height: 20px;
+      background-color: var(--card-border); 
+      border-radius: 10px;
+      margin-left: auto;
+      position: relative;
+      padding: 2px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .toggle-knob {
+      width: 16px;
+      height: 16px;
+      background-color: var(--card-bg); 
+      border-radius: 50%;
+      transition: transform 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .dark-mode .toggle-knob { 
+        background-color: var(--input-text);
+    }
+
+    .toggle-switch.active {
+      background-color: var(--accent);
+    }
+
+    .toggle-switch.active .toggle-knob {
+      transform: translateX(20px);
+    }
+
+    .user-profile-expanded {
+      display: flex;
+      align-items: center;
+      padding: 8px 16px;
+      margin-bottom: 8px;
+      border-top: 1px solid var(--card-border);
+      padding-top: 16px;
+      min-width: 0;
+    }
+
+    .user-info {
+      margin-left: 12px;
+      min-width: 0;
+      flex: 1 1 0%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .user-name {
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 170px;
+    }
+
+    .user-role {
+      color: var(--text-secondary);
+      font-size: 12px;
+      word-break: break-all;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 170px;
+      white-space: nowrap;
+      display: block;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex-grow: 1;
+      background-color: var(--bg);
+      margin-left: 80px;
+      transition: margin-left 0.3s ease, background-color 0.3s ease; 
+      min-height: 100vh;
+    }
+
+    .main-content-expanded {
+      margin-left: 240px;
+    }
+
+    .main-content h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    .main-content p {
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .vertical-panel-narrow { width: 60px; }
+      .vertical-panel-expanded { width: 200px; }
+      .main-content { margin-left: 60px; }
+      .main-content-expanded { margin-left: 200px; }
+      .expand-button i { padding: 15px 4px; }
+    }
+
+    @media (max-width: 480px) {
+      .vertical-panel-expanded { width: 180px; }
+      .main-content-expanded { margin-left: 180px; }
+    }
+
+    /* Animation for smoother transitions */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.3s ease forwards;
+    }
+    .logo {
+  height: 50px;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
+  transition: opacity 0.3s ease;
+}
+
+.logo-dark {
+  display: none;
+}
+
+.dark-mode .logo-light {
+  display: none;
+}
+
+.dark-mode .logo-dark {
+  display: block;
+}
+
+    /* Professional Dialog Box Styles */
+    .dialog-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(30, 34, 90, 0.25);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      backdrop-filter: blur(6px);
+    }
+    .dialog-modal.show {
+      display: flex;
+      opacity: 1;
+    }
+    .dialog-content {
+      background: rgba(255,255,255,0.95);
+      border-radius: 18px;
+      box-shadow: 0 8px 32px rgba(42,140,244,0.13), 0 2px 12px rgba(0,0,0,0.09);
+      max-width: 370px;
+      width: 90%;
+      padding: 2rem 1.5rem 1.25rem 1.5rem;
+      position: relative;
+      animation: modalFadeIn 0.3s;
+      color: var(--text);
+    }
+    .dark-mode .dialog-content {
+      background: rgba(24, 26, 40, 0.98);
+      color: #fff;
+    }
+    .dialog-header {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .dark-mode .dialog-header {
+      color: var(--accent-secondary);
+    }
+    .dialog-body {
+      color: var(--text-secondary);
+      margin-bottom: 1.25rem;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+    .dark-mode .dialog-body {
+      color: #e0e0e0;
+    }
+    .dialog-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+    }
+    .dialog-btn {
+      padding: 0.5rem 1.2rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      border: none;
+      background: var(--btn-primary);
+      color: #fff;
+      transition: background 0.2s;
+    }
+    .dialog-btn.cancel {
+      background: var(--card-bg);
+      color: var(--text-secondary);
+      border: 1px solid var(--card-border);
+    }
+    .dark-mode .dialog-btn.cancel {
+      background: #23243a;
+      color: #bdbdbd;
+      border: 1px solid #333;
+    }
+    .dialog-btn.cancel:hover {
+      background: var(--menu-hover);
+      color: var(--text);
+    }
+    .dark-mode .dialog-btn.cancel:hover {
+      background: #2a2b3d;
+      color: #fff;
+    }
+    .dialog-btn.confirm {
+      background: var(--accent);
+      color: #fff;
+    }
+    .dialog-btn.confirm:hover {
+      background: var(--accent-secondary);
+    }
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .theme-toggle-btn, #themeToggle { display: none !important; }
+
+    .vertical-panel-narrow.hide-arrow .expand-button {
+      display: none !important;
+    }
   </style>
 </head>
 <body>
+  <div class="grid-bg"></div>
+  <div class="app-container">
+    <!-- Narrow (icon-only) panel -->
+    <div class="vertical-panel-narrow" id="narrowPanel">
+      <div class="logo-container">
+  <img class="logo logo-light" src="../logos/logo-light.png" alt="logo">
+  <img class="logo logo-dark" src="../logos/logo-dark.png" alt="logo" style="display: none;">
+  <div class="expand-button"><i class="fas fa-chevron-right"></i></div>
+</div>
 
-  <!-- <header>
-    <div class="logo">
-      <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="cap icon" />
-      <span>CLASS MATE</span>
+      <div class="nav-item active" data-page="Stats.html">
+        <i class="fas fa-th-large" title="Dashboard"></i>
+      </div>
+      <div class="nav-item" data-page="chatbot.html">
+        <i class="fa-solid fa-robot" title="AI Chatbot"></i>
+      </div>
+      <div class="nav-item" data-page="notes.html">
+        <i class="fas fa-sticky-note" title="Notes"></i>
+      </div>
+      <div class="nav-item" data-page="To Do List Front End.html">
+        <i class="fas fa-tasks" title="Task Manager"></i>
+      </div>
+      <div class="nav-item" data-page="attendance.html">
+        <i class="fa-solid fa-calendar-days" title="Attendance Calculator"></i>
+      </div>
+      <div class="nav-item" data-page="settings.html">
+        <i class="fas fa-cog" title="Settings"></i>
+      </div>
+      <div class="nav-item" id="darkToggle">
+        <i class="fas fa-moon" title="Dark Mode"></i>
+      </div>
+      <div class="spacer"></div>
+      <div class="user-profile">
+        <img
+          src="https://randomuser.me/api/portraits/men/32.jpg"
+          alt="User"
+          class="user-avatar"
+          id="narrowUserAvatar"
+        />
+      </div>
+      <div class="nav-item logout" id="logoutBtnNarrow">
+        <a href="#"> 
+            <i class="fas fa-sign-out-alt" title="Logout"></i>
+        </a>
+      </div>
     </div>
-    <nav>
-      <div>HOME</div>
-      <div>FEATURES</div>
-      <div>ABOUT</div>
-    </nav>
-    <button class="logout-btn">Log Out</button>
-  </header> -->
-  <header>
-    <nav>
-      <a href="#" class="logo">
-        <div class="logo-icon">
-          <svg width="20" height="15" viewBox="0 0 20 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10 0L20 15H0L10 0Z" fill="white" />
-          </svg>
+
+    <!-- Expanded (text + icons) panel -->
+    <div class="vertical-panel-expanded" id="expandedPanel">
+      <div class="panel-header">
+        <div class="logo-container">
+  <img class="logo logo-light" src="../logos/logo-light.png" alt="logo">
+  <img class="logo logo-dark" src="../logos/logo-dark.png" alt="logo" style="display: none;">
+  <span class="logo-text">Classmate</span> 
+</div>
+        <button class="collapse-button"><i class="fas fa-chevron-left"></i></button>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-header">MENU</div>
+        <div class="nav-item-expanded active" data-page="Stats.html">
+          <div class="nav-icon"><i class="fas fa-th-large"></i></div>
+          <span class="nav-text">Dashboard</span>
         </div>
-        <span>CLASS MATE</span>
-      </a>
-      <div class="nav-links">
-        <a href="Class Mate Func.html">HOME</a>
-        <a href="#features">FEATURES</a>
-        <a href="Dashboard.html" id="dashboard">DASHBOARD</a>
-        <a href="#about">ABOUT</a>
+        <div class="nav-item-expanded" data-page="chatbot.html">
+          <div class="nav-icon"><i class="fas fa-comment-dots"></i></div>
+          <span class="nav-text">AI Chatbot</span>
+        </div>
+        <div class="nav-item-expanded" data-page="notes.html">
+          <div class="nav-icon"><i class="fas fa-sticky-note"></i></div>
+          <span class="nav-text">Notes</span>
+        </div>
+        <div class="nav-item-expanded" data-page="To Do List Front End.html">
+          <div class="nav-icon"><i class="fas fa-tasks"></i></div>
+          <span class="nav-text">Task Manager</span>
+        </div>
+        <div class="nav-item-expanded" data-page="attendance.html">
+          <div class="nav-icon"><i class="fa-solid fa-calendar-days"></i></div>
+          <span class="nav-text">Attendance</span>
+        </div>
+      
       </div>
-      <a href="ClassMateWeb.html" class="btn btn-primary">Log Out</a>
-    </nav>
-  </header>
 
-  <div class="dashboard">
-    <div class="card profile">
-      <img src="https://via.placeholder.com/250x250.png?text=Avatar" alt="Avatar"/>
-      <div class="name-list">
-        <p>Name</p>
-        <p>Name</p>
-        <p>Name</p>
-        <p>Name</p>
+      <div class="panel-section">
+        <div class="section-header">SYSTEM</div>
+        <div class="nav-item-expanded" data-page="settings.html">
+          <div class="nav-icon"><i class="fas fa-cog"></i></div>
+          <span class="nav-text">Settings</span>
+        </div>
+        <div class="nav-item-expanded" id="darkToggleExpanded">
+          <div class="nav-icon"><i class="fas fa-moon"></i></div>
+          <span class="nav-text">Dark mode</span>
+          <div class="toggle-switch"><div class="toggle-knob"></div></div>
+        </div>
+      </div>
+
+      <div class="spacer"></div>
+
+      <div class="user-profile-expanded">
+        <img
+          src="https://randomuser.me/api/portraits/men/32.jpg"
+          alt="User"
+          class="user-avatar"
+          id="expandedUserAvatar"
+        />
+        <div class="user-info">
+          <div class="user-name" id="expandedUserName">User Name</div>
+          <div class="user-role" id="expandedUserEmail">user@example.com</div>
+        </div>
+      </div>
+      <div class="nav-item-expanded logout" id="logoutBtnExpanded">
+         <a href="#"> 
+            <div class="nav-icon"><i class="fas fa-sign-out-alt"></i></div>
+            <span class="nav-text">Log out</span>
+        </a>
       </div>
     </div>
 
-    <div class="card chart">
-      <img src="https://via.placeholder.com/200x200.png?text=Pie+Chart" alt="Pie Chart"/>
-    </div>
-
-    <div class="card graph">
-      <img src="https://via.placeholder.com/200x200.png?text=Bar+Graph" alt="Bar Graph"/>
-    </div>
-
-    <div class="card big-card">
-      <!-- Additional content area -->
+    <!-- Main Content Area -->
+    <div class="main-content" id="mainContent">
+      <iframe id="contentFrame" src="Stats.html" frameborder="0" style="width:100%; height:100%; min-height: 98vh;"></iframe>
     </div>
   </div>
 
+  <!-- Logout Confirmation Dialog -->
+  <div class="dialog-modal" id="logoutDialog">
+    <div class="dialog-content">
+      <div class="dialog-header">
+        <i class="fas fa-sign-out-alt"></i>
+        Confirm Logout
+      </div>
+      <div class="dialog-body">
+        Are you sure you want to log out? You will need to sign in again to access your account.
+      </div>
+      <div class="dialog-footer">
+        <button class="dialog-btn cancel" id="logoutCancelBtn">Cancel</button>
+        <button class="dialog-btn confirm" id="logoutConfirmBtn">Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const narrowPanel = document.getElementById("narrowPanel");
+      const expandedPanel = document.getElementById("expandedPanel");
+      const expandBtn = narrowPanel.querySelector(".expand-button");
+      const collapseBtn = expandedPanel.querySelector(".collapse-button");
+      const navItems = document.querySelectorAll(
+        ".nav-item, .nav-item-expanded"
+      );
+      const darkToggle = document.getElementById("darkToggle");
+      const darkToggleExp = document.getElementById("darkToggleExpanded");
+      const mainContent = document.getElementById("mainContent");
+      const contentFrame = document.getElementById('contentFrame');
+
+      const narrowUserAvatar = document.getElementById('narrowUserAvatar');
+      const expandedUserAvatar = document.getElementById('expandedUserAvatar');
+      const expandedUserName = document.getElementById('expandedUserName');
+      const expandedUserEmail = document.getElementById('expandedUserEmail');
+      const defaultAvatar = 'https://randomuser.me/api/portraits/men/32.jpg';
+      
+      const API_BASE_URL = "https://classmate1-ffw7.onrender.com"; 
+
+
+      const authToken = localStorage.getItem('auth_token');
+      if (!authToken) {
+          window.location.href = '../../index.html'; 
+          return; 
+      }
+
+      async function updateUserInfo() {
+        const token = localStorage.getItem('auth_token');
+
+        // --- 1. Show loading state ---
+        if (narrowUserAvatar) narrowUserAvatar.classList.add('avatar-loading-placeholder');
+        if (expandedUserAvatar) expandedUserAvatar.classList.add('avatar-loading-placeholder');
+        if (expandedUserName) expandedUserName.textContent = "Loading...";
+        if (expandedUserEmail) expandedUserEmail.textContent = ""; // Or "Loading email..."
+
+        // Initialize with localStorage values or defaults as fallbacks
+        let finalUserName = localStorage.getItem('user_name') || 'User';
+        let finalUserEmail = localStorage.getItem('user_email') || 'user@example.com';
+        let finalUserAvatar = localStorage.getItem('user_avatar') || defaultAvatar;
+
+        if (!token) {
+            console.log("Dashboard: No auth token, using local/default user info.");
+            // Fallback values are already set in finalUser... variables
+        } else {
+            try {
+                const apiUrl = `${API_BASE_URL}/api/me`;
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const userData = await response.json();
+                    finalUserName = userData.name || finalUserName; 
+                    finalUserEmail = userData.email || finalUserEmail;
+                    
+                    finalUserAvatar = userData.avatar || localStorage.getItem('user_avatar') || defaultAvatar; 
+                    if (!userData.avatar && !localStorage.getItem('user_avatar')) {
+                        finalUserAvatar = defaultAvatar;
+                    }
+
+                    localStorage.setItem('user_name', finalUserName);
+                    localStorage.setItem('user_email', finalUserEmail);
+                    if (userData.avatar) { 
+                        localStorage.setItem('user_avatar', finalUserAvatar);
+                    }
+                    console.log("Dashboard: User info updated from /api/me");
+
+                } else if (response.status === 401) { 
+                    console.error('Dashboard: Unauthorized. Logging out.');
+                    // Clean up UI loading state before redirecting via logout
+                    if (narrowUserAvatar) narrowUserAvatar.classList.remove('avatar-loading-placeholder');
+                    if (expandedUserAvatar) expandedUserAvatar.classList.remove('avatar-loading-placeholder');
+                    // Set to default before logout to avoid "Loading..." flash if logout is slow
+                    if (expandedUserName) expandedUserName.textContent = 'User';
+                    if (expandedUserEmail) expandedUserEmail.textContent = 'user@example.com';
+
+                    handleLogout(null, true); 
+                    return; 
+                } else {
+                    console.error('Dashboard: Failed to fetch user details, using local/default.', response.status, await response.text());
+                    // Fallback values in finalUser... will be used
+                }
+            } catch (error) {
+                console.error('Dashboard: Network error fetching user details, using local/default.', error);
+                // Fallback values in finalUser... will be used
+            }
+        }
+        
+        // --- 2. Update UI with final values and remove loading state ---
+        if (narrowUserAvatar) {
+            narrowUserAvatar.src = finalUserAvatar;
+            narrowUserAvatar.classList.remove('avatar-loading-placeholder');
+        }
+        if (expandedUserAvatar) {
+            expandedUserAvatar.src = finalUserAvatar;
+            expandedUserAvatar.classList.remove('avatar-loading-placeholder');
+        }
+        if (expandedUserName) expandedUserName.textContent = finalUserName;
+        if (expandedUserEmail) expandedUserEmail.textContent = finalUserEmail;
+      }
+      
+      updateUserInfo(); 
+
+
+      // Function to handle panel expansion
+      const expandPanel = () => {
+        narrowPanel.style.display = "none";
+        expandedPanel.style.display = "flex";
+        mainContent.classList.add("main-content-expanded");
+        localStorage.setItem("panelState", "expanded");
+      };
+
+      // Function to handle panel collapse
+      const collapsePanel = () => {
+        expandedPanel.style.display = "none";
+        narrowPanel.style.display = "flex";
+        mainContent.classList.remove("main-content-expanded");
+        localStorage.setItem("panelState", "narrow");
+      };
+
+      // Restore panel state
+      if (localStorage.getItem("panelState") === "expanded") {
+        expandPanel();
+      } else {
+        collapsePanel(); 
+      }
+
+      // --- Expand Panel Behavior Mode ---
+      function applyPanelExpandMode() {
+        const mode = localStorage.getItem('panelExpandMode') || 'static';
+        // Remove any previous listeners
+        expandBtn.replaceWith(expandBtn.cloneNode(true));
+        collapseBtn.replaceWith(collapseBtn.cloneNode(true));
+        const newExpandBtn = narrowPanel.querySelector('.expand-button');
+        const newCollapseBtn = expandedPanel.querySelector('.collapse-button');
+        // Remove previous hover listeners
+        narrowPanel.onmouseenter = null;
+        narrowPanel.onmouseleave = null;
+        expandedPanel.onmouseenter = null;
+        expandedPanel.onmouseleave = null;
+        if (mode === 'hover') {
+          // Hover to expand/collapse
+          narrowPanel.onmouseenter = expandPanel;
+          expandedPanel.onmouseleave = collapsePanel;
+          narrowPanel.classList.add('hide-arrow');
+        } else {
+          // Static: click to expand/collapse
+          if (newExpandBtn) newExpandBtn.addEventListener('click', expandPanel);
+          if (newCollapseBtn) newCollapseBtn.addEventListener('click', collapsePanel);
+          narrowPanel.classList.remove('hide-arrow');
+        }
+      }
+      applyPanelExpandMode();
+      // Listen for changes to the setting (in case settings page is open in another tab)
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'panelExpandMode') applyPanelExpandMode();
+      });
+      // --- End Expand Panel Behavior Mode ---
+
+      expandBtn.addEventListener("click", expandPanel);
+      collapseBtn.addEventListener("click", collapsePanel);
+
+      const updateDashboardToggleStates = (isDark) => {
+        if (darkToggleExp) {
+            const toggleSwitch = darkToggleExp.querySelector(".toggle-switch");
+            const icon = darkToggleExp.querySelector(".nav-icon i");
+            if (toggleSwitch) {
+                toggleSwitch.classList.toggle("active", isDark);
+            }
+            if(icon) icon.className = isDark ? "fas fa-sun" : "fas fa-moon"; 
+        }
+        if(darkToggle){ 
+            const icon = darkToggle.querySelector("i");
+            if(icon) icon.className = isDark ? "fas fa-sun" : "fas fa-moon"; 
+            if(icon) icon.title = isDark ? "Light Mode" : "Dark Mode";
+        }
+      };
+
+      const dispatchThemeToIframe = (isDark) => {
+        if (contentFrame && contentFrame.contentWindow) {
+            try {
+                if (contentFrame.contentDocument && contentFrame.contentDocument.readyState === 'complete') {
+                    contentFrame.contentWindow.postMessage({ type: 'themeChange', darkMode: isDark }, '*');
+                } else {
+                    contentFrame.addEventListener('load', function onDispatchLoad() {
+                        if (contentFrame.contentWindow) {
+                           contentFrame.contentWindow.postMessage({ type: 'themeChange', darkMode: isDark }, '*');
+                        }
+                    }, { once: true });
+                }
+            } catch (e) {
+                console.warn("Dashboard: Could not dispatch themeChange to iframe. ", e.message);
+            }
+        }
+      };
+      
+      const setDarkMode = (isDark, dispatchToIframe = true) => {
+  document.body.classList.toggle("dark-mode", isDark);
+  localStorage.setItem("darkMode", isDark ? "enabled" : "disabled"); 
+  localStorage.setItem("theme", isDark ? "dark" : "light"); 
+  updateDashboardToggleStates(isDark);
+  
+  // Update logos
+  document.querySelectorAll('.logo-light').forEach(logo => {
+    logo.style.display = isDark ? 'none' : 'block';
+  });
+  document.querySelectorAll('.logo-dark').forEach(logo => {
+    logo.style.display = isDark ? 'block' : 'none';
+  });
+  
+  if (dispatchToIframe) {
+    dispatchThemeToIframe(isDark);
+  }
+};
+
+      const toggleDark = () => {
+        const currentIsDark = document.body.classList.contains("dark-mode");
+        setDarkMode(!currentIsDark);
+      };
+      
+      const initialDarkMode = localStorage.getItem("darkMode") === "enabled" || localStorage.getItem("theme") === "dark";
+      setDarkMode(initialDarkMode, false); 
+
+      darkToggle.addEventListener("click", toggleDark);
+      if (darkToggleExp) darkToggleExp.addEventListener("click", toggleDark);
+
+      contentFrame.addEventListener('load', () => {
+        const currentParentThemeIsDark = document.body.classList.contains("dark-mode");
+        setTimeout(() => { 
+            dispatchThemeToIframe(currentParentThemeIsDark);
+        }, 150); 
+      });
+      
+      // On page load, set iframe src to last visited page or default
+      const lastVisitedPage = localStorage.getItem('lastVisitedPage') || 'Stats.html';
+      contentFrame.src = lastVisitedPage;
+      // Set active class on nav items to match last visited page
+      document.querySelectorAll('.nav-item, .nav-item-expanded').forEach(item => {
+        if (item.dataset && item.dataset.page === lastVisitedPage) {
+          item.classList.add('active');
+        } else if (item.classList.contains('active')) {
+          item.classList.remove('active');
+        }
+      });
+
+      navItems.forEach((item) => {
+        item.addEventListener("click", (e) => {
+          const isLinkInside = e.target.closest('a'); 
+          
+          const targetIsToggle = item.id === "darkToggle" || item.id === "darkToggleExpanded";
+          const targetIsLogout = item.classList.contains("logout");
+
+          if (targetIsToggle) return; 
+          if (targetIsLogout) {
+            return; 
+          }
+          
+          const pageToLoad = item.dataset.page;
+
+          document.querySelectorAll(".nav-item:not(.logout), .nav-item-expanded:not(.logout)").forEach(i => {
+            if (i.id !== 'darkToggle' && i.id !== 'darkToggleExpanded') { 
+              i.classList.remove("active");
+            }
+          });
+
+          if (pageToLoad) {
+            document.querySelectorAll(`.nav-item[data-page="${pageToLoad}"], .nav-item-expanded[data-page="${pageToLoad}"]`).forEach(match => {
+                match.classList.add("active");
+            });
+            contentFrame.src = pageToLoad; 
+            localStorage.setItem('lastVisitedPage', pageToLoad); // Save last visited page
+          }
+        });
+      });
+      
+      window.addEventListener('message', (event) => {
+        if (event.data) {
+            if (event.data.type === 'logout') {
+                console.log("Dashboard received logout message from iframe:", event.data.reason);
+                handleLogout(null, true); 
+            } else if (event.data.type === 'themeChangeFromIframe') {
+                setDarkMode(event.data.darkMode, false); 
+            } else if (event.data.type === 'userProfileUpdatedInIframe') {
+                console.log("Dashboard: User profile updated in iframe, refreshing dashboard info.");
+                updateUserInfo(); 
+            }
+        }
+      });
+      
+      function handleLogout(event, programmatic = false) {
+          if (!programmatic && event) { 
+            event.preventDefault(); 
+          }
+          console.log("Logout initiated.");
+          localStorage.removeItem('auth_token');
+          localStorage.removeItem('user_name');
+          localStorage.removeItem('user_email');
+          localStorage.removeItem('user_avatar');
+          window.location.href = '../../index.html'; 
+      }
+      
+      // Show logout confirmation dialog
+      function showLogoutDialog() {
+        const logoutDialog = document.getElementById('logoutDialog');
+        logoutDialog.classList.add('show');
+      }
+      
+      // Hide logout confirmation dialog
+      function hideLogoutDialog() {
+        const logoutDialog = document.getElementById('logoutDialog');
+        logoutDialog.classList.remove('show');
+      }
+      
+      // Logout button event handlers - show confirmation dialog
+      document.getElementById("logoutBtnNarrow").addEventListener("click", (e) => {
+        e.preventDefault();
+        showLogoutDialog();
+      });
+      document.getElementById("logoutBtnExpanded").addEventListener("click", (e) => {
+        e.preventDefault();
+        showLogoutDialog();
+      });
+      
+      // Dialog button event handlers
+      document.getElementById("logoutCancelBtn").addEventListener("click", () => {
+        hideLogoutDialog();
+      });
+      
+      document.getElementById("logoutConfirmBtn").addEventListener("click", () => {
+        hideLogoutDialog();
+        handleLogout(null, true);
+      });
+      
+      // Close dialog when clicking outside
+      document.getElementById("logoutDialog").addEventListener("click", (e) => {
+        if (e.target === e.currentTarget) {
+          hideLogoutDialog();
+        }
+      });
+
+      window.addEventListener("click", (e) => {
+        if (window.innerWidth <= 768 && expandedPanel.style.display === "flex") {
+          if (!expandedPanel.contains(e.target) && !narrowPanel.contains(e.target) && !e.target.closest('.expand-button')) {
+            collapsePanel();
+          }
+        }
+      });
+
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'auth_token' && !e.newValue) { 
+            console.log("Auth token cleared externally, logging out dashboard.");
+            window.location.href = '../../index.html'; 
+        }
+        if (e.key === 'darkMode' || e.key === 'theme') { 
+            const isDark = e.newValue === 'enabled' || e.newValue === 'dark';
+            setDarkMode(isDark, true); 
+        }
+        if (e.key === 'user_name' || e.key === 'user_avatar' || e.key === 'user_email') {
+            updateUserInfo(); 
+        }
+      });
+
+    });
+  </script>
 </body>
 </html>
