@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Progress Dashboard</title>
+<style>
+  /* Modern CSS Reset & Base Styles */
+  :root {
+    /* THEME VARIABLES from notes.html/settings.html */
+    --bg: #f5f5f5;
+    --text: #333333;
+    --text-secondary: rgba(51, 51, 51, 0.7);
+    --accent: #2a8cf4; /* Was --primary: #5e0f7b */
+    --accent-secondary: #ff3a8c; /* Was --primary-light: #d9138a */
+    --accent-tertiary: #00c2ff;
+    --accent-dark: #284cff; /* Added for consistency */
+    --card-bg: rgba(255, 255, 255, 0.9); /* Was white */
+    --card-border: rgba(0, 0, 0, 0.1); /* Was --neutral-200 */
+    --btn-primary-bg: linear-gradient(135deg, #a18dff, #7d5fff); /* For gradient buttons */
+    --btn-secondary-bg: linear-gradient(135deg, #ff3a8c, #ff6b6b);
+    --btn-hover-brightness: brightness(1.05);
+    --shadow: 0 8px 32px rgba(0, 0, 0, 0.1); /* Standardized shadow */
+    --glow: 0 0 20px rgba(138, 143, 255, 0.4);
+    --header-bg: rgba(255, 255, 255, 0.9); /* Was gradient */
+    --header-text: #333333; /* Was white */
+    --header-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+    --input-bg: #ffffff;
+    --input-border: #ddd;
+    --input-text: #333333;
+    --menu-bg: #ffffff;
+    --menu-hover: rgba(138, 143, 255, 0.1);
+    --danger: #ef4444;
+    --success: #22c55e;
+    --warning: #f59e0b; /* Was --highlight */
+    --info: #3b82f6;
+
+    /* Radii from original Stats.html, seem fine */
+    --radius-sm: 0.125rem;
+    --radius: 0.25rem;
+    --radius-md: 0.375rem;
+    --radius-lg: 0.5rem;
+    --radius-full: 9999px;
+
+    /* Specific to Stats.html if needed, but prefer common ones */
+    --stats-secondary-color: #10b981; /* Original --secondary */
+    --progress-gradient: linear-gradient(to right, var(--accent-secondary), var(--accent)); /* Updated progress */
+  }
+
+  .dark-mode {
+    /* Dark Theme */
+    --bg: #0a0a0a;
+    --text: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.7);
+    --accent: #8a8fff; /* Was #5e0f7b -> dark version */
+    --accent-secondary: #ff3a8c;
+    --accent-dark: #2a8cf4;
+    --card-bg: rgba(0, 0, 0, 0.9); /* Was --neutral-800 */
+    --card-border: rgba(255, 255, 255, 0.1); /* Was --neutral-700 */
+    --btn-hover-brightness: brightness(1.1);
+    --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    --glow: 0 0 20px rgba(138, 143, 255, 0.3);
+    --header-bg: rgba(0, 0, 0, 0.9); /* Was gradient */
+    --header-text: #ffffff;
+    --header-shadow: 0 4px 30px rgba(0,0,0,0.5); /* Darker shadow */
+    --input-bg: #1a1a1a;
+    --input-border: #333;
+    --input-text: #ffffff;
+    --menu-bg: #1a1a1a;
+    --menu-hover: rgba(138, 143, 255, 0.2);
+    
+    --stats-secondary-color: #34d399; /* Original --secondary-light */
+    --progress-gradient: linear-gradient(to right, var(--accent-secondary), var(--accent));
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; /* Updated font */
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    padding-top: 70px; /* Space for fixed header */
+    overflow-x: hidden;
+  }
+  
+  .grid-bg {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background-image: 
+        linear-gradient(var(--card-border) 1px, transparent 1px), /* Use card-border for subtle grid */
+        linear-gradient(90deg, var(--card-border) 1px, transparent 1px);
+      background-size: 40px 40px; z-index: -2; opacity: 0.4;
+  }
+  .dark-mode .grid-bg {
+      background-image: 
+        linear-gradient(var(--card-border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--card-border) 1px, transparent 1px);
+      opacity: 0.2; /* Darker grid for dark mode */
+  }
+
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  header { /* Updated header style */
+    padding: 0.75rem 1.5rem;
+    height: 70px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: var(--header-bg);
+    color: var(--header-text);
+    backdrop-filter: blur(10px);
+    box-shadow: var(--header-shadow);
+    border-bottom: 1px solid var(--card-border);
+  }
+  
+  .header-brand { /* For title and optional icon/subtitle */
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .header-brand i {
+    font-size: 1.5rem; /* Icon size for header title */
+    color: var(--accent); /* Consistent icon color */
+  }
+  
+  h1.page-title { /* Updated H1 style */
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    /* Gradient text for title if desired, or just var(--header-text) */
+    background: linear-gradient(to right, var(--accent-dark, var(--accent)), var(--accent-secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .dark-mode h1.page-title {
+    background: linear-gradient(to right, var(--accent), var(--accent-secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .header-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: -0.25rem; /* Adjust if needed */
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .header-btn.theme-toggle, #themeToggle { display: none !important; }
+
+  .theme-toggle { /* Updated theme-toggle style */
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid var(--card-border);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+  }
+
+  .theme-toggle:hover {
+    background: var(--menu-hover);
+    color: var(--accent);
+    transform: translateY(-1px);
+    box-shadow: var(--glow);
+  }
+
+  .dark-mode .theme-toggle i.fa-sun { display: block; } /* Sun in dark mode */
+  .dark-mode .theme-toggle i.fa-moon { display: none; } /* Moon hidden in dark */
+  .theme-toggle i.fa-sun { display: none; } /* Sun hidden in light */
+  .theme-toggle i.fa-moon { display: block; } /* Moon in light mode */
+
+  .theme-toggle-btn { display: none; }
+  @media (max-width: 700px) {
+    .theme-toggle-btn { display: inline-flex; }
+  }
+
+  .stats-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg); /* 0.5rem */
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--glow); /* Updated hover shadow */
+  }
+
+  .stat-card h3 {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--accent); /* Updated color */
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-description {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+
+  .chart-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .chart-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+  }
+
+  .chart-card h2 {
+    color: var(--text);
+    margin-bottom: 1.5rem;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .chart-card h2 i { /* Icon color in chart card titles */
+    color: var(--accent);
+  }
+
+  .chart-wrapper {
+    position: relative;
+    width: 100%;
+    height: 300px;
+  }
+
+  canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .section-title { /* For "Your Goals", "Recent Activity" */
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--card-border);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+  }
+  .section-title i {
+      color: var(--accent);
+  }
+
+
+  .goals-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .goal-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .goal-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--glow); /* Updated hover shadow */
+  }
+
+  .goal-card h3 {
+    color: var(--text);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .goal-card h3 i {
+    color: var(--accent); /* Updated color */
+  }
+
+  .goal-progress {
+    margin: 1rem 0;
+  }
+
+  .progress-bar {
+    height: 8px;
+    background-color: var(--card-border); /* Use card-border for background */
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+  }
+  .dark-mode .progress-bar {
+    background-color: rgba(255,255,255,0.1); /* Lighter bg for dark mode progress bar */
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--progress-gradient); /* Updated gradient */
+    border-radius: var(--radius-full);
+    transition: width 0.5s ease;
+  }
+
+  .progress-text {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  .goal-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .stat {
+    text-align: center;
+    padding: 0.5rem;
+    border-radius: var(--radius);
+  }
+
+  .stat .number {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--accent); /* Updated color */
+  }
+
+  .stat .label {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+  }
+
+  .completed .progress-fill {
+    background: var(--success); /* Use success color */
+  }
+
+  .completed .stat .number {
+    color: var(--success);
+  }
+
+  .recent-activity {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+  }
+
+  /* .recent-activity h2 is covered by .section-title now */
+
+  .activity-list {
+    list-style: none;
+  }
+
+  .activity-item {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--card-border);
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .activity-item:last-child {
+    border-bottom: none;
+  }
+
+  .activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--menu-hover); /* Use menu-hover for subtle background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent); /* Updated color */
+    flex-shrink: 0;
+  }
+  .dark-mode .activity-icon {
+      background-color: rgba(255,255,255,0.05);
+  }
+
+
+  .activity-content {
+    flex-grow: 1;
+  }
+
+  .activity-title {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: var(--text);
+  }
+
+  .activity-time {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+  }
+
+  .btn { /* General button class for consistency */
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      justify-content: center;
+  }
+  .btn-primary { /* For primary actions like refresh */
+      background: var(--btn-primary-bg);
+      color: white;
+  }
+  .btn-primary:hover {
+      filter: var(--btn-hover-brightness);
+      transform: translateY(-1px);
+      box-shadow: var(--glow);
+  }
+
+  .refresh-btn { /* Specific class for refresh, using general .btn .btn-primary */
+    /* Styles will be inherited from .btn and .btn-primary */
+  }
+
+
+  @media (max-width: 768px) {
+    .container {
+      padding: 15px;
+    }
+    header { /* Adjust header padding on mobile */
+      padding: 0.5rem 1rem;
+    }
+    .header-brand {
+        gap: 0.5rem;
+    }
+    h1.page-title {
+        font-size: 1.25rem;
+    }
+    .header-brand i {
+        font-size: 1.25rem;
+    }
+    .header-subtitle {
+        display: none; /* Hide subtitle on small screens if too cluttered */
+    }
+    .chart-container {
+      grid-template-columns: 1fr;
+    }
+    .stats-overview {
+      grid-template-columns: 1fr 1fr;
+    }
+    .goals-container {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .stats-overview {
+      grid-template-columns: 1fr;
+    }
+    .header-actions {
+        gap: 0.5rem; /* Reduce gap for very small screens */
+    }
+    .refresh-btn span { /* Hide text on very small screens, show only icon */
+        display: none;
+    }
+    .refresh-btn {
+        padding: 0.5rem; /* Make it more square-ish */
+        width: 40px;
+        height: 40px;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="grid-bg"></div> <!-- Grid background -->
+<div class="container">
+  <header>
+    <div class="header-brand">
+      <i class="fas fa-chart-bar"></i> <!-- Changed icon -->
+      <div>
+          <h1 class="page-title">Progress Dashboard</h1>
+          <p class="header-subtitle">Track your goals, tasks, and notes</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-primary refresh-btn" id="refreshBtn"> <!-- Added .btn .btn-primary -->
+        <i class="fas fa-sync-alt"></i> <span>Refresh Data</span>
+      </button>
+      <button class="theme-toggle" id="themeToggle" title="Toggle Theme">
+        <i class="fas fa-sun"></i>
+        <i class="fas fa-moon"></i>
+      </button>
+    </div>
+  </header>
+
+  <div class="stats-overview">
+    <div class="stat-card">
+      <h3>Total Goals</h3>
+      <div class="stat-value" id="totalGoals">0</div>
+      <div class="stat-description">Goals you've set</div>
+    </div>
+    <div class="stat-card">
+      <h3>Completed Goals</h3>
+      <div class="stat-value" id="completedGoals">0</div>
+      <div class="stat-description">Goals fully achieved</div>
+    </div>
+    <div class="stat-card">
+      <h3>Total Tasks</h3>
+      <div class="stat-value" id="totalTasks">0</div>
+      <div class="stat-description">Tasks across all goals</div>
+    </div>
+    <div class="stat-card">
+      <h3>Completed Tasks</h3>
+      <div class="stat-value" id="completedTasks">0</div>
+      <div class="stat-description">Tasks you've finished</div>
+    </div>
+    <div class="stat-card">
+      <h3>Total Notes</h3>
+      <div class="stat-value" id="totalNotes">0</div>
+      <div class="stat-description">Notes created</div>
+    </div>
+    <div class="stat-card">
+      <h3>Pinned Notes</h3>
+      <div class="stat-value" id="pinnedNotes">0</div>
+      <div class="stat-description">Important notes</div>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <div class="chart-card">
+      <h2><i class="fas fa-chart-pie"></i> Goal Completion</h2>
+      <div class="chart-wrapper">
+        <canvas id="goalChart"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <h2><i class="fas fa-chart-pie"></i> Task Completion</h2>
+      <div class="chart-wrapper">
+        <canvas id="taskChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title"><i class="fas fa-bullseye"></i> Your Goals</h2>
+  <div class="goals-container" id="goalsContainer">
+    <!-- Goal cards will be inserted here -->
+  </div>
+
+  <h2 class="section-title"><i class="fas fa-history"></i> Recent Activity</h2>
+  <div class="recent-activity">
+    <ul class="activity-list" id="activityList">
+      <!-- Activity items will be inserted here -->
+    </ul>
+  </div>
+</div>
+
+<!-- Font Awesome for icons -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+<!-- Chart.js for visualizations -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  // Sample data - in a real app, this would come from your task manager's localStorage
+  let dashboardData = {
+    goals: [],
+    activities: [],
+    notes: []
+  };
+
+  // DOM Elements
+  const totalGoalsEl = document.getElementById('totalGoals');
+  const completedGoalsEl = document.getElementById('completedGoals');
+  const totalTasksEl = document.getElementById('totalTasks');
+  const completedTasksEl = document.getElementById('completedTasks');
+  const totalNotesEl = document.getElementById('totalNotes');
+  const pinnedNotesEl = document.getElementById('pinnedNotes');
+  const goalsContainer = document.getElementById('goalsContainer');
+  const activityList = document.getElementById('activityList');
+  const refreshBtn = document.getElementById('refreshBtn');
+  const themeToggle = document.getElementById('themeToggle');
+  let goalChart, taskChart;
+
+  // Initialize the dashboard
+  function initDashboard() {
+    applyTheme();
+    loadData();
+    renderStats();
+    renderGoalCards();
+    renderActivityLog();
+    initCharts();
+  }
+
+  // Theme management functions
+  function applyTheme() {
+    // Check localStorage for the shared 'darkMode' key
+    const darkModeEnabled = localStorage.getItem('darkMode') === 'enabled';
+    document.body.classList.toggle('dark-mode', darkModeEnabled);
+  }
+
+  function toggleTheme() {
+    const isDarkNow = document.body.classList.toggle('dark-mode');
+    localStorage.setItem('darkMode', isDarkNow ? 'enabled' : 'disabled');
+    // The 'storage' event listener below will handle synchronization if other tabs are open.
+  }
+
+  // Listen for theme changes from other tabs/pages via localStorage
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'darkMode') {
+      applyTheme(); // Re-apply theme based on the new value
+      // Update charts if they need to be re-rendered with new theme colors
+      if (goalChart && taskChart) {
+          // You might need to destroy and re-init charts if their colors are theme-dependent
+          // For now, this just re-applies body class. Chart.js colors are hardcoded.
+      }
+    }
+  });
+
+
+  // Load data from localStorage (from both task manager and notes app)
+  function loadData() {
+    const tasksData = JSON.parse(localStorage.getItem('tasks')) || [];
+    const checkboxStates = JSON.parse(localStorage.getItem('checkboxStates')) || {};
+    
+    dashboardData.goals = tasksData.map((task, taskArrayIndex) => { // Added taskArrayIndex
+      const goalTitle = task.text.split('\n')[0].trim().replace(/^Goal:\s*/, '');
+      const phases = task.text.split(/Phase\s*\d*:/i).slice(1);
+      let totalTasksInGoal = 0;
+      let completedTasksInGoal = 0;
+      
+      phases.forEach((phaseBlock, phaseIndex) => {
+        const lines = phaseBlock.trim().split('\n').map(l => l.trim()).filter(Boolean);
+        if (lines.length <= 1) return;
+        
+        const phaseTasks = lines.slice(1);
+        totalTasksInGoal += phaseTasks.length;
+        
+        phaseTasks.forEach((_, taskItemIndex) => {
+          // Use taskArrayIndex here for unique IDs across all goals if tasksData order is stable
+          const checkboxId = `task_${taskArrayIndex}_phase_${phaseIndex}_item_${taskItemIndex}`;
+          if (checkboxStates[checkboxId]) {
+            completedTasksInGoal++;
+          }
+        });
+      });
+      
+      return {
+        id: 'goal-' + Math.random().toString(36).substr(2, 9), // Keep random ID for now
+        title: goalTitle,
+        totalTasks: totalTasksInGoal,
+        completedTasks: completedTasksInGoal,
+        pinned: task.pinned || false,
+        highlighted: task.highlighted || false,
+        lastUpdated: new Date().toISOString() // Placeholder
+      };
+    });
+    
+    const notesData = JSON.parse(localStorage.getItem('notes')) || [];
+    dashboardData.notes = notesData;
+    
+    if ((dashboardData.goals.length > 0 || dashboardData.notes.length > 0) && dashboardData.activities.length === 0) {
+      generateSampleActivity();
+    }
+  }
+
+  function generateSampleActivity() {
+    const activities = [];
+    // Simplified sample generation
+    dashboardData.goals.forEach(goal => {
+      activities.push({
+        id: 'act-g-' + goal.id, action: 'created', item: 'goal', title: goal.title,
+        time: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString()
+      });
+      if (goal.completedTasks > 0) {
+         activities.push({
+            id: 'act-t-' + goal.id, action: 'completed', item: 'task', title: `Task in ${goal.title}`,
+            time: new Date(Date.now() - Math.random() * 3 * 24 * 60 * 60 * 1000).toISOString()
+         });
+      }
+    });
+    dashboardData.notes.forEach(note => {
+      activities.push({
+        id: 'act-n-' + (note.id || Math.random().toString(36).substr(2,9)), action: 'created', item: 'note', title: note.title || 'Untitled Note',
+        time: new Date(note.timestamp || Date.now() - Math.random() * 2 * 24 * 60 * 60 * 1000).toISOString()
+      });
+    });
+    activities.sort((a, b) => new Date(b.time) - new Date(a.time));
+    dashboardData.activities = activities.slice(0, 10);
+  }
+
+  function renderStats() {
+    const totalGoals = dashboardData.goals.length;
+    const completedGoals = dashboardData.goals.filter(g => g.totalTasks > 0 && g.completedTasks === g.totalTasks).length;
+    const totalTasks = dashboardData.goals.reduce((sum, goal) => sum + goal.totalTasks, 0);
+    const completedTasks = dashboardData.goals.reduce((sum, goal) => sum + goal.completedTasks, 0);
+    const totalNotes = dashboardData.notes.length;
+    const pinnedNotes = dashboardData.notes.filter(note => note.pinned).length;
+    
+    totalGoalsEl.textContent = totalGoals;
+    completedGoalsEl.textContent = completedGoals;
+    totalTasksEl.textContent = totalTasks;
+    completedTasksEl.textContent = completedTasks;
+    totalNotesEl.textContent = totalNotes;
+    pinnedNotesEl.textContent = pinnedNotes;
+  }
+
+  function renderGoalCards() {
+    goalsContainer.innerHTML = '';
+    if (dashboardData.goals.length === 0) {
+      goalsContainer.innerHTML = `
+        <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--text-secondary);">
+          <i class="fas fa-clipboard-list" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+          <p>No goals yet. Create some in your Task Manager!</p>
+        </div>`;
+      return;
+    }
+    dashboardData.goals.forEach(goal => {
+      const completionPercentage = goal.totalTasks > 0 ? Math.round((goal.completedTasks / goal.totalTasks) * 100) : 0;
+      const isCompleted = completionPercentage === 100 && goal.totalTasks > 0;
+      const card = document.createElement('div');
+      card.className = `goal-card ${isCompleted ? 'completed' : ''}`;
+      card.innerHTML = `
+        <h3>
+          <i class="fas ${goal.pinned ? 'fa-thumbtack' : 'fa-bullseye'}"></i>
+          ${goal.title}
+        </h3>
+        <div class="goal-progress">
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: ${completionPercentage}%"></div>
+          </div>
+          <div class="progress-text">
+            <span>Progress</span>
+            <span>${completionPercentage}%</span>
+          </div>
+        </div>
+        <div class="goal-stats">
+          <div class="stat">
+            <div class="number">${goal.completedTasks}</div><div class="label">Completed</div>
+          </div>
+          <div class="stat">
+            <div class="number">${goal.totalTasks - goal.completedTasks}</div><div class="label">Remaining</div>
+          </div>
+          <div class="stat">
+            <div class="number">${goal.totalTasks}</div><div class="label">Total</div>
+          </div>
+        </div>`;
+      goalsContainer.appendChild(card);
+    });
+  }
+
+  function renderActivityLog() {
+    activityList.innerHTML = '';
+    if (dashboardData.activities.length === 0) {
+      activityList.innerHTML = `
+        <li style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+          <i class="fas fa-clock" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+          <p>No recent activity</p>
+        </li>`;
+      return;
+    }
+    dashboardData.activities.forEach(activity => {
+      const timeAgo = getTimeAgo(activity.time);
+      const actionIcon = getActionIcon(activity.action, activity.item);
+      const actionText = getActionText(activity.action, activity.item);
+      const item = document.createElement('li');
+      item.className = 'activity-item';
+      item.innerHTML = `
+        <div class="activity-icon"><i class="fas ${actionIcon}"></i></div>
+        <div class="activity-content">
+          <div class="activity-title">${actionText} "${activity.title}"</div>
+          <div class="activity-time">${timeAgo}</div>
+        </div>`;
+      activityList.appendChild(item);
+    });
+  }
+
+  function getTimeAgo(isoString) {
+    const seconds = Math.floor((new Date() - new Date(isoString)) / 1000);
+    if (seconds < 60) return 'Just now';
+    if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+    return `${Math.floor(seconds / 86400)}d ago`;
+  }
+
+  function getActionIcon(action, item) {
+    if (item === 'note') return action === 'created' ? 'fa-file-alt' : 'fa-edit';
+    switch (action) {
+      case 'completed': return 'fa-check-circle';
+      case 'created': return 'fa-plus-circle';
+      default: return 'fa-info-circle';
+    }
+  }
+
+  function getActionText(action, item) {
+    return `${action.charAt(0).toUpperCase() + action.slice(1)} ${item}`;
+  }
+
+  function initCharts() {
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+    const textColor = isDarkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)';
+    // Chart.js global defaults
+    Chart.defaults.borderColor = gridColor;
+    Chart.defaults.color = textColor;
+
+
+    const goalCtx = document.getElementById('goalChart').getContext('2d');
+    const totalGoalsVal = dashboardData.goals.length;
+    const completedGoalsVal = dashboardData.goals.filter(g => g.totalTasks > 0 && g.completedTasks === g.totalTasks).length;
+    
+    // Define colors based on theme, ideally from CSS vars if Chart.js could easily consume them.
+    // Hardcoding for now, matching the original intent but consider CSS vars for future.
+    const completedColor = getComputedStyle(document.documentElement).getPropertyValue('--success').trim() || 'rgba(34, 197, 94, 0.8)'; // Greenish
+    const incompleteColorLight = 'rgba(226, 232, 240, 0.8)'; // Light gray
+    const incompleteColorDark = 'rgba(55, 65, 81, 0.8)'; // Darker gray for dark mode
+    const incompleteColor = isDarkMode ? incompleteColorDark : incompleteColorLight;
+
+
+    goalChart = new Chart(goalCtx, {
+      type: 'doughnut', // Changed to doughnut for a modern look
+      data: {
+        labels: ['Completed', 'Incomplete'],
+        datasets: [{
+          data: [completedGoalsVal, totalGoalsVal - completedGoalsVal],
+          backgroundColor: [completedColor, incompleteColor],
+          borderColor: [completedColor, incompleteColor], // or var(--card-bg) for separation
+          borderWidth: 1,
+          hoverOffset: 8
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, cutout: '60%', // Doughnut specific
+        plugins: {
+          legend: { position: 'bottom', labels: { padding: 20 } },
+          tooltip: {
+            callbacks: {
+              label: (context) => `${context.label}: ${context.raw} (${Math.round((context.raw / context.dataset.data.reduce((a,b)=>a+b,0)) * 100)}%)`
+            }
+          }
+        }
+      }
+    });
+    
+    const taskCtx = document.getElementById('taskChart').getContext('2d');
+    const totalTasksVal = dashboardData.goals.reduce((sum, goal) => sum + goal.totalTasks, 0);
+    const completedTasksVal = dashboardData.goals.reduce((sum, goal) => sum + goal.completedTasks, 0);
+    const taskAccentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || 'rgba(139, 92, 246, 0.8)'; // Purple/Accent
+
+    taskChart = new Chart(taskCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Completed', 'Incomplete'],
+        datasets: [{
+          data: [completedTasksVal, totalTasksVal - completedTasksVal],
+          backgroundColor: [taskAccentColor, incompleteColor],
+          borderColor: [taskAccentColor, incompleteColor],
+          borderWidth: 1,
+          hoverOffset: 8
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, cutout: '60%',
+        plugins: {
+          legend: { position: 'bottom', labels: { padding: 20 } },
+          tooltip: {
+            callbacks: {
+              label: (context) => `${context.label}: ${context.raw} (${Math.round((context.raw / context.dataset.data.reduce((a,b)=>a+b,0)) * 100)}%)`
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function refreshData() {
+    // Clear existing activities before reloading data to avoid duplicates if generateSampleActivity runs again
+    dashboardData.activities = []; 
+    loadData();
+    renderStats();
+    renderGoalCards();
+    renderActivityLog();
+    
+    // Update charts
+    const totalGoalsVal = dashboardData.goals.length;
+    const completedGoalsVal = dashboardData.goals.filter(g => g.totalTasks > 0 && g.completedTasks === g.totalTasks).length;
+    const totalTasksVal = dashboardData.goals.reduce((sum, goal) => sum + goal.totalTasks, 0);
+    const completedTasksVal = dashboardData.goals.reduce((sum, goal) => sum + goal.completedTasks, 0);
+    
+    if (goalChart) {
+        goalChart.data.datasets[0].data = [completedGoalsVal, totalGoalsVal - completedGoalsVal];
+        goalChart.update();
+    }
+    if (taskChart) {
+        taskChart.data.datasets[0].data = [completedTasksVal, totalTasksVal - completedTasksVal];
+        taskChart.update();
+    }
+  }
+
+  // Listen for storage events to update when notes or tasks change
+  window.addEventListener('storage', function(e) {
+    if (e.key === 'notes' || e.key === 'tasks' || e.key === 'checkboxStates') {
+      refreshData();
+    }
+  });
+
+  refreshBtn.addEventListener('click', refreshData);
+  themeToggle.addEventListener('click', toggleTheme);
+
+  window.addEventListener('DOMContentLoaded', initDashboard);
+</script>
+</body>
+</html>
