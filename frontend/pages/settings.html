@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Settings - Classmate</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+   <style>
+    /* Modern CSS Reset & Base Styles */
+    :root {
+      /* THEME VARIABLES from notes.html - Clean and minimal */
+      --bg: #f5f5f5;
+      --text: #333333;
+      --text-secondary: rgba(51, 51, 51, 0.7);
+      --accent: #2a8cf4;
+      --accent-secondary: #ff3a8c;
+      --accent-tertiary: #00c2ff;
+      --accent-dark: #284cff;
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --card-border: rgba(0, 0, 0, 0.1);
+      --btn-primary: linear-gradient(135deg, #a18dff, #7d5fff);
+      --btn-secondary: linear-gradient(135deg, #ff3a8c, #ff6b6b);
+      --btn-hover: brightness(1.05);
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      --hero-gradient: linear-gradient(135deg, #4361ee 0%, #7209b7 30%, #f72585 70%, #ff006e 100%);
+      --hero-gradient-dark: linear-gradient(135deg, #2a8cf4 0%, #2d00b6 25%, #aa046d 70%, #f40039 100%);
+      --grid-color: rgba(0, 0, 0, 0.05);
+      --glow: 0 0 20px rgba(138, 143, 255, 0.4);
+      --header-bg: rgba(255, 255, 255, 0.9); /* Page-specific header background */
+      --header-text: #333333;
+      --header-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+      --input-bg: #ffffff;
+      --input-border: #ddd;
+      --input-text: #333333;
+      --menu-bg: #ffffff;
+      --menu-hover: rgba(138, 143, 255, 0.1);
+      --modal-bg: #ffffff;
+      --danger: #ef4444;
+      --danger-dark: #b91c1c;
+      --danger-hover-bg: #fee2e2; 
+      --danger-hover-text: #b91c1c;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+      --btn-font-size: 0.9rem;
+
+      /* RGB versions for box-shadows */
+      --accent-rgb: 42, 140, 244;
+      --accent-dark-rgb: 40, 76, 255;
+    }
+    
+    .dark-mode {
+      /* dark mode colors - matching notes.html */
+      --bg: #0a0a0a;
+      --text: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.7);
+      --accent: #8a8fff; 
+      --accent-secondary: #ff3a8c;
+      --accent-tertiary: #00c2ff;
+      --accent-dark: #2a8cf4;
+      --card-bg: #161b22; 
+      --card-border: rgba(255, 255, 255, 0.1);
+      --btn-primary: linear-gradient(135deg, #a18dff, #7d5fff);
+      --btn-secondary: linear-gradient(135deg, #ff3a8c, #ff6b6b);
+      --btn-hover: brightness(1.1);
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.3); 
+      --hero-gradient: linear-gradient(135deg, #2a8cf4 0%, #2d00b6 25%, #aa046d 70%, #f40039 100%);
+      --hero-gradient-dark: linear-gradient(135deg, #4361ee 0%, #7209b7 30%, #f72585 70%, #ff006e 100%);
+      --grid-color: rgba(255, 255, 255, 0.05);
+      --glow: 0 0 20px rgba(138, 143, 255, 0.3);
+      --header-bg: rgba(13, 17, 23, 0.85); /* Darker header for dark mode */
+      --header-text: #ffffff;
+      --header-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); /* Darker shadow for dark header */
+      --input-bg: #0d1117; 
+      --input-border: #30363d; 
+      --input-text: #c9d1d9; 
+      --menu-bg: #1a1a1a;
+      --menu-hover: rgba(138, 143, 255, 0.2);
+      --modal-bg: #0d1117;
+      --danger: #f85149; 
+      --danger-dark: #da3633;
+      --danger-hover-bg: rgba(248, 81, 73, 0.1);
+      --danger-hover-text: #f85149;
+
+      /* RGB versions for box-shadows */
+      --accent-rgb: 138, 143, 255;
+      --accent-dark-rgb: 42, 140, 244;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      transition: background-color 0.3s ease, color 0.3s ease;
+      overflow-x: hidden; 
+      font-size: 15px;
+      line-height: 1.6;
+      padding-top: 70px; 
+    }
+    
+    /* Page Loader Styles */
+    .page-loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: var(--bg); /* Match body background */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999; /* Highest z-index */
+        transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+        opacity: 1;
+        visibility: visible;
+    }
+    .page-loader.hidden {
+        opacity: 0;
+        visibility: hidden;
+    }
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid var(--text-secondary); /* Lighter border */
+        border-top-color: var(--accent); /* Accent color for spinner top */
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+
+    .grid-bg {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background-image: 
+        linear-gradient(var(--grid-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+      background-size: 40px 40px; z-index: -2; opacity: 0.4;
+    }
+    
+    .page-header { 
+        padding: 0.75rem 1.5rem; 
+        height: 70px;
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center;
+        position: fixed; 
+        top: 0; 
+        left: 0; 
+        width: 100%; 
+        z-index: 1000;
+        background-color: var(--header-bg); 
+        color: var(--header-text);
+        backdrop-filter: blur(10px); 
+        box-shadow: var(--header-shadow);
+        border-bottom: 1px solid var(--card-border);
+        transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .page-title {
+        font-size: 1.5rem; 
+        font-weight: 600; 
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        background: linear-gradient(to right, var(--accent-dark), var(--accent-secondary));
+        -webkit-background-clip: text; 
+        background-clip: text; 
+        color: transparent;
+    }
+    .page-title i { 
+        background: none; 
+        -webkit-background-clip: initial;
+        background-clip: initial;
+        color: var(--accent); 
+        font-size: 1.4rem; 
+    }
+
+    .header-actions { 
+        display: flex; 
+        align-items: center; 
+        gap: 1rem; 
+    }
+
+    .theme-toggle-btn, #pageThemeToggle { display: none !important; }
+    @media (max-width: 700px) {
+      .theme-toggle-btn { display: flex; }
+    }
+
+    .settings-container {
+      padding: 1.5rem; 
+      max-width: 900px; 
+      margin: 0 auto; 
+    }
+    
+    .settings-card {
+      background-color: var(--card-bg);
+      border-radius: 12px;
+      padding: 1.5rem; 
+      box-shadow: var(--shadow);
+      border: 1px solid var(--card-border);
+      margin-bottom: 2rem;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+    
+    .settings-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between; 
+      margin-bottom: 1.5rem; 
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .settings-header-main { 
+        display: flex;
+        align-items: center;
+    }
+    
+    .settings-header i {
+      font-size: 1.25rem; 
+      color: var(--accent);
+      margin-right: 0.75rem; 
+      flex-shrink: 0;
+    }
+    
+    .settings-title { 
+      font-size: 1.15rem; 
+      font-weight: 600;
+      color: var(--text);
+    }
+    
+    .form-group {
+      margin-bottom: 1.25rem; 
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+    
+    .form-control, .form-select {
+      width: 100%;
+      padding: 0.65rem 0.9rem; 
+      border-radius: 8px;
+      border: 1px solid var(--input-border);
+      background-color: var(--input-bg);
+      color: var(--input-text);
+      font-size: 0.9rem; 
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, color 0.3s ease, opacity 0.3s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.2); 
+    }
+        
+    textarea.form-control {
+        min-height: 80px;
+        resize: vertical;
+    }
+
+    .avatar-upload {
+      display: flex;
+      align-items: center;
+      gap: 1rem; 
+      margin-bottom: 1.5rem;
+    }
+    
+    .avatar-preview {
+      width: 70px; 
+      height: 70px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--accent);
+      background-color: var(--input-bg); 
+    }
+        
+    .btn {
+      padding: 0.6rem 1.2rem; 
+      border: none;
+      border-radius: 6px; 
+      font-weight: 500; 
+      font-size: var(--btn-font-size);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none; 
+      justify-content: center;
+      position: relative;
+      overflow: hidden; 
+    }
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.7s ease;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+    .btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+    .btn:disabled::before {
+        display: none; 
+    }
+    
+    .btn-primary {
+      background: var(--btn-primary);
+      color: white;
+    }
+    .btn-primary:hover:not(:disabled) { filter: var(--btn-hover); transform: translateY(-1px); box-shadow: var(--glow);}
+
+    .btn-secondary {
+      background-color: var(--input-bg); 
+      color: var(--text);
+      border: 1px solid var(--card-border);
+    }
+    .btn-secondary:hover:not(:disabled) { background-color: var(--menu-hover); transform: translateY(-1px); }
+    
+    .btn-danger {
+      background-color: var(--danger);
+      color: white;
+    }
+    .btn-danger:hover:not(:disabled) { background-color: var(--danger-dark); transform: translateY(-1px); }
+
+    .btn-sm {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+    }
+    
+    .avatar-upload input[type="file"] {
+      display: none; 
+    }
+    .avatar-upload-label { 
+      padding: 0.6rem 1.2rem;
+      background: var(--btn-primary);
+      color: white;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: var(--btn-font-size);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .avatar-upload-label:hover { filter: var(--btn-hover); }
+        
+    .security-actions, .data-actions {
+      margin-top: 1.5rem;
+      border-top: 1px solid var(--card-border);
+      padding-top: 1.5rem;
+      display: flex;
+      flex-wrap: wrap; 
+      gap: 0.75rem;
+    }
+    
+    .confirmation-modal-overlay {
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        background-color: rgba(0,0,0,0.6);
+        display: none; align-items: center; justify-content: center;
+        z-index: 2000; opacity: 0; transition: opacity 0.3s ease;
+    }
+    .confirmation-modal-overlay.show { display: flex; opacity: 1; }
+    .confirmation-modal {
+        background-color: var(--modal-bg); padding: 1.5rem;
+        border-radius: 8px; box-shadow: var(--shadow);
+        width: 90%; max-width: 400px; text-align: center;
+        border: 1px solid var(--card-border);
+    }
+    .confirmation-modal h3 { font-size: 1.2rem; margin-bottom: 0.75rem; color: var(--text); }
+    .confirmation-modal p { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem; }
+    .confirmation-modal-actions { display: flex; justify-content: center; gap: 1rem; }
+    .confirmation-modal-actions .btn-danger:hover { background-color: var(--danger-dark); }
+    
+    .toast {
+      position: fixed; bottom: 20px; left: 50%;
+      background-color: var(--success); color: white;
+      padding: 10px 20px; border-radius: 6px;
+      z-index: 3000; opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      box-shadow: var(--shadow); font-size: 0.9rem;
+      transform: translate(-50%, 20px); 
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    .toast.error { background-color: var(--danger); }
+    .toast.warning { background-color: var(--warning); }
+    .toast.info { background-color: var(--info); }
+
+    /* Master Toggle Switch for Sections (like Chatbot Customization) */
+    .master-toggle-switch {
+        width: 42px; 
+        height: 22px;
+        background-color: var(--input-border);
+        border-radius: 11px;
+        position: relative;
+        padding: 2px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    .master-toggle-knob {
+        width: 18px; 
+        height: 18px;
+        background-color: var(--card-bg);
+        border-radius: 50%;
+        transition: transform 0.2s ease;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+    .dark-mode .master-toggle-knob {
+      background-color: var(--input-text); 
+    }
+    .master-toggle-switch.active {
+        background-color: var(--accent);
+    }
+    .master-toggle-switch.active .master-toggle-knob {
+        transform: translateX(20px); 
+    }
+
+    /* Styling for de-emphasized fields when master toggle is OFF */
+    .settings-card-content.deactivated {
+        opacity: 0.6; 
+        transition: opacity 0.3s ease;
+    }
+
+    /* Theme Settings Styles */
+    .theme-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 1rem;
+        margin-top: 0.5rem;
+    }
+    
+    .theme-option {
+        position: relative;
+    }
+    
+    .theme-radio {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    
+    .theme-label {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem;
+        border: 2px solid var(--card-border);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: var(--card-bg);
+    }
+    
+    .theme-radio:checked + .theme-label {
+        border-color: var(--accent);
+        background: rgba(var(--accent-rgb), 0.05);
+        box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.1);
+    }
+    
+    .theme-label:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+    }
+    
+    .theme-preview {
+        width: 60px;
+        height: 40px;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid var(--card-border);
+        position: relative;
+    }
+    
+    .preview-header {
+        height: 8px;
+        background: var(--accent);
+        border-bottom: 1px solid var(--card-border);
+    }
+    
+    .preview-content {
+        height: calc(100% - 8px);
+        background: var(--bg);
+        position: relative;
+    }
+    
+    .preview-content::before {
+        content: '';
+        position: absolute;
+        top: 4px;
+        left: 6px;
+        right: 6px;
+        height: 2px;
+        background: var(--text-secondary);
+        border-radius: 1px;
+    }
+    
+    .preview-content::after {
+        content: '';
+        position: absolute;
+        top: 8px;
+        left: 6px;
+        right: 12px;
+        height: 2px;
+        background: var(--text-secondary);
+        border-radius: 1px;
+    }
+    
+    .light-preview .preview-content {
+        background: #ffffff;
+    }
+    
+    .light-preview .preview-content::before,
+    .light-preview .preview-content::after {
+        background: #555555;
+    }
+    
+    .dark-preview .preview-content {
+        background: #121212;
+    }
+    
+    .dark-preview .preview-content::before,
+    .dark-preview .preview-content::after {
+        background: #aaaaaa;
+    }
+    
+    .auto-preview .preview-content {
+        background: linear-gradient(90deg, #ffffff 50%, #121212 50%);
+    }
+    
+    .auto-preview .preview-content::before,
+    .auto-preview .preview-content::after {
+        background: linear-gradient(90deg, #555555 50%, #aaaaaa 50%);
+    }
+    
+    .theme-name {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--text);
+        text-align: center;
+    }
+    
+    .theme-radio:checked + .theme-label .theme-name {
+        color: var(--accent);
+        font-weight: 600;
+    }
+    
+    .avatar-upload input[type="file"] {
+      display: none; 
+    }
+
+    @media (max-width: 600px) {
+        .settings-container { padding: 1rem 0.5rem; }
+        .settings-card { padding: 1rem; }
+        .page-header { padding: 0.75rem 1rem; }
+        .page-title { font-size: 1.25rem; }
+        .page-title i { font-size: 1.1rem; }
+        .settings-header i { font-size: 1.1rem; margin-right: 0.5rem; }
+        .settings-title { font-size: 1.1rem; }
+        .form-control, .form-select, .btn { font-size: 0.85rem; padding: 0.6rem 0.8rem; }
+        .avatar-preview { width: 60px; height: 60px; }
+        .security-actions, .data-actions { flex-direction: column; }
+        .security-actions .btn, .data-actions .btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Page Loader -->
+  <div class="page-loader" id="pageLoader">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="grid-bg"></div>
+
+  <header class="page-header">
+    <h1 class="page-title"><i class="fas fa-cog"></i> Settings</h1>
+    <div class="header-actions">
+      <button class="theme-toggle-btn" id="pageThemeToggle">
+        <i class="fas fa-sun"></i>
+        <i class="fas fa-moon"></i>
+      </button>
+    </div>
+  </header>
+
+  <div class="settings-container">
+      
+      <!-- Profile Settings -->
+      <div class="settings-card fade-in">
+        <div class="settings-header">
+          <div class="settings-header-main">
+            <i class="fas fa-user-edit"></i>
+            <h2 class="settings-title">Profile</h2>
+          </div>
+        </div>
+        <div class="settings-card-content"> 
+            <div class="avatar-upload">
+              <img id="avatarPreview" src="https://randomuser.me/api/portraits/men/32.jpg" class="avatar-preview" alt="Profile">
+              <label for="avatarUpload" class="btn avatar-upload-label">
+                <i class="fas fa-camera"></i> Change Photo
+              </label>
+              <input type="file" id="avatarUpload" accept="image/*">
+            </div>
+            
+            <div class="form-group">
+              <label for="userName" class="form-label">Full Name</label>
+              <input type="text" id="userName" class="form-control" value="User Name">
+            </div>
+            <div class="form-group">
+              <label for="userEmail" class="form-label">Email Address</label>
+              <input type="email" id="userEmail" class="form-control" value="user@example.com" readonly>
+              <small style="color: var(--text-secondary); font-size: 0.8rem;">Email is not editable.</small>
+            </div>
+            <div class="form-group">
+              <label for="userBio" class="form-label">Short Bio/Interests</label>
+              <textarea id="userBio" class="form-control" rows="3" placeholder="Tell us a bit about yourself or your interests..."></textarea>
+            </div>
+            
+            <button id="saveProfileBtn" class="btn btn-primary">
+              <i class="fas fa-save"></i> Save Profile
+            </button>
+        </div>
+      </div>
+      
+      <!-- Theme Settings -->
+      <div class="settings-card fade-in" style="animation-delay: 0.1s;">
+        <div class="settings-header">
+          <div class="settings-header-main">
+            <i class="fas fa-palette"></i>
+            <h2 class="settings-title">Theme Settings</h2>
+          </div>
+        </div>
+        <div class="settings-card-content">
+            <div class="form-group">
+              <label class="form-label">Appearance</label>
+              <div class="theme-options">
+                <div class="theme-option">
+                  <input type="radio" id="lightTheme" name="theme" value="light" class="theme-radio">
+                  <label for="lightTheme" class="theme-label">
+                    <div class="theme-preview light-preview">
+                      <div class="preview-header"></div>
+                      <div class="preview-content"></div>
+                    </div>
+                    <span class="theme-name">Light Mode</span>
+                  </label>
+                </div>
+                <div class="theme-option">
+                  <input type="radio" id="darkTheme" name="theme" value="dark" class="theme-radio">
+                  <label for="darkTheme" class="theme-label">
+                    <div class="theme-preview dark-preview">
+                      <div class="preview-header"></div>
+                      <div class="preview-content"></div>
+                    </div>
+                    <span class="theme-name">Dark Mode</span>
+                  </label>
+                </div>
+                <div class="theme-option">
+                  <input type="radio" id="autoTheme" name="theme" value="auto" class="theme-radio">
+                  <label for="autoTheme" class="theme-label">
+                    <div class="theme-preview auto-preview">
+                      <div class="preview-header"></div>
+                      <div class="preview-content"></div>
+                    </div>
+                    <span class="theme-name">Auto (System)</span>
+                  </label>
+                </div>
+              </div>
+              <small style="color: var(--text-secondary); font-size: 0.8rem; display: block; margin-top: 0.5rem;">
+                Choose your preferred theme. Auto mode follows your system's appearance setting.
+              </small>
+            </div>
+            
+            <button id="saveThemeBtn" class="btn btn-primary">
+              <i class="fas fa-save"></i> Save Theme Settings
+            </button>
+        </div>
+      </div>
+      
+      <!-- Expand Panel Behavior Settings -->
+      <div class="settings-card fade-in" style="animation-delay: 0.15s;">
+        <div class="settings-header">
+          <div class="settings-header-main">
+            <i class="fas fa-columns"></i>
+            <h2 class="settings-title">Expand Panel Behavior</h2>
+          </div>
+        </div>
+        <div class="settings-card-content">
+          <div class="form-group">
+            <label class="form-label">Panel Expansion Mode</label>
+            <div style="display: flex; gap: 2rem; align-items: center;">
+              <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="radio" name="panelExpandMode" id="panelExpandStatic" value="static">
+                <span>Static (Click to Expand/Collapse)</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="radio" name="panelExpandMode" id="panelExpandHover" value="hover">
+                <span>Hover (Expand on Mouseover)</span>
+              </label>
+            </div>
+            <small style="color: var(--text-secondary); font-size: 0.8rem; display: block; margin-top: 0.5rem;">
+              Choose how the sidebar expand/collapse panel in Dashboard behaves.
+            </small>
+          </div>
+          <button id="savePanelExpandModeBtn" class="btn btn-primary">
+            <i class="fas fa-save"></i> Save Panel Behavior
+          </button>
+        </div>
+      </div>
+      
+      <!-- Chatbot Customization Settings -->
+      <div class="settings-card fade-in" style="animation-delay: 0.2s;">
+        <div class="settings-header">
+          <div class="settings-header-main">
+            <i class="fas fa-robot"></i>
+            <h2 class="settings-title">Chatbot Customization</h2>
+          </div>
+          <div class="master-toggle-switch" id="chatbotCustomizationToggle" aria-label="Enable Chatbot Customization">
+            <div class="master-toggle-knob"></div>
+          </div>
+        </div>
+        <div class="settings-card-content" id="chatbotSettingsContent">
+            <div class="form-group">
+              <label for="userNickname" class="form-label">Your Nickname (Optional)</label>
+              <input type="text" id="userNickname" class="form-control" placeholder="e.g., Alex, Study Pro">
+               <small style="color: var(--text-secondary); font-size: 0.8rem; display: block; margin-top: 0.25rem;">Chatbot will use this to address you if provided.</small>
+            </div>
+            <div class="form-group">
+              <label for="chatbotTone" class="form-label">Chatbot Tone/Style</label>
+              <select id="chatbotTone" class="form-select">
+                <option value="friendly_supportive" selected>Friendly & Supportive</option>
+                <option value="professional_concise">Professional & Concise</option>
+                <option value="humorous_witty">Humorous & Witty (Experimental)</option>
+                <option value="custom">Custom (Use Instructions Below)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="chatbotCustomInstructions" class="form-label">Custom Instructions (How should ClassMate respond?)</label>
+              <textarea id="chatbotCustomInstructions" class="form-control" rows="5" placeholder="e.g., You are a helpful AI study assistant. Address me as [Your Nickname if provided, otherwise 'User']. Act as a supportive tutor. Keep responses brief and encouraging. Explain concepts clearly."></textarea>
+              <small style="color: var(--text-secondary); font-size: 0.8rem; display: block; margin-top: 0.25rem;">These instructions are primarily used when 'Custom' tone/style is selected.</small>
+            </div>
+            <div class="form-group">
+              <label for="chatbotUserContext" class="form-label">User Context (Optional: What should ClassMate know about you?)</label>
+              <textarea id="chatbotUserContext" class="form-control" rows="3" placeholder="e.g., I'm studying Computer Science, focusing on Python and AI. I prefer examples in Python. My goal is to pass my final exams."></textarea>
+            </div>
+
+             <div class="data-actions" style="border-top: 1px solid var(--card-border); padding-top: 1.5rem; margin-top:0.5rem;">
+                <button id="clearCurrentChatHistoryBtn" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-comment-slash"></i> Clear Current Chat History
+                </button>
+                <button id="clearAllChatHistoryBtn" class="btn btn-danger btn-sm">
+                    <i class="fas fa-history"></i> Clear All Chat History
+                </button>
+            </div>
+            <button id="saveChatbotSettingsBtn" class="btn btn-primary" style="margin-top: 1.5rem;">
+              <i class="fas fa-cogs"></i> Save Chatbot Settings
+            </button>
+        </div>
+      </div>
+
+      <!-- Security Settings -->
+      <div class="settings-card fade-in" style="animation-delay: 0.3s;">
+        <div class="settings-header">
+           <div class="settings-header-main">
+            <i class="fas fa-shield-alt"></i>
+            <h2 class="settings-title">Security</h2>
+          </div>
+        </div>
+        <div class="settings-card-content">
+            <div class="form-group">
+              <label for="currentPassword" class="form-label">Current Password</label>
+              <input type="password" id="currentPassword" class="form-control" placeholder="Enter current password">
+            </div>
+            <div class="form-group">
+              <label for="newPassword" class="form-label">New Password</label>
+              <input type="password" id="newPassword" class="form-control" placeholder="Enter new password (min. 6 characters)">
+            </div>
+            <div class="form-group">
+              <label for="confirmPassword" class="form-label">Confirm New Password</label>
+              <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm new password">
+            </div>
+            <div class="security-actions">
+              <button id="changePasswordBtn" class="btn btn-primary">
+                <i class="fas fa-key"></i> Change Password
+              </button>
+            </div>
+        </div>
+      </div>
+      
+      <!-- Account Actions -->
+      <div class="settings-card fade-in" style="animation-delay: 0.4s;">
+        <div class="settings-header">
+          <div class="settings-header-main">
+            <i class="fas fa-user-cog"></i>
+            <h2 class="settings-title">Account Actions</h2>
+          </div>
+        </div>
+        <div class="settings-card-content">
+            <div class="data-actions" style="border-top: none; padding-top: 0; margin-top:0;"> 
+                <button id="deleteAccountBtn" class="btn btn-danger">
+                    <i class="fas fa-trash-alt"></i> Delete Account
+                </button>
+            </div>
+            <p style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 0.75rem;">
+                Permanently delete your account and all associated data. This action cannot be undone.
+            </p>
+        </div>
+      </div>
+
+    </div> <!-- /.settings-container -->
+
+  <!-- Confirmation Modals (HTML remains the same) -->
+  <div class="confirmation-modal-overlay" id="clearCurrentChatModal">
+      <div class="confirmation-modal">
+          <h3><i class="fas fa-exclamation-triangle" style="color: var(--warning);"></i> Confirm Clear</h3>
+          <p>Are you sure you want to clear the history for the currently active chat? This action cannot be undone.</p>
+          <div class="confirmation-modal-actions">
+              <button class="btn btn-secondary" data-action="cancel">Cancel</button>
+              <button class="btn btn-danger" data-action="confirm">Clear History</button>
+          </div>
+      </div>
+  </div>
+  <div class="confirmation-modal-overlay" id="clearAllChatModal">
+      <div class="confirmation-modal">
+          <h3><i class="fas fa-skull-crossbones" style="color: var(--danger);"></i> Confirm Delete All Chats</h3>
+          <p><strong>DANGER:</strong> Are you sure you want to delete ALL your chat history? This action is permanent and cannot be undone.</p>
+          <div class="confirmation-modal-actions">
+              <button class="btn btn-secondary" data-action="cancel">Cancel</button>
+              <button class="btn btn-danger" data-action="confirm">Delete All Chats</button>
+          </div>
+      </div>
+  </div>
+  <div class="confirmation-modal-overlay" id="deleteAccountModal">
+      <div class="confirmation-modal">
+          <h3><i class="fas fa-user-slash" style="color: var(--danger);"></i> Confirm Account Deletion</h3>
+          <p><strong>PERMANENT ACTION:</strong> Are you sure you want to delete your account? All your data (profile, chats, settings) will be permanently erased. This cannot be undone.</p>
+          <p>Type "DELETE MY ACCOUNT" to confirm:</p>
+          <input type="text" id="deleteAccountConfirmText" class="form-control" style="margin-bottom: 1rem; text-align: center;">
+          <div class="confirmation-modal-actions">
+              <button class="btn btn-secondary" data-action="cancel">Cancel</button>
+              <button class="btn btn-danger" data-action="confirm" id="finalDeleteAccountBtn" disabled>Delete Account</button>
+          </div>
+      </div>
+  </div>
+
+  <!-- Toast notification -->
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const serverUrl = "https://classmate1-ffw7.onrender.com"; 
+    const pageLoader = document.getElementById('pageLoader'); 
+
+    function getAuthToken() {
+        return localStorage.getItem('auth_token');
+    }
+
+    if (!getAuthToken()) {
+        if (window.parent && window.parent !== window) {
+            // If in an iframe and no token, tell parent to log out
+            window.parent.postMessage({ type: 'logout', reason: 'no_token_in_iframe' }, '*');
+        } else {
+            // If standalone page and no token, redirect directly
+            window.location.href = 'Login page.html'; 
+        }
+    }
+    
+    document.addEventListener("DOMContentLoaded", () => {
+      // DOM Elements
+      const avatarPreview = document.getElementById('avatarPreview');
+      const avatarUpload = document.getElementById('avatarUpload');
+      const userNameInput = document.getElementById('userName');
+      const userEmailInput = document.getElementById('userEmail');
+      const userBioInput = document.getElementById('userBio');
+      const saveProfileBtn = document.getElementById('saveProfileBtn');
+      
+      const pageThemeToggle = document.getElementById('pageThemeToggle');
+
+      const chatbotCustomizationToggle = document.getElementById('chatbotCustomizationToggle');
+      const chatbotSettingsContent = document.getElementById('chatbotSettingsContent');
+      const userNicknameInput = document.getElementById('userNickname'); 
+      const chatbotToneSelect = document.getElementById('chatbotTone');
+      const chatbotCustomInstructionsTextarea = document.getElementById('chatbotCustomInstructions');
+      const chatbotUserContextTextarea = document.getElementById('chatbotUserContext'); 
+      const saveChatbotSettingsBtn = document.getElementById('saveChatbotSettingsBtn');
+      const clearCurrentChatHistoryBtn = document.getElementById('clearCurrentChatHistoryBtn');
+      const clearAllChatHistoryBtn = document.getElementById('clearAllChatHistoryBtn');
+
+      const changePasswordBtn = document.getElementById('changePasswordBtn');
+      const deleteAccountBtn = document.getElementById('deleteAccountBtn'); 
+
+      const toast = document.getElementById('toast');
+
+      const clearCurrentChatModal = document.getElementById('clearCurrentChatModal');
+      const clearAllChatModal = document.getElementById('clearAllChatModal');
+      const deleteAccountModal = document.getElementById('deleteAccountModal');
+      const deleteAccountConfirmText = document.getElementById('deleteAccountConfirmText');
+      const finalDeleteAccountBtn = document.getElementById('finalDeleteAccountBtn');
+
+      // --- Chatbot Customization Master Toggle Logic ---
+      function setChatbotCustomizationVisualState(enabled) {
+        chatbotCustomizationToggle.classList.toggle('active', enabled);
+        chatbotSettingsContent.classList.toggle('deactivated', !enabled);
+      }
+
+      chatbotCustomizationToggle.addEventListener('click', () => {
+        const isActive = chatbotCustomizationToggle.classList.toggle('active');
+        setChatbotCustomizationVisualState(isActive);
+      });
+
+
+      // --- THEME SYNCHRONIZATION LOGIC ---
+      function applyThemeSynchronized() {
+          const parentDarkModeSetting = localStorage.getItem("darkMode") || localStorage.getItem("theme");
+          const isNowDark = parentDarkModeSetting === "enabled" || parentDarkModeSetting === "dark";
+          document.body.classList.toggle("dark-mode", isNowDark);
+          
+          if (pageThemeToggle) { 
+            const sunIcon = pageThemeToggle.querySelector('.fa-sun');
+            const moonIcon = pageThemeToggle.querySelector('.fa-moon');
+            if (sunIcon && moonIcon) { 
+                sunIcon.style.display = isNowDark ? 'block' : 'none'; 
+                moonIcon.style.display = isNowDark ? 'none' : 'block'; 
+            }
+          }
+      }
+      applyThemeSynchronized(); 
+
+      window.addEventListener('storage', (e) => { // Listens for changes from other tabs/windows
+          if (e.key === 'darkMode' || e.key === 'theme') {
+              applyThemeSynchronized();
+          }
+           if (e.key === 'auth_token' && !e.newValue) { // Token removed
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: 'logout', reason: 'token_cleared_externally' }, '*');
+                } else {
+                    window.location.href = 'Login page.html';
+                }
+            }
+      });
+
+      // Listen for theme changes dispatched from parent (Dashboard.html)
+      window.addEventListener('themeChange', (e) => { 
+          if (e.detail && typeof e.detail.darkMode === 'boolean') {
+              const isNowDark = e.detail.darkMode;
+              document.body.classList.toggle("dark-mode", isNowDark);
+              // No need to set localStorage here, parent (Dashboard) is the source of truth for iframe theme dispatch
+              if (pageThemeToggle) { 
+                const sunIcon = pageThemeToggle.querySelector('.fa-sun');
+                const moonIcon = pageThemeToggle.querySelector('.fa-moon');
+                if (sunIcon && moonIcon) {
+                    sunIcon.style.display = isNowDark ? 'block' : 'none'; 
+                    moonIcon.style.display = isNowDark ? 'none' : 'block'; 
+                }
+              }
+          }
+      });
+      
+      if (pageThemeToggle) { 
+          pageThemeToggle.addEventListener('click', () => {
+              const bodyIsDarkNow = document.body.classList.toggle('dark-mode');
+              const newThemeState = bodyIsDarkNow ? 'dark' : 'light';
+              localStorage.setItem('theme', newThemeState); 
+              localStorage.setItem('darkMode', bodyIsDarkNow ? 'enabled' : 'disabled'); 
+              
+              const sunIcon = pageThemeToggle.querySelector('.fa-sun');
+              const moonIcon = pageThemeToggle.querySelector('.fa-moon');
+              if (sunIcon && moonIcon) {
+                sunIcon.style.display = bodyIsDarkNow ? 'block' : 'none'; 
+                moonIcon.style.display = bodyIsDarkNow ? 'none' : 'block'; 
+              }
+              // Inform parent (Dashboard) about the theme change
+              if (window.parent && window.parent !== window) { 
+                  window.parent.postMessage({ type: 'themeChangeFromIframe', darkMode: bodyIsDarkNow }, '*');
+              }
+          });
+      }
+      // --- END OF THEME SYNCHRONIZATION LOGIC ---
+
+      // --- THEME SETTINGS LOGIC ---
+      const lightThemeRadio = document.getElementById('lightTheme');
+      const darkThemeRadio = document.getElementById('darkTheme');
+      const autoThemeRadio = document.getElementById('autoTheme');
+      const saveThemeBtn = document.getElementById('saveThemeBtn');
+
+      // Function to get current theme setting
+      function getCurrentThemeSetting() {
+        const savedTheme = localStorage.getItem('theme');
+        const savedDarkMode = localStorage.getItem('darkMode');
+        
+        if (savedTheme === 'auto') return 'auto';
+        if (savedDarkMode === 'enabled' || savedTheme === 'dark') return 'dark';
+        return 'light';
+      }
+
+      // Function to set theme radio button
+      function setThemeRadio(theme) {
+        if (lightThemeRadio && darkThemeRadio && autoThemeRadio) {
+          lightThemeRadio.checked = theme === 'light';
+          darkThemeRadio.checked = theme === 'dark';
+          autoThemeRadio.checked = theme === 'auto';
+        }
+      }
+
+      // Initialize theme radio buttons
+      setThemeRadio(getCurrentThemeSetting());
+
+      // Theme radio button change handlers
+      if (lightThemeRadio) {
+        lightThemeRadio.addEventListener('change', () => {
+          if (lightThemeRadio.checked) {
+            document.body.classList.remove('dark-mode');
+            localStorage.setItem('theme', 'light');
+            localStorage.setItem('darkMode', 'disabled');
+            
+            // Inform parent about theme change
+            if (window.parent && window.parent !== window) {
+              window.parent.postMessage({ type: 'themeChangeFromIframe', darkMode: false }, '*');
+            }
+          }
+        });
+      }
+
+      if (darkThemeRadio) {
+        darkThemeRadio.addEventListener('change', () => {
+          if (darkThemeRadio.checked) {
+            document.body.classList.add('dark-mode');
+            localStorage.setItem('theme', 'dark');
+            localStorage.setItem('darkMode', 'enabled');
+            
+            // Inform parent about theme change
+            if (window.parent && window.parent !== window) {
+              window.parent.postMessage({ type: 'themeChangeFromIframe', darkMode: true }, '*');
+            }
+          }
+        });
+      }
+
+      if (autoThemeRadio) {
+        autoThemeRadio.addEventListener('change', () => {
+          if (autoThemeRadio.checked) {
+            localStorage.setItem('theme', 'auto');
+            
+            // Check system preference
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            document.body.classList.toggle('dark-mode', prefersDark);
+            localStorage.setItem('darkMode', prefersDark ? 'enabled' : 'disabled');
+            
+            // Inform parent about theme change
+            if (window.parent && window.parent !== window) {
+              window.parent.postMessage({ type: 'themeChangeFromIframe', darkMode: prefersDark }, '*');
+            }
+          }
+        });
+      }
+
+      // Listen for system theme changes when auto is selected
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if (autoThemeRadio && autoThemeRadio.checked) {
+          const isDark = e.matches;
+          document.body.classList.toggle('dark-mode', isDark);
+          localStorage.setItem('darkMode', isDark ? 'enabled' : 'disabled');
+          
+          // Inform parent about theme change
+          if (window.parent && window.parent !== window) {
+            window.parent.postMessage({ type: 'themeChangeFromIframe', darkMode: isDark }, '*');
+          }
+        }
+      });
+
+      // Save theme settings button
+      if (saveThemeBtn) {
+        saveThemeBtn.addEventListener('click', () => {
+          const currentTheme = getCurrentThemeSetting();
+          showToast(`Theme saved: ${currentTheme === 'auto' ? 'Auto (System)' : currentTheme === 'dark' ? 'Dark Mode' : 'Light Mode'}`);
+        });
+      }
+      // --- END OF THEME SETTINGS LOGIC ---
+
+      // --- PANEL EXPAND MODE SETTINGS LOGIC ---
+      const panelExpandStatic = document.getElementById('panelExpandStatic');
+      const panelExpandHover = document.getElementById('panelExpandHover');
+      const savePanelExpandModeBtn = document.getElementById('savePanelExpandModeBtn');
+
+      // Load saved setting
+      function loadPanelExpandModeSetting() {
+        const savedMode = localStorage.getItem('panelExpandMode') || 'static';
+        if (panelExpandStatic && panelExpandHover) {
+          panelExpandStatic.checked = savedMode === 'static';
+          panelExpandHover.checked = savedMode === 'hover';
+        }
+      }
+      loadPanelExpandModeSetting();
+
+      // Save setting
+      if (savePanelExpandModeBtn) {
+        savePanelExpandModeBtn.addEventListener('click', () => {
+          const selectedMode = panelExpandHover.checked ? 'hover' : 'static';
+          localStorage.setItem('panelExpandMode', selectedMode);
+          showToast(`Panel behavior saved: ${selectedMode === 'hover' ? 'Hover' : 'Static'}`);
+        });
+      }
+      // --- END PANEL EXPAND MODE SETTINGS LOGIC ---
+
+      async function loadUserSettings() {
+        pageLoader.classList.remove('hidden'); 
+        const token = getAuthToken();
+        if (!token) {
+             // Already handled by initial check, but good to be defensive
+            setTimeout(() => pageLoader.classList.add('hidden'), 200);
+            return;
+        }
+
+        try {
+            const response = await fetch(`${serverUrl}/api/me`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (response.status === 401) { // Unauthorized
+                showToast("Session expired. Please log in again.", "error");
+                localStorage.removeItem('auth_token'); // Clear potentially stale token
+                 if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: 'logout', reason: 'unauthorized_iframe' }, '*');
+                } else {
+                    window.location.href = 'Login page.html';
+                }
+                return; // Stop further processing
+            }
+
+            if (response.ok) {
+                const userData = await response.json();
+                userNameInput.value = userData.name || 'User';
+                userEmailInput.value = userData.email || 'user@example.com';
+                userBioInput.value = userData.bio || '';
+                avatarPreview.src = userData.avatar || 'https://randomuser.me/api/portraits/men/32.jpg';
+                if(!userData.avatar) avatarPreview.src = 'https://randomuser.me/api/portraits/men/32.jpg';
+
+                const chatbotEnabled = userData.chatbot_customization_enabled !== false; 
+                setChatbotCustomizationVisualState(chatbotEnabled);
+                
+                userNicknameInput.value = userData.chatbot_nickname || ''; 
+                chatbotToneSelect.value = userData.chatbot_tone || 'friendly_supportive';
+                chatbotCustomInstructionsTextarea.value = userData.chatbot_custom_instructions || '';
+                chatbotUserContextTextarea.value = userData.chatbot_user_context || '';
+
+            } else {
+                console.error("Failed to load user data from backend:", response.status);
+                showToast("Could not load profile data.", "error");
+                userNameInput.value = localStorage.getItem('user_name') || 'User';
+                setChatbotCustomizationVisualState(true); 
+            }
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+            showToast("Network error loading profile.", "error");
+            userNameInput.value = localStorage.getItem('user_name') || 'User';
+            setChatbotCustomizationVisualState(true); 
+        } finally {
+            setTimeout(() => pageLoader.classList.add('hidden'), 200); 
+        }
+      }
+      
+      avatarUpload.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            avatarPreview.src = event.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+      
+      async function saveAllSettings(event) {
+        const token = getAuthToken();
+        if (!token) {
+            showToast("Authentication error. Please log in again.", "error");
+             if (window.parent && window.parent !== window) {
+                window.parent.postMessage({ type: 'logout', reason: 'save_no_token' }, '*');
+            } else {
+                window.location.href = 'Login page.html';
+            }
+            return;
+        }
+
+        const settingsData = {
+          name: userNameInput.value,
+          bio: userBioInput.value,
+          avatar: avatarPreview.src, 
+          chatbot_customization_enabled: chatbotCustomizationToggle.classList.contains('active'), 
+          chatbot_nickname: userNicknameInput.value,
+          chatbot_tone: chatbotToneSelect.value,
+          chatbot_custom_instructions: chatbotCustomInstructionsTextarea.value,
+          chatbot_user_context: chatbotUserContextTextarea.value
+        };
+        
+        const activeSaveButton = event.target.closest('button'); 
+        const originalButtonHTML = activeSaveButton.innerHTML;
+        activeSaveButton.disabled = true;
+        activeSaveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+        try {
+            const response = await fetch(`${serverUrl}/api/me`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(settingsData)
+            });
+            
+            if (response.status === 401) { // Unauthorized during save
+                showToast("Session expired. Save failed. Please log in.", "error");
+                localStorage.removeItem('auth_token');
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: 'logout', reason: 'unauthorized_save' }, '*');
+                } else {
+                    window.location.href = 'Login page.html';
+                }
+                return;
+            }
+
+
+            if (response.ok) {
+                const updatedUser = await response.json();
+                showToast("Settings updated successfully!");
+                localStorage.setItem('user_name', updatedUser.name); 
+                
+                userNameInput.value = updatedUser.name;
+                userBioInput.value = updatedUser.bio || '';
+                avatarPreview.src = updatedUser.avatar || 'https://randomuser.me/api/portraits/men/32.jpg';
+                if(!updatedUser.avatar) avatarPreview.src = 'https://randomuser.me/api/portraits/men/32.jpg';
+                
+                const chatbotEnabled = updatedUser.chatbot_customization_enabled !== false;
+                setChatbotCustomizationVisualState(chatbotEnabled);
+                userNicknameInput.value = updatedUser.chatbot_nickname || '';
+                chatbotToneSelect.value = updatedUser.chatbot_tone || 'friendly_supportive';
+                chatbotCustomInstructionsTextarea.value = updatedUser.chatbot_custom_instructions || '';
+                chatbotUserContextTextarea.value = updatedUser.chatbot_user_context || '';
+
+            } else {
+                const errorData = await response.json();
+                showToast(errorData.detail || "Failed to update settings.", "error");
+            }
+        } catch (error) {
+            console.error("Error saving settings:", error);
+            showToast("Network error. Could not save settings.", "error");
+        } finally {
+            activeSaveButton.disabled = false;
+            activeSaveButton.innerHTML = originalButtonHTML;
+        }
+      }
+
+      saveProfileBtn.addEventListener('click', saveAllSettings);
+      saveChatbotSettingsBtn.addEventListener('click', saveAllSettings);
+
+
+      clearCurrentChatHistoryBtn.addEventListener('click', () => showConfirmationModal(clearCurrentChatModal));
+      clearAllChatHistoryBtn.addEventListener('click', () => showConfirmationModal(clearAllChatModal));
+      
+      changePasswordBtn.addEventListener('click', async () => {
+        const token = getAuthToken();
+        if (!token) {
+            showToast("Authentication error.", "error"); 
+             if (window.parent && window.parent !== window) {
+                window.parent.postMessage({ type: 'logout', reason: 'changepw_no_token' }, '*');
+            } else {
+                window.location.href = 'Login page.html';
+            }
+            return;
+        }
+
+        const currentPasswordInput = document.getElementById('currentPassword');
+        const newPasswordInput = document.getElementById('newPassword');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+
+        const currentPass = currentPasswordInput.value;
+        const newPass = newPasswordInput.value;
+        const confirmPass = confirmPasswordInput.value;
+
+        if (!currentPass || !newPass || !confirmPass) {
+          showToast("Please fill all password fields.", "error"); return;
+        }
+        if (newPass.length < 6) {
+          showToast("New password must be at least 6 characters.", "error"); return;
+        }
+        if (newPass !== confirmPass) {
+          showToast("New passwords don't match.", "error"); return;
+        }
+
+        const originalButtonHTML = changePasswordBtn.innerHTML;
+        changePasswordBtn.disabled = true;
+        changePasswordBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Changing...';
+
+        try {
+            const response = await fetch(`${serverUrl}/api/password/change`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ current_password: currentPass, new_password: newPass })
+            });
+
+            if (response.status === 401) { // Unauthorized during password change
+                showToast("Session expired. Password change failed. Please log in.", "error");
+                localStorage.removeItem('auth_token');
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: 'logout', reason: 'unauthorized_changepw' }, '*');
+                } else {
+                    window.location.href = 'Login page.html';
+                }
+                return;
+            }
+
+            const data = await response.json();
+            if (response.ok) {
+                showToast("Password changed successfully!");
+                currentPasswordInput.value = '';
+                newPasswordInput.value = '';
+                confirmPasswordInput.value = '';
+            } else {
+                showToast(data.detail || "Failed to change password.", "error");
+            }
+        } catch (error) {
+            console.error("Error changing password:", error);
+            showToast("Network error. Could not change password.", "error");
+        } finally {
+            changePasswordBtn.disabled = false;
+            changePasswordBtn.innerHTML = originalButtonHTML;
+        }
+      });
+      
+      if (deleteAccountBtn) {
+        deleteAccountBtn.addEventListener('click', () => {
+            deleteAccountConfirmText.value = ''; 
+            finalDeleteAccountBtn.disabled = true;
+            showConfirmationModal(deleteAccountModal);
+        });
+      }
+
+      if (deleteAccountConfirmText) {
+        deleteAccountConfirmText.addEventListener('input', () => {
+            finalDeleteAccountBtn.disabled = deleteAccountConfirmText.value !== "DELETE MY ACCOUNT";
+        });
+      }
+      
+      function showToast(message, type = 'success') { 
+        toast.textContent = message;
+        toast.className = 'toast show'; 
+        if (type !== 'success') {
+          toast.classList.add(type);
+        }
+        setTimeout(() => {
+          toast.classList.remove('show');
+        }, 3000);
+      }
+
+      function showConfirmationModal(modalElement) {
+          modalElement.classList.add('show');
+          modalElement.querySelector('[data-action="cancel"]').onclick = () => modalElement.classList.remove('show');
+          const confirmBtn = modalElement.querySelector('[data-action="confirm"]');
+          
+          if (modalElement.id === 'clearCurrentChatModal') {
+              confirmBtn.onclick = () => {
+                  localStorage.removeItem('currentChatMessages_temp'); 
+                  showToast("Current chat history cleared (conceptual).");
+                  modalElement.classList.remove('show');
+              };
+          } else if (modalElement.id === 'clearAllChatModal') {
+              confirmBtn.onclick = () => {
+                  localStorage.removeItem('allChats_ClassMate'); 
+                  showToast("All chat history cleared (conceptual)!", "warning");
+                  modalElement.classList.remove('show');
+              };
+          } else if (modalElement.id === 'deleteAccountModal') {
+              confirmBtn.onclick = async () => {
+                  if (deleteAccountConfirmText.value === "DELETE MY ACCOUNT") {
+                      const token = getAuthToken();
+                      if (!token) {
+                          showToast("Authentication error.", "error");
+                          modalElement.classList.remove('show');
+                           if (window.parent && window.parent !== window) {
+                              window.parent.postMessage({ type: 'logout', reason: 'delete_no_token' }, '*');
+                          } else {
+                              window.location.href = 'Login page.html';
+                          }
+                          return;
+                      }
+                      const finalDeleteBtnOriginalHTML = finalDeleteAccountBtn.innerHTML;
+                      finalDeleteAccountBtn.disabled = true;
+                      finalDeleteAccountBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+                      try {
+                          const response = await fetch(`${serverUrl}/api/me`, {
+                              method: 'DELETE',
+                              headers: { 'Authorization': `Bearer ${token}` }
+                          });
+                          if (response.ok) {
+                              showToast("Account deleted successfully. You will be logged out.", "warning");
+                              localStorage.clear(); // Clear iframe's local storage
+
+                              if (window.parent && window.parent !== window) {
+                                  window.parent.postMessage({ type: 'logout', reason: 'account_deleted' }, '*');
+                              }
+                              // The iframe will be redirected by the parent now, or directly if not in iframe
+                              // No need for setTimeout here if parent handles it. If parent doesn't, iframe redirects.
+                              // For simplicity, let parent handle redirect. If this page is standalone, it needs its own redirect.
+                              // setTimeout(() => { window.location.href = 'Login page.html'; }, 500); // Shorter delay
+
+                          } else if (response.status === 401) {
+                                showToast("Session expired. Deletion failed. Please log in.", "error");
+                                localStorage.removeItem('auth_token');
+                                if (window.parent && window.parent !== window) {
+                                    window.parent.postMessage({ type: 'logout', reason: 'unauthorized_delete' }, '*');
+                                } else {
+                                    window.location.href = 'Login page.html';
+                                }
+                          } else {
+                              const errorData = await response.json();
+                              showToast(errorData.detail || "Failed to delete account.", "error");
+                          }
+                      } catch (error) {
+                          console.error("Error deleting account:", error);
+                          showToast("Network error. Could not delete account.", "error");
+                      } finally {
+                          modalElement.classList.remove('show');
+                          finalDeleteAccountBtn.disabled = (deleteAccountConfirmText.value !== "DELETE MY ACCOUNT");
+                          finalDeleteAccountBtn.innerHTML = finalDeleteBtnOriginalHTML;
+                      }
+                  } else {
+                      showToast("Confirmation text does not match.", "error");
+                  }
+              };
+          }
+      }
+      
+      loadUserSettings();
+
+    });
+  </script>
+</body>
+</html>
