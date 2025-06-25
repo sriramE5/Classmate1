@@ -1,0 +1,704 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - ClassmateAI</title> <!-- Updated Title -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* Copied styles from Loginpage.html */
+    :root {
+      /* light mode colors */
+      --bg: #f5f5f5;
+      --text: #333333;
+      --text-secondary: rgba(51, 51, 51, 0.7);
+      --accent: #2a8cf4;
+      --accent-secondary: #ff3a8c;
+      --accent-tertiary: #00c2ff;
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --card-border: rgba(0, 0, 0, 0.1);
+      --btn-primary: linear-gradient(135deg, #a18dff, #7d5fff);
+      --btn-secondary: linear-gradient(135deg, #ff3a8c, #ff6b6b);
+      --btn-hover: brightness(1.05);
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      --hero-gradient: linear-gradient(135deg, #4361ee 0%, #7209b7 30%, #f72585 70%, #ff006e 100%);
+      --grid-color: rgba(0, 0, 0, 0.05);
+      --glow: 0 0 20px rgba(138, 143, 255, 0.4);
+      --hero-text: #ffffff;
+      --hero-text-secondary: rgba(255, 255, 255, 0.8);
+      --header-bg: rgba(255, 255, 255, 0.9);
+      --header-text: #333333;
+      --header-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+      --footer-bg: rgba(255, 255, 255, 0.9);
+      --footer-text: #333333;
+      --scrolled-header-bg: rgba(255, 255, 255, 0.8);
+      --scrolled-header-text: #333333;
+    }
+
+    .dark-mode {
+        /* dark mode colors */
+        --bg: #0a0a0a;
+        --text: #ffffff;
+        --text-secondary: rgba(255, 255, 255, 0.7);
+        --accent: #8a8fff;
+        --accent-secondary: #ff3a8c;
+        --accent-tertiary: #00c2ff;
+        --card-bg: rgba(0, 0, 0, 0.9);
+        --card-border: rgba(255, 255, 255, 0.1);
+        --btn-primary: linear-gradient(135deg, #a18dff, #7d5fff);
+        --btn-secondary: linear-gradient(135deg, #ff3a8c, #ff6b6b);
+        --btn-hover: brightness(1.1);
+        --shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        --hero-gradient: linear-gradient(135deg, #2a8cf4 0%, #2d00b6 25%, #aa046d 70%, #f40039 100%);
+        --grid-color: rgba(255, 255, 255, 0.05);
+        --glow: 0 0 20px rgba(138, 143, 255, 0.4);
+        --hero-text: #ffffff;
+        --hero-text-secondary: rgba(255, 255, 255, 0.8);
+        --header-bg: rgba(0, 0, 0, 0.9);
+        --header-text: #ffffff;
+        --header-shadow: 0 4px 30px rgba(255, 255, 255, 0.15);
+        --footer-bg: rgba(0, 0, 0, 0.9);
+        --footer-text: #ffffff;
+        --scrolled-header-bg: rgba(0, 0, 0, 0.9);
+        --scrolled-header-text: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    /* Header */
+    header {
+      padding: 0.75rem 1.5rem;
+      height: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      background-color: var(--header-bg);
+      color: var(--header-text);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--header-shadow);
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .logo {
+      height: 40px;
+      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
+    }
+
+    .logo-text {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--header-text);
+    }
+
+    /* Grid background */
+    .grid-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(var(--grid-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+      background-size: 40px 40px;
+      z-index: -2;
+      opacity: 0.4;
+    }
+
+    /* Auth container */
+    .auth-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 6rem 2rem 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .auth-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--card-border);
+      width: 100%;
+      max-width: 420px;
+      padding: 2rem;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      margin-top: 1rem;
+    }
+
+    .auth-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(138, 143, 255, 0.1) 0%, rgba(255, 58, 140, 0.1) 100%);
+      z-index: -1;
+    }
+
+    .auth-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(to right, var(--accent), var(--accent-secondary));
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .auth-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .auth-logo img {
+      height: 60px;
+    }
+
+    .auth-title {
+      font-size: 1.75rem;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+      background: linear-gradient(to right, var(--accent), var(--accent-secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .auth-subtitle {
+      color: var(--text-secondary);
+      font-size: 1rem;
+    }
+
+    .auth-switch {
+      color: var(--text-secondary);
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+
+    .auth-switch a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+      position: relative;
+    }
+
+    .auth-switch a:hover {
+      color: var(--accent-secondary);
+    }
+
+    .auth-switch a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(to right, var(--accent), var(--accent-secondary));
+      transition: width 0.3s ease;
+    }
+
+    .auth-switch a:hover::after {
+      width: 100%;
+    }
+
+    /* Form styles */
+    .form-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      font-size: 1rem;
+      color: var(--text);
+      transition: all 0.3s ease;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(138, 143, 255, 0.2);
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(50%);
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .password-toggle:hover {
+      color: var(--accent);
+    }
+
+    .terms-agreement {
+      display: flex;
+      align-items: flex-start; /* Align checkbox with top of text */
+      margin-bottom: 1.5rem;
+    }
+
+    .terms-agreement input {
+      margin-right: 0.75rem;
+      margin-top: 0.25rem; /* Adjust vertical alignment */
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent);
+    }
+
+    .terms-agreement label {
+      color: var(--text);
+      font-size: 0.9375rem;
+      line-height: 1.4;
+    }
+
+    .terms-agreement a {
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .terms-agreement a:hover {
+        text-decoration: underline;
+    }
+
+    /* Button styles */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.7s ease;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary {
+      background: var(--btn-primary);
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .btn-primary:hover {
+      filter: var(--btn-hover);
+      transform: translateY(-2px);
+      box-shadow: var(--glow);
+    }
+
+    .btn-icon {
+      margin-right: 0.75rem;
+      font-size: 1.1rem;
+    }
+
+    /* Error message */
+    .error-message {
+      color: #ff6b6b;
+      font-size: 0.875rem;
+      margin-top: -0.5rem; /* Adjust spacing */
+      margin-bottom: 1rem;
+      display: none;
+      text-align: left;
+    }
+
+    /* Theme toggle */
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: var(--text);
+    }
+
+    .theme-toggle:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .theme-toggle i {
+      font-size: 1.2rem;
+      transition: transform 0.3s ease;
+    }
+
+    .dark-mode .theme-toggle i.fa-sun {
+      display: none;
+    }
+
+    .dark-mode .theme-toggle i.fa-moon {
+      display: block;
+    }
+
+    .theme-toggle i.fa-sun {
+      display: block;
+    }
+
+    .theme-toggle i.fa-moon {
+      display: none;
+    }
+
+    /* Responsive styles */
+    @media (max-width: 768px) {
+      header {
+        padding: 1rem;
+      }
+      
+      .auth-card {
+        padding: 2rem 1.5rem;
+      }
+      
+      .auth-title {
+        font-size: 1.5rem;
+      }
+      
+      .logo {
+        height: 32px;
+      }
+      
+      .logo-text {
+        font-size: 1.25rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .auth-container {
+        padding: 1rem;
+      }
+      
+      .auth-card {
+        padding: 1.5rem 1rem;
+      }
+    }
+
+    /* In your existing CSS, add these rules */
+.logo-dark {
+  display: none;
+}
+
+.dark-mode .logo-light {
+  display: none;
+}
+
+.dark-mode .logo-dark {
+  display: block;
+}
+  </style>
+</head>
+<body>
+  <!-- Header with logo and name -->
+  <header>
+    <div class="logo-container">
+  <img src="../logos/logo-light.png" alt="ClassmateAI Logo" class="logo logo-light">
+  <img src="../logos/logo-dark.png" alt="ClassmateAI Logo" class="logo logo-dark">
+  <span class="logo-text">ClassmateAI</span>
+</div>
+    <button class="theme-toggle" id="themeToggle">
+      <i class="fas fa-sun"></i>
+      <i class="fas fa-moon"></i>
+    </button>
+  </header>
+
+  <!-- Grid background -->
+  <div class="grid-bg"></div>
+
+  <!-- Auth container -->
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-logo">
+  <img src="../logos/logo-light.png" alt="ClassmateAI Logo" class="logo logo-light">
+  <img src="../logos/logo-dark.png" alt="ClassmateAI Logo" class="logo logo-dark">
+</div>
+        <h1 class="auth-title">Create your account</h1> <!-- Updated Title -->
+        <p class="auth-subtitle">Join ClassmateAI today</p> <!-- Updated Subtitle -->
+      </div>
+
+      <form id="signup-form">
+        <div class="form-group">
+          <label for="name" class="form-label">Full Name</label>
+          <input type="text" id="name" class="form-control" placeholder="Enter your full name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email" class="form-label">Email</label>
+          <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" id="password" class="form-control" placeholder="Create a password (min. 8 characters)" required>
+          <button type="button" id="togglePassword" class="password-toggle">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+
+        <div class="form-group">
+          <label for="dob" class="form-label">Date of Birth</label>
+          <input type="date" id="dob" class="form-control" required>
+        </div>
+
+        <div class="terms-agreement">
+          <input type="checkbox" id="terms" required>
+          <label for="terms">I agree to the <a href="#">Terms & Conditions</a></label>
+        </div>
+
+        <div id="error-message" class="error-message"></div>
+
+        <button type="submit" class="btn btn-primary" id="submit-button">
+          <i class="fas fa-user-plus btn-icon"></i> Create Account <!-- Updated Button Text/Icon -->
+        </button>
+
+        <div class="auth-switch">
+          Already have an account? <a href="Login page.html">Sign in</a> <!-- Updated Link -->
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // DOM elements
+    const signupForm = document.getElementById('signup-form');
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const dobInput = document.getElementById('dob');
+    const termsCheckbox = document.getElementById('terms');
+    const submitButton = document.getElementById('submit-button');
+    const errorMessage = document.getElementById('error-message');
+    const togglePassword = document.getElementById('togglePassword');
+    const themeToggle = document.getElementById('themeToggle');
+    const serverUrl = "https://classmate1-ffw7.onrender.com"; // Update with your server URL
+
+    // Redirect if already logged in
+    if (localStorage.getItem('auth_token')) {
+      window.location.href = "Dashboard.html";
+    }
+
+    // Show error message
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorMessage.style.display = 'block';
+    }
+
+    // Handle successful auth (Registration -> Auto Login)
+    function handleAuthSuccess(token, userData) {
+      // Store the token and user data in localStorage
+      localStorage.setItem('auth_token', token);
+      if (userData && userData.name) {
+        localStorage.setItem('user_name', userData.name);
+      }
+      // Redirect to the protected page
+      window.location.href = 'Dashboard.html';
+    }
+
+    // Toggle password visibility
+    togglePassword.addEventListener('click', function() {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      this.querySelector('i').classList.toggle('fa-eye');
+      this.querySelector('i').classList.toggle('fa-eye-slash');
+    });
+
+    // Theme toggle functionality (Copied from Loginpage.html)
+    const currentTheme = localStorage.getItem('theme') || 
+                       (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    
+    if (currentTheme === 'dark') {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+    
+    function toggleTheme() {
+      if (document.body.classList.contains('dark-mode')) {
+        document.body.classList.remove('dark-mode');
+        localStorage.setItem('theme', 'light');
+      } else {
+        document.body.classList.add('dark-mode');
+        localStorage.setItem('theme', 'dark');
+      }
+    }
+    
+    themeToggle.addEventListener('click', toggleTheme);
+    
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+      const newTheme = e.matches ? 'dark' : 'light';
+      localStorage.setItem('theme', newTheme);
+      if (newTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+      } else {
+        document.body.classList.remove('dark-mode');
+      }
+    });
+
+    // Signup Form Submission
+    signupForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      errorMessage.style.display = 'none'; // Hide previous errors
+
+      if (!termsCheckbox.checked) {
+        showError('You must agree to the Terms & Conditions.');
+        return;
+      }
+
+      // Show loading state (Matching Loginpage.html style)
+      const originalButtonHTML = submitButton.innerHTML;
+      submitButton.disabled = true;
+      submitButton.innerHTML = '<i class="fas fa-spinner fa-spin btn-icon"></i> Creating Account...';
+
+      try {
+        // Registration logic
+        const name = nameInput.value;
+        const email = emailInput.value;
+        const password = passwordInput.value;
+        const dob = dobInput.value;
+
+        const response = await fetch(serverUrl + '/api/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            name: name,
+            email: email,
+            password: password,
+            dob: dob
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          // Handle specific error types (Matching Loginpage.html style)
+          if (data.error_type === 'email_exists') {
+            showError('Email already registered. Please sign in.');
+          } else {
+            showError(data.detail || 'Registration failed. Please check your details.');
+          }
+          return; // Stop execution if registration failed
+        }
+
+        // After successful registration, automatically log the user in
+        const loginResponse = await fetch(serverUrl + '/api/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({ email, password }) // Use email and password for login
+        });
+
+        const loginData = await loginResponse.json();
+
+        if (!loginResponse.ok) {
+          // If auto-login fails, show message and maybe redirect to login page
+          showError('Registration successful! Please sign in manually.');
+          // Optional: redirect to login after a delay
+          setTimeout(() => {
+              window.location.href = 'Loginpage.html'; // Redirect to the correct login page
+          }, 2000);
+          return;
+        }
+
+        // Handle successful auto-login
+        handleAuthSuccess(loginData.token, loginData.user);
+
+      } catch (error) {
+        showError('Network error or server issue. Please try again later.');
+        console.error('Error:', error);
+      } finally {
+        // Restore button state
+        submitButton.disabled = false;
+        submitButton.innerHTML = originalButtonHTML;
+      }
+    });
+
+  </script>
+</body>
+</html>
+
