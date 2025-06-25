@@ -120,7 +120,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: fixed;
+/*             position: fixed; */
             top: 0;
             left: 0;
             width: 100%;
@@ -164,7 +164,6 @@
         }
 
         .notes-container {
-            margin: 80px auto 2rem;
             flex-grow: 1;
             width: 100%;
             max-width: 100%;
@@ -1108,13 +1107,172 @@
             }
         }
 
-        
+        /* Professional Dialog Box Styles */
+        .dialog-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(30, 34, 90, 0.25);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(6px);
+        }
+        .dialog-modal.show {
+            display: flex;
+            opacity: 1;
+        }
+        .dialog-content {
+            background: rgba(255,255,255,0.95);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(42,140,244,0.13), 0 2px 12px rgba(0,0,0,0.09);
+            max-width: 370px;
+            width: 90%;
+            padding: 2rem 1.5rem 1.25rem 1.5rem;
+            position: relative;
+            animation: modalFadeIn 0.3s;
+            color: var(--text);
+        }
+        .dark-mode .dialog-content {
+            background: rgba(24, 26, 40, 0.98);
+            color: #fff;
+        }
+        .dialog-header {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .dark-mode .dialog-header {
+            color: var(--accent-secondary);
+        }
+        .dialog-body {
+            color: var(--text-secondary);
+            margin-bottom: 1.25rem;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        .dark-mode .dialog-body {
+            color: #e0e0e0;
+        }
+        .dialog-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+        .dialog-btn {
+            padding: 0.5rem 1.2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            border: none;
+            background: var(--btn-primary);
+            color: #fff;
+            transition: background 0.2s;
+        }
+        .dialog-btn.cancel {
+            background: var(--card-bg);
+            color: var(--text-secondary);
+            border: 1px solid var(--card-border);
+        }
+        .dark-mode .dialog-btn.cancel {
+            background: #23243a;
+            color: #bdbdbd;
+            border: 1px solid #333;
+        }
+        .dialog-btn.cancel:hover {
+            background: var(--menu-hover);
+            color: var(--text);
+        }
+        .dark-mode .dialog-btn.cancel:hover {
+            background: #2a2b3d;
+            color: #fff;
+        }
+        .dialog-btn.confirm {
+            background: var(--accent);
+            color: #fff;
+        }
+        .dialog-btn.confirm:hover {
+            background: var(--accent-secondary);
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .search-bar-container {
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.7);
+            border-radius: 30px;
+            border: 1.5px solid var(--accent);
+            box-shadow: 0 2px 12px rgba(42,140,244,0.08);
+            padding: 0.25rem 1rem;
+            margin-left: 1.5rem;
+            transition: background 0.3s, border 0.3s;
+            max-width: 320px;
+            width: 100%;
+        }
+        .dark-mode .search-bar-container {
+            background: rgba(24,26,40,0.95);
+            border-color: var(--accent-secondary);
+        }
+        .search-bar-input {
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 1rem;
+            color: var(--text);
+            flex: 1;
+            padding: 0.5rem 0.5rem 0.5rem 0;
+        }
+        .search-bar-input::placeholder {
+            color: var(--text-secondary);
+            opacity: 1;
+        }
+        .search-bar-btn {
+            background: none;
+            border: none;
+            color: var(--accent);
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 0 0.25rem;
+            display: flex;
+            align-items: center;
+        }
+        @media (max-width: 700px) {
+            .search-bar-container {
+                max-width: 100%;
+                margin-left: 0.5rem;
+                padding: 0.15rem 0.5rem;
+            }
+            .notes-title {
+                font-size: 1.1rem;
+            }
+        }
+
+        .theme-toggle-btn { display: none; }
+        @media (max-width: 700px) {
+          .theme-toggle-btn { display: inline-flex; }
+        }
+
+        .header-btn.theme-toggle { display: none; }
+        @media (max-width: 700px) {
+          .header-btn.theme-toggle { display: flex; }
+        }
+
+        .header-btn.theme-toggle, #themeToggle { display: none !important; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1 class="notes-title">My Notes</h1>
+        <h1 class="notes-title"><i class="fa-solid fa-note-sticky"></i> My Notes</h1>
         <button class="header-btn theme-toggle" id="themeToggle" title="Toggle Theme">
         <i class="fas fa-sun"></i>
         <i class="fas fa-moon"></i>
@@ -1191,7 +1349,7 @@
             <div class="modal-header">
                 <span id="viewModalTitle">View Note</span>
                 <button class="menu-button" id="viewMenuButton">
-                    
+                    <i class="fas fa-ellipsis-v"></i>
                 </button>
                 <div class="menu-dropdown" id="viewMenuDropdown">
                     <div class="menu-item edit-icon" id="editNoteMenuItem">
@@ -1239,6 +1397,18 @@
             </div>
             <div class="attachment-viewer-body" id="attachmentViewerBody">
                 <!-- Content will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Professional Dialog Modal (hidden by default) -->
+    <div class="dialog-modal" id="proDialogModal">
+        <div class="dialog-content">
+            <div class="dialog-header" id="proDialogHeader">Dialog Title</div>
+            <div class="dialog-body" id="proDialogBody">Dialog message goes here.</div>
+            <div class="dialog-footer">
+                <button class="dialog-btn cancel" id="proDialogCancel">Cancel</button>
+                <button class="dialog-btn confirm" id="proDialogConfirm">OK</button>
             </div>
         </div>
     </div>
@@ -1316,17 +1486,17 @@
             notesContainer.innerHTML = ""; // Clear previous notes
 
             if (notes.length === 0) {
-                notesContainer.appendChild(emptyNotesMessage);
+                    notesContainer.appendChild(emptyNotesMessage);
                 return;
             }
 
             // Map notes with their original index before sorting
             const sortedNotes = notes.map((note, index) => ({ note, originalIndex: index }))
                 .sort((a, b) => {
-                    if (a.note.pinned && !b.note.pinned) return -1;
-                    if (!a.note.pinned && b.note.pinned) return 1;
-                    return new Date(b.note.timestamp) - new Date(a.note.timestamp);
-                });
+                if (a.note.pinned && !b.note.pinned) return -1;
+                if (!a.note.pinned && b.note.pinned) return 1;
+                return new Date(b.note.timestamp) - new Date(a.note.timestamp);
+            });
 
             sortedNotes.forEach(({ note, originalIndex }) => {
                 const noteCard = document.createElement("div");
@@ -1639,15 +1809,15 @@
                     viewTextContent.textContent = note.content || ""; // (old version fallback)
                 } 
                 else if (note.type === "list") {
-                    viewListContent.innerHTML = "";
+                  viewListContent.innerHTML = "";
                     note.listItems?.forEach((item, itemIndex) => {
-                        const listItem = document.createElement("div");
-                        listItem.className = "view-mode-list-item";
-                        
-                        const checkbox = document.createElement("input");
-                        checkbox.type = "checkbox";
-                        checkbox.className = "view-mode-checkbox";
-                        checkbox.checked = item.checked;
+                          const listItem = document.createElement("div");
+                          listItem.className = "view-mode-list-item";
+                          
+                          const checkbox = document.createElement("input");
+                          checkbox.type = "checkbox";
+                          checkbox.className = "view-mode-checkbox";
+                          checkbox.checked = item.checked;
                         checkbox.disabled = false; // (old version interactivity)
                         
                         const text = document.createElement("span");
@@ -1663,12 +1833,12 @@
                         });
                         
                         listItem.append(checkbox, text);
-                        viewListContent.appendChild(listItem);
-                    });
-                }
-                
+                          viewListContent.appendChild(listItem);
+                      });
+              }
+              
                 // Attachments (new version hiding + old version filenames)
-                viewAttachments.innerHTML = "";
+              viewAttachments.innerHTML = "";
                 viewAttachments.style.display = "flex"; // (new version improvement)
                 if (note.attachments?.length) {
                     note.attachments.forEach(attach => {
@@ -1694,15 +1864,15 @@
                 }
                 
                 // Pin toggle (new version style)
-                pinNoteMenuItem.innerHTML = `
-                    <i class="fas fa-thumbtack"></i>
-                    ${note.pinned ? "Unpin" : "Pin"}
-                `;
-                
+              pinNoteMenuItem.innerHTML = `
+                  <i class="fas fa-thumbtack"></i>
+                  ${note.pinned ? "Unpin" : "Pin"}
+              `;
+              
                 // Show modal (both versions)
-                noteViewModal.style.display = "block";
+              noteViewModal.style.display = "block";
                 setTimeout(() => noteViewModal.classList.add("show"), 10);
-            }
+          }
           function closeEditorModal() {
               noteEditorModal.classList.remove("show");
               setTimeout(() => {
@@ -1729,7 +1899,7 @@
                   viewMenuDropdown.classList.remove("show");
               }, 300);
           }
-
+          
           // --- Menu Logic ---
           function showNoteMenu(event, index) {
               event.stopPropagation();
@@ -1753,8 +1923,8 @@
                   '<i class="fas fa-thumbtack icon"></i> Pin';
               pinItem.addEventListener("click", () => {
                   notes[index].pinned = !notes[index].pinned;
-                  localStorage.setItem("notes", JSON.stringify(notes));
-                  renderNotes();
+                          localStorage.setItem("notes", JSON.stringify(notes));
+                          renderNotes();
                   document.body.removeChild(menu);
               });
               
@@ -1765,8 +1935,8 @@
                   '<i class="fas fa-star icon"></i> Highlight';
               highlightItem.addEventListener("click", () => {
                   notes[index].highlighted = !notes[index].highlighted;
-                  localStorage.setItem("notes", JSON.stringify(notes));
-                  renderNotes();
+                          localStorage.setItem("notes", JSON.stringify(notes));
+                          renderNotes();
                   document.body.removeChild(menu);
               });
               
@@ -1774,11 +1944,18 @@
               deleteItem.className = "menu-item delete-icon";
               deleteItem.innerHTML = '<i class="fas fa-trash-alt icon"></i> Delete';
               deleteItem.addEventListener("click", () => {
-                  if (confirm("Are you sure you want to delete this note?")) {
-                      notes.splice(index, 1);
-                      localStorage.setItem("notes", JSON.stringify(notes));
-                      renderNotes();
-                  }
+                  showProDialog({
+                      title: "Delete Note",
+                      message: "Are you sure you want to delete this note?",
+                      confirmText: "Delete",
+                      cancelText: "Cancel",
+                      onConfirm: () => {
+                          notes.splice(index, 1);
+                              localStorage.setItem("notes", JSON.stringify(notes));
+                              renderNotes();
+                      },
+                      onCancel: () => {}
+                  });
                   document.body.removeChild(menu);
               });
               
@@ -1914,21 +2091,25 @@
           // --- Note Saving Logic ---
           saveNoteBtn.addEventListener("click", () => {
               const title = noteTitleInput.value.trim();
-              let content = "";
+              const content = noteContentInput.value.trim();
               let listItems = [];
-              
-              if (currentNoteType === "text") {
-                  content = noteContentInput.value.trim();
-                  if (!title && !content && currentAttachments.length === 0) {
-                      alert("Please add a title, content, or attachment to your note.");
+              if (currentNoteType === "list") {
+                  listItems = Array.from(listItemsContainer.querySelectorAll(".list-item-input")).map((input, idx) => ({
+                      text: input.value.trim(),
+                      checked: listItemsContainer.querySelectorAll(".list-item-checkbox")[idx].checked
+                  })).filter(item => item.text);
+              }
+              // Prevent saving empty notes
+              if (!title && !content && listItems.length === 0 && currentAttachments.length === 0) {
+                  showProDialog({
+                      title: "Empty Note",
+                      message: "Cannot save an empty note. Please add a title, content, list item, or attachment.",
+                      confirmText: "OK",
+                      cancelText: "__HIDE__",
+                      onConfirm: () => { noteTitleInput.focus(); },
+                      onCancel: null
+                  });
                       return;
-                  }
-              } else if (currentNoteType === "list") {
-                  listItems = getListItems();
-                  if (!title && listItems.length === 0 && currentAttachments.length === 0) {
-                      alert("Please add a title, list items, or attachment to your note.");
-                      return;
-                  }
               }
               
               let finalTitle = title;
@@ -2045,14 +2226,20 @@
           
           deleteNoteMenuItem.addEventListener("click", () => {
               if (viewingNoteIndex !== null) {
-                  if (confirm("Are you sure you want to delete this note?")) {
+                  showProDialog({
+                      title: "Delete Note",
+                      message: "Are you sure you want to delete this note?",
+                      confirmText: "Delete",
+                      cancelText: "Cancel",
+                      onConfirm: () => {
                       notes.splice(viewingNoteIndex, 1);
                       localStorage.setItem("notes", JSON.stringify(notes));
                       closeViewModal();
                       renderNotes();
+                      },
+                      onCancel: () => {}
+                  });
                   }
-              }
-              
               viewMenuDropdown.classList.remove("show");
           });
           
@@ -2095,36 +2282,67 @@
 
           // Theme toggle functionality
           const themeToggle = document.getElementById('themeToggle');
-          const currentTheme = localStorage.getItem('theme') || 
-                           (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-          // Apply current theme
-          if (currentTheme === 'dark') {
-            document.body.classList.add('dark-mode');
-          } else {
-            document.body.classList.remove('dark-mode');
+          function applyThemeSynchronized() {
+              const parentDarkModeSetting = localStorage.getItem("darkMode");
+              const isDark = parentDarkModeSetting === "enabled";
+              document.body.classList.toggle("dark-mode", isDark);
+              // The CSS in notes (1).html already handles showing/hiding fa-sun/fa-moon
+              // based on the body.dark-mode class, so no manual icon style changes needed here.
           }
-          // Toggle function
-          function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-            const isDark = document.body.classList.contains('dark-mode');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-          }
-          // Event listener
-          themeToggle.addEventListener('click', toggleTheme);
-          // System theme change listener
-          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-            const newTheme = e.matches ? 'dark' : 'light';
-            localStorage.setItem('theme', newTheme);
-            if (newTheme === 'dark') {
-              document.body.classList.add('dark-mode');
-            } else {
-              document.body.classList.remove('dark-mode');
-            }
+
+          // 1. Initial theme application on load
+          applyThemeSynchronized();
+
+          // 2. Listen for 'storage' events (when localStorage.darkMode changes elsewhere)
+          window.addEventListener('storage', (e) => {
+              if (e.key === 'darkMode') {
+                  applyThemeSynchronized();
+              }
           });
+
+          // 3. Listen for 'themeChange' custom event dispatched by the parent to this iframe
+          window.addEventListener('themeChange', (e) => {
+              if (e.detail && typeof e.detail.darkMode === 'boolean') {
+                  document.body.classList.toggle("dark-mode", e.detail.darkMode);
+                  // CSS handles icon changes
+              }
+          });
+
+          // 4. Handle the notes page's own theme toggle button
+          if (themeToggle) {
+              themeToggle.addEventListener('click', () => {
+                  const bodyIsDarkNow = document.body.classList.toggle('dark-mode');
+                  // Update the shared 'darkMode' localStorage item
+                  localStorage.setItem('darkMode', bodyIsDarkNow ? 'enabled' : 'disabled');
+                  // The parent's 'storage' event listener will pick this up and update parent UI.
+                  // CSS handles local icon changes.
+              });
+          }
           
           // Initial render
-          renderNotes();
-      });
+              renderNotes();
+          });
+          
+      // Professional dialog show/hide utility
+      function showProDialog({title, message, onConfirm, onCancel, confirmText = 'OK', cancelText = 'Cancel'}) {
+          const modal = document.getElementById('proDialogModal');
+          document.getElementById('proDialogHeader').textContent = title;
+          document.getElementById('proDialogBody').textContent = message;
+          const confirmBtn = document.getElementById('proDialogConfirm');
+          const cancelBtn = document.getElementById('proDialogCancel');
+          confirmBtn.textContent = confirmText;
+          // Hide cancel button if cancelText is __HIDE__
+          if (cancelText === '__HIDE__') {
+            cancelBtn.style.display = 'none';
+          } else {
+            cancelBtn.style.display = '';
+            cancelBtn.textContent = cancelText;
+          }
+          modal.classList.add('show');
+          confirmBtn.onclick = () => { modal.classList.remove('show'); if (onConfirm) onConfirm(); };
+          cancelBtn.onclick = () => { modal.classList.remove('show'); if (onCancel) onCancel(); };
+          modal.onclick = (e) => { if (e.target === modal) { modal.classList.remove('show'); if (onCancel) onCancel(); } };
+      }
   </script>
 
 </body>
