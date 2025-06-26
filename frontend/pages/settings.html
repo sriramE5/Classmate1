@@ -208,20 +208,23 @@
     .settings-card {
       background-color: var(--card-bg);
       border-radius: 12px;
-      padding: 1.5rem; 
+      padding: 0.75rem; 
       box-shadow: var(--shadow);
       border: 1px solid var(--card-border);
-      margin-bottom: 2rem;
+      margin-bottom: 1rem;
       transition: background-color 0.3s ease, border-color 0.3s ease;
+      overflow: hidden;
     }
     
     .settings-header {
       display: flex;
       align-items: center;
       justify-content: space-between; 
-      margin-bottom: 1.5rem; 
-      padding-bottom: 1rem;
-      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 0.75rem; 
+      padding-bottom: 0.5rem;
+      cursor: pointer;
+      user-select: none;
+      position: relative;
     }
     .settings-header-main { 
         display: flex;
@@ -242,7 +245,7 @@
     }
     
     .form-group {
-      margin-bottom: 1.25rem; 
+      margin-bottom: 0.75rem; 
     }
     
     .form-label {
@@ -372,9 +375,9 @@
     .avatar-upload-label:hover { filter: var(--btn-hover); }
         
     .security-actions, .data-actions {
-      margin-top: 1.5rem;
+      margin-top: 0.75rem;
       border-top: 1px solid var(--card-border);
-      padding-top: 1.5rem;
+      padding-top: 0.75rem;
       display: flex;
       flex-wrap: wrap; 
       gap: 0.75rem;
@@ -414,37 +417,46 @@
 
     /* Master Toggle Switch for Sections (like Chatbot Customization) */
     .master-toggle-switch {
-        width: 42px; 
-        height: 22px;
-        background-color: var(--input-border);
-        border-radius: 11px;
-        position: relative;
-        padding: 2px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-    .master-toggle-knob {
-        width: 18px; 
-        height: 18px;
-        background-color: var(--card-bg);
-        border-radius: 50%;
-        transition: transform 0.2s ease;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-    }
-    .dark-mode .master-toggle-knob {
-      background-color: var(--input-text); 
+      position: relative;
+      width: 44px;
+      height: 24px;
+      background-color: var(--input-border);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-left: 1rem;
+      border: 2px solid transparent;
     }
     .master-toggle-switch.active {
-        background-color: var(--accent);
+      background: var(--btn-primary);
+      border-color: var(--accent);
+      box-shadow: 0 0 8px rgba(var(--accent-rgb), 0.3);
+    }
+    .master-toggle-knob {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      background-color: white;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
     .master-toggle-switch.active .master-toggle-knob {
-        transform: translateX(20px); 
+      transform: translateX(20px);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
     }
 
     /* Styling for de-emphasized fields when master toggle is OFF */
     .settings-card-content.deactivated {
-        opacity: 0.6; 
-        transition: opacity 0.3s ease;
+      opacity: 0.5;
+    }
+    .settings-card-content.deactivated .form-control,
+    .settings-card-content.deactivated .form-select,
+    .settings-card-content.deactivated textarea,
+    .settings-card-content.deactivated button {
+      opacity: 0.6;
     }
 
     /* Theme Settings Styles */
@@ -590,6 +602,65 @@
         .security-actions, .data-actions { flex-direction: column; }
         .security-actions .btn, .data-actions .btn { width: 100%; }
     }
+
+    /* Hide scrollbar for Chrome, Safari, and Opera */
+::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+}
+
+/* Hide scrollbar for IE, Edge, and Firefox */
+html, body {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+  overflow: -moz-scrollbars-none;  /* Older Firefox */
+}
+
+/* Ensure scrolling still works */
+body {
+  overflow: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+/* Collapsible settings card styles */
+.settings-card {
+  overflow: hidden;
+  margin-bottom: 1.2rem;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+.settings-card.collapsed .settings-card-content {
+  max-height: 0;
+  opacity: 0;
+  padding: 0 0.75rem;
+  pointer-events: none;
+  transition: max-height 0.3s, opacity 0.3s, padding 0.3s;
+}
+.settings-card .settings-card-content {
+  max-height: 2000px;
+  opacity: 1;
+  transition: max-height 0.3s, opacity 0.3s, padding 0.3s;
+}
+.settings-header {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+.settings-card.collapsed .settings-header {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+.settings-card:not(.collapsed) .settings-header {
+  border-bottom: 1px solid var(--card-border);
+}
+.settings-header .chevron {
+  margin-left: 1rem;
+  font-size: 1.1rem;
+  transition: transform 0.3s;
+}
+.settings-card.collapsed .settings-header .chevron {
+  transform: rotate(-90deg);
+}
   </style>
 </head>
 <body>
@@ -740,9 +811,9 @@
           <div class="settings-header-main">
             <i class="fas fa-robot"></i>
             <h2 class="settings-title">Chatbot Customization</h2>
-          </div>
-          <div class="master-toggle-switch" id="chatbotCustomizationToggle" aria-label="Enable Chatbot Customization">
-            <div class="master-toggle-knob"></div>
+            <div class="master-toggle-switch" id="chatbotCustomizationToggle" aria-label="Enable Chatbot Customization">
+              <div class="master-toggle-knob"></div>
+            </div>
           </div>
         </div>
         <div class="settings-card-content" id="chatbotSettingsContent">
@@ -926,11 +997,23 @@
       function setChatbotCustomizationVisualState(enabled) {
         chatbotCustomizationToggle.classList.toggle('active', enabled);
         chatbotSettingsContent.classList.toggle('deactivated', !enabled);
+        
+        // Only apply visual de-emphasis, don't disable form controls
+        // Users can edit even when toggle is off
       }
 
-      chatbotCustomizationToggle.addEventListener('click', () => {
+      // Load saved toggle state
+      function loadChatbotCustomizationState() {
+        const savedState = localStorage.getItem('chatbotCustomizationEnabled') === 'true';
+        setChatbotCustomizationVisualState(savedState);
+      }
+      loadChatbotCustomizationState();
+
+      chatbotCustomizationToggle.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent header collapse when clicking toggle
         const isActive = chatbotCustomizationToggle.classList.toggle('active');
         setChatbotCustomizationVisualState(isActive);
+        localStorage.setItem('chatbotCustomizationEnabled', isActive);
       });
 
 
@@ -1459,6 +1542,25 @@
       }
       
       loadUserSettings();
+
+      // Collapsible logic for settings cards
+      const settingsCards = document.querySelectorAll('.settings-card');
+      settingsCards.forEach(card => {
+        const header = card.querySelector('.settings-header');
+        if (header && !header.querySelector('.chevron')) {
+          const chevron = document.createElement('i');
+          chevron.className = 'fas fa-chevron-down chevron';
+          header.appendChild(chevron);
+        }
+        card.classList.add('collapsed');
+        header.addEventListener('click', () => {
+          const isCurrentlyCollapsed = card.classList.contains('collapsed');
+          settingsCards.forEach(c => c.classList.add('collapsed'));
+          if (isCurrentlyCollapsed) {
+            card.classList.remove('collapsed');
+          }
+        });
+      });
 
     });
   </script>
