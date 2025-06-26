@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Classmate AI - Smart Study Assistant</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -23,7 +24,7 @@
     --btn-secondary: linear-gradient(135deg, #ff3a8c, #ff6b6b);
     --btn-hover: brightness(1.05);
     --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    --hero-gradient: linear-gradient(135deg, #96a6ed 0%, #7209b7 30%, #f72585 70%, #ff006e 100%); /* Modified gradient */
+    --hero-gradient: linear-gradient(135deg, #4361ee 0%, #7209b7 30%, #f72585 70%, #ff006e 100%); /* Modified gradient */
     --grid-color: rgba(0, 0, 0, 0.05);
     --glow: 0 0 20px rgba(138, 143, 255, 0.4);
     --hero-text: #ffffff;
@@ -87,7 +88,7 @@
     }
 
     body:not(.dark-mode) header:not(.scrolled) {
-      --header-text: #ffffff; /* Force black text when at top in light mode */
+      --header-text: #ffffff; /* Force white text when at top in light mode */
       color: var(--header-text);
     }
 
@@ -190,6 +191,25 @@
       filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
       transition: transform 0.3s ease, filter 0.3s ease;
     }
+    
+    /* Logo theme switching */
+    .logo-dark {
+      display: none;
+    }
+    .dark-mode .logo-light {
+      display: none;
+    }
+    .dark-mode .logo-dark {
+      display: block;
+    }
+    /* Special case: show dark (white) logo at top in light mode */
+    body:not(.dark-mode) header:not(.scrolled) .logo-container .logo-light {
+      display: none;
+    }
+    body:not(.dark-mode) header:not(.scrolled) .logo-container .logo-dark {
+      display: block;
+    }
+
 
     .logo:hover {
       transform: scale(1.05);
@@ -1119,22 +1139,6 @@
     font-size: 1rem;
   }
     }
-
-    .dark-logo {
-  display: none;
-}
-
-.light-logo {
-  display: block;
-}
-
-.dark-mode .dark-logo {
-  display: block;
-}
-
-.dark-mode .light-logo {
-  display: none;
-}
   </style>
 </head>
 <body>
@@ -1149,12 +1153,10 @@
     <header id="mainHeader">
       <div class="header-container">
         <div class="logo-container">
-  <!-- Light mode logo -->
-  <img src="https://ganesh714.github.io/Classmate1/frontend/logos/logo-light.png" alt="Classmate AI Logo" class="logo light-logo" />
-  <!-- Dark mode logo -->
-  <img src="https://ganesh714.github.io/Classmate1/frontend/logos/logo-dark.png" alt="Classmate AI Logo" class="logo dark-logo" />
-  <span class="logo-text">ClassmateAI</span>
-</div>
+          <img src="https://ganesh714.github.io/Classmate1/frontend/logos/logo-light.png" alt="Classmate AI Logo" class="logo logo-light" />
+          <img src="https://ganesh714.github.io/Classmate1/frontend/logos/logo-dark.png" alt="Classmate AI Logo" class="logo logo-dark" />
+          <span class="logo-text">ClassmateAI</span>
+        </div>
         <nav>
           <a href="#" class="nav-link" data-target="hero">Home</a>
           <a href="#features" class="nav-link" data-target="features">Features</a>
@@ -1376,12 +1378,10 @@
   <!-- Footer -->
   <footer>
     <div class="logo-container">
-  <!-- Light mode logo -->
-  <img src="https://ganesh714.github.io/Classmate1/frontend/logos/logo-light.png" alt="Classmate AI Logo" class="logo light-logo" />
-  <!-- Dark mode logo -->
-  <img src="https://ganesh714.github.io/Classmate1/frontend/logos/logo-dark.png" alt="Classmate AI Logo" class="logo dark-logo" />
-  <span class="logo-text">ClassmateAI</span>
-</div>
+      <img src="https://ganesh714.github.io/Classmate1/frontend/logos/logo-light.png" alt="Classmate AI Logo" class="logo logo-light" />
+      <img src="https://ganesh714.github.io/Classmate1/frontend/logos/logo-dark.png" alt="Classmate AI Logo" class="logo logo-dark" />
+      <span class="logo-text">ClassmateAI</span>
+    </div>
     <div class="footer-links">
       <a href="#">About Us</a>
       <a href="#">Features</a>
@@ -1394,7 +1394,7 @@
       <a href="#"><i class="fab fa-linkedin"></i></a>
       <a href="#"><i class="fab fa-youtube"></i></a>
     </div>
-    <p>&copy; 2025 Classmate AI. All rights reserved.</p>
+    <p>© 2025 Classmate AI. All rights reserved.</p>
   </footer>
 
   <!-- Script -->
@@ -1433,9 +1433,11 @@
       
       header.classList.toggle('scrolled', isScrolled);
       
+      // Note: The text color change is now primarily handled by CSS variables and this block is simplified.
+      // The CSS rule `body:not(.dark-mode) header:not(.scrolled)` now handles the text and logo color at the top.
       if (!document.body.classList.contains('dark-mode')) {
         if (isScrolled) {
-          header.style.setProperty('--header-text', 'var(--text)');
+          header.style.setProperty('--header-text', 'var(--scrolled-header-text)');
         } else {
           header.style.setProperty('--header-text', '#ffffff');
         }
@@ -1459,19 +1461,18 @@
       document.body.classList.remove('dark-mode');
       if (themeText) themeText.textContent = 'Light Mode';
     }
+    // Manually trigger a scroll event check on load to set initial header state
+    window.dispatchEvent(new Event('scroll'));
     
     // Theme toggle function
     function toggleTheme() {
-      if (document.body.classList.contains('dark-mode')) {
-        document.body.classList.remove('dark-mode');
-        localStorage.setItem('theme', 'light');
-        if (themeText) themeText.textContent = 'Light Mode';
-      } else {
-        document.body.classList.add('dark-mode');
-        localStorage.setItem('theme', 'dark');
-        if (themeText) themeText.textContent = 'Dark Mode';
+      const isDark = document.body.classList.toggle('dark-mode');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      if (themeText) {
+        themeText.textContent = isDark ? 'Dark Mode' : 'Light Mode';
       }
-      updateSocialIcons();
+      // Re-evaluate header style after theme change
+      window.dispatchEvent(new Event('scroll'));
     }
     
     // Add event listeners to both toggle buttons
@@ -1484,13 +1485,12 @@
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
       const newTheme = e.matches ? 'dark' : 'light';
       localStorage.setItem('theme', newTheme);
-      if (newTheme === 'dark') {
-        document.body.classList.add('dark-mode');
-        if (themeText) themeText.textContent = 'Dark Mode';
-      } else {
-        document.body.classList.remove('dark-mode');
-        if (themeText) themeText.textContent = 'Light Mode';
+      document.body.classList.toggle('dark-mode', e.matches);
+      if (themeText) {
+        themeText.textContent = e.matches ? 'Dark Mode' : 'Light Mode';
       }
+      // Re-evaluate header style after theme change
+      window.dispatchEvent(new Event('scroll'));
     });
 
     // Smooth scrolling for navigation links
@@ -1525,31 +1525,6 @@
         }
       }
     });
-
-    // Function to update social media icons based on theme
-function updateSocialIcons() {
-  const isDarkMode = document.body.classList.contains('dark-mode');
-  const socialIcons = document.querySelectorAll('.social-links a i');
-  
-  socialIcons.forEach(icon => {
-    if (isDarkMode) {
-      // Add dark mode specific classes or change icons
-      if (icon.classList.contains('fa-twitter')) {
-        // Example: icon.classList.remove('fa-twitter-light');
-        // icon.classList.add('fa-twitter-dark');
-      }
-    } else {
-      // Revert to light mode icons
-      if (icon.classList.contains('fa-twitter')) {
-        // Example: icon.classList.remove('fa-twitter-dark');
-        // icon.classList.add('fa-twitter-light');
-      }
-    }
-  });
-}
-
-// Call this function when the page loads to set initial icons
-updateSocialIcons();
   </script>
 </body>
 </html>
