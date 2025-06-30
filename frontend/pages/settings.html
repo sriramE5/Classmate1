@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -417,12 +418,12 @@
 
     /* Master Toggle Switch for Sections (like Chatbot Customization) */
     .master-toggle-switch {
-      position: relative;
+        position: relative;
       width: 44px;
       height: 24px;
       background-color: var(--input-border);
       border-radius: 12px;
-      cursor: pointer;
+        cursor: pointer;
       transition: all 0.3s ease;
       margin-left: 1rem;
       border: 2px solid transparent;
@@ -439,12 +440,12 @@
       width: 16px;
       height: 16px;
       background-color: white;
-      border-radius: 50%;
+        border-radius: 50%;
       transition: all 0.3s ease;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
     .master-toggle-switch.active .master-toggle-knob {
-      transform: translateX(20px);
+        transform: translateX(20px); 
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
     }
 
@@ -456,7 +457,7 @@
     .settings-card-content.deactivated .form-select,
     .settings-card-content.deactivated textarea,
     .settings-card-content.deactivated button {
-      opacity: 0.6;
+        opacity: 0.6; 
     }
 
     /* Theme Settings Styles */
@@ -660,7 +661,7 @@ body {
 }
 .settings-card.collapsed .settings-header .chevron {
   transform: rotate(-90deg);
-}
+    }
   </style>
 </head>
 <body>
@@ -801,7 +802,7 @@ body {
           </div>
           <button id="savePanelExpandModeBtn" class="btn btn-primary">
             <i class="fas fa-save"></i> Save Panel Behavior
-          </button>
+            </button>
         </div>
       </div>
       
@@ -811,15 +812,15 @@ body {
           <div class="settings-header-main">
             <i class="fas fa-robot"></i>
             <h2 class="settings-title">Chatbot Customization</h2>
-            <div class="master-toggle-switch" id="chatbotCustomizationToggle" aria-label="Enable Chatbot Customization">
-              <div class="master-toggle-knob"></div>
+          <div class="master-toggle-switch" id="chatbotCustomizationToggle" aria-label="Enable Chatbot Customization">
+            <div class="master-toggle-knob"></div>
             </div>
           </div>
         </div>
         <div class="settings-card-content" id="chatbotSettingsContent">
             <div class="form-group">
               <label for="userNickname" class="form-label">Your Nickname (Optional)</label>
-              <input type="text" id="userNickname" class="form-control" placeholder="e.g., Ramu, gani, veeru..">
+              <input type="text" id="userNickname" class="form-control" placeholder="e.g., Alex, Study Pro">
                <small style="color: var(--text-secondary); font-size: 0.8rem; display: block; margin-top: 0.25rem;">Chatbot will use this to address you if provided.</small>
             </div>
             <div class="form-group">
@@ -894,12 +895,15 @@ body {
         </div>
         <div class="settings-card-content">
             <div class="data-actions" style="border-top: none; padding-top: 0; margin-top:0;"> 
+                <button id="logoutBtn" class="btn btn-secondary">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
                 <button id="deleteAccountBtn" class="btn btn-danger">
                     <i class="fas fa-trash-alt"></i> Delete Account
                 </button>
             </div>
             <p style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 0.75rem;">
-                Permanently delete your account and all associated data. This action cannot be undone.
+                Logout from your account or permanently delete your account and all associated data. Account deletion cannot be undone.
             </p>
         </div>
       </div>
@@ -984,6 +988,7 @@ body {
 
       const changePasswordBtn = document.getElementById('changePasswordBtn');
       const deleteAccountBtn = document.getElementById('deleteAccountBtn'); 
+      const logoutBtn = document.getElementById('logoutBtn');
 
       const toast = document.getElementById('toast');
 
@@ -1047,12 +1052,12 @@ body {
             }
       });
 
-      // Listen for theme changes dispatched from parent (Dashboard.html)
+      // Listen for theme changes dispatched from parent (home.html)
       window.addEventListener('themeChange', (e) => { 
           if (e.detail && typeof e.detail.darkMode === 'boolean') {
               const isNowDark = e.detail.darkMode;
               document.body.classList.toggle("dark-mode", isNowDark);
-              // No need to set localStorage here, parent (Dashboard) is the source of truth for iframe theme dispatch
+              // No need to set localStorage here, parent (home) is the source of truth for iframe theme dispatch
               if (pageThemeToggle) { 
                 const sunIcon = pageThemeToggle.querySelector('.fa-sun');
                 const moonIcon = pageThemeToggle.querySelector('.fa-moon');
@@ -1077,7 +1082,7 @@ body {
                 sunIcon.style.display = bodyIsDarkNow ? 'block' : 'none'; 
                 moonIcon.style.display = bodyIsDarkNow ? 'none' : 'block'; 
               }
-              // Inform parent (Dashboard) about the theme change
+              // Inform parent (home) about the theme change
               if (window.parent && window.parent !== window) { 
                   window.parent.postMessage({ type: 'themeChangeFromIframe', darkMode: bodyIsDarkNow }, '*');
               }
@@ -1443,6 +1448,21 @@ body {
             deleteAccountConfirmText.value = ''; 
             finalDeleteAccountBtn.disabled = true;
             showConfirmationModal(deleteAccountModal);
+        });
+      }
+
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('user_name');
+            localStorage.removeItem('user_email');
+            localStorage.removeItem('user_avatar');
+            
+            if (window.parent && window.parent !== window) {
+                window.parent.postMessage({ type: 'logout', reason: 'user_logout' }, '*');
+            } else {
+                window.location.href = '../../index.html';
+            }
         });
       }
 
