@@ -1267,6 +1267,54 @@
         }
 
         .header-btn.theme-toggle, #themeToggle { display: none !important; }
+
+        @media (max-width: 700px) {
+          .fab-container {
+            bottom: 80px !important;
+            right: 16px !important;
+          }
+          .header-settings-btn {
+            display: flex !important;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+          }
+          .header-settings-btn:hover {
+            background: var(--accent);
+            color: white;
+          }
+        }
+
+        .header-settings-btn {
+          display: none;
+        }
+
+        .header-logout-btn {
+          background: none;
+          border: none;
+          color: var(--text);
+          font-size: 1.2rem;
+          cursor: pointer;
+          padding: 0.5rem;
+          border-radius: 50%;
+          transition: all 0.3s ease;
+        }
+
+        .header-logout-btn:hover {
+          background: rgba(255, 0, 0, 0.1);
+          color: #ff4444;
+        }
+
+        @media (max-width: 700px) {
+          .header-settings-btn {
+            display: none;
+          }
+        }
     </style>
 </head>
 <body>
@@ -1276,6 +1324,9 @@
         <button class="header-btn theme-toggle" id="themeToggle" title="Toggle Theme">
         <i class="fas fa-sun"></i>
         <i class="fas fa-moon"></i>
+        </button>
+        <button class="header-settings-btn" id="settingsBtn" title="Settings">
+          <i class="fas fa-cog"></i>
         </button>
     </header>
 
@@ -1543,7 +1594,8 @@
                 } else if (note.type === "list") {
                     const listPreview = document.createElement("div");
                     listPreview.className = "note-card-list-preview";
-                    const itemsToShow = note.listItems.slice(0, 3);
+                    const listItems = note.listItems || [];
+                    const itemsToShow = listItems.slice(0, 3);
                     itemsToShow.forEach(item => {
                         const listItem = document.createElement("div");
                         listItem.className = "note-card-list-item";
@@ -1556,10 +1608,10 @@
                         listItem.appendChild(itemText);
                         listPreview.appendChild(listItem);
                     });
-                    if (note.listItems.length > 3) {
+                    if (listItems.length > 3) {
                         const moreItems = document.createElement("div");
                         moreItems.className = "note-card-list-item";
-                        moreItems.textContent = `+ ${note.listItems.length - 3} more items`;
+                        moreItems.textContent = `+ ${listItems.length - 3} more items`;
                         listPreview.appendChild(moreItems);
                     }
                     contentSection.appendChild(listPreview);
@@ -2343,7 +2395,21 @@
           cancelBtn.onclick = () => { modal.classList.remove('show'); if (onCancel) onCancel(); };
           modal.onclick = (e) => { if (e.target === modal) { modal.classList.remove('show'); if (onCancel) onCancel(); } };
       }
-  </script>
+
+      // Settings button functionality
+      document.getElementById('settingsBtn').addEventListener('click', function() {
+        window.location.href = 'settings.html';
+      });
+
+      // Theme toggle functionality
+      document.getElementById('themeToggle').addEventListener('click', () => {
+        const bodyIsDarkNow = document.body.classList.toggle('dark-mode');
+        // Update the shared 'darkMode' localStorage item
+        localStorage.setItem('darkMode', bodyIsDarkNow ? 'enabled' : 'disabled');
+        // The parent's 'storage' event listener will pick this up and update parent UI.
+        // CSS handles local icon changes.
+      });
+    </script>
 
 </body>
 </html>
