@@ -161,6 +161,44 @@
   .header-actions { display: flex; align-items: center; gap: 1rem; }
   .header-btn.theme-toggle, #themeToggle { display: none !important; }
 
+  .header-settings-btn {
+    display: none;
+  }
+
+  .header-logout-btn {
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+
+  .header-logout-btn:hover {
+    background: rgba(255, 0, 0, 0.1);
+    color: #ff4444;
+  }
+
+  @media (max-width: 700px) {
+    .header-settings-btn {
+      display: flex !important;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+    .header-settings-btn:hover {
+      background: var(--accent);
+      color: white;
+    }
+  }
+
   /* Collapsible panel for input - Updated styling */
   .collapsible {
     background: var(--card-bg); border: 1px solid var(--card-border);
@@ -1019,6 +1057,26 @@
   @media (max-width: 700px) {
     .theme-toggle-btn { display: inline-flex; }
   }
+
+  /* Hide scrollbar for Chrome, Safari, and Opera */
+::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+}
+
+/* Hide scrollbar for IE, Edge, and Firefox */
+html, body {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+  overflow: -moz-scrollbars-none;  /* Older Firefox */
+}
+
+/* Ensure scrolling still works */
+body {
+  overflow: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
 </style>
 </head>
 <body>
@@ -1028,6 +1086,9 @@
   <header class="app-header">
     <h1 class="app-title"><span class="app-logo"><i class="fa-solid fa-list-check"></i></span> Task Manager</h1>
     <div class="header-actions">
+      <button class="header-settings-btn" id="header-settings-btn" title="Settings">
+        <i class="fas fa-cog"></i>
+      </button>
       <button class="theme-toggle" id="themeToggle">
         <i class="fa-solid fa-sun"></i>
         <i class="fa-solid fa-moon"></i>
@@ -1589,6 +1650,11 @@ Phase 2:
     cancelBtn.onclick = () => { modal.classList.remove('show'); if (onCancel) onCancel(); };
     modal.onclick = (e) => { if (e.target === modal) { modal.classList.remove('show'); if (onCancel) onCancel(); } };
   }
+
+  // Settings button functionality
+  document.getElementById('header-settings-btn').addEventListener('click', function() {
+    window.location.href = 'settings.html';
+  });
 </script>
 </body>
 </html>
