@@ -620,6 +620,107 @@
     .vertical-panel-narrow.hide-arrow .expand-button {
       display: none !important;
     }
+
+    /* Hide scrollbar for Chrome, Safari, and Opera */
+::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+}
+
+/* Hide scrollbar for IE, Edge, and Firefox */
+html, body {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+  overflow: -moz-scrollbars-none;  /* Older Firefox */
+}
+
+/* Ensure scrolling still works */
+body {
+  overflow: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+@media (max-width: 700px) {
+  .vertical-panel-narrow {
+    width: 100vw;
+    height: auto;
+    min-height: unset;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    top: unset;
+    border-right: none;
+    border-top: 1px solid var(--card-border);
+    box-shadow: 0 -2px 16px rgba(0,0,0,0.08);
+    z-index: 100;
+    padding: 0;
+  }
+  .vertical-panel-narrow .logo-container,
+  .vertical-panel-narrow .spacer,
+  .vertical-panel-narrow .user-profile {
+    display: none !important;
+  }
+  .vertical-panel-narrow .nav-icons-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100vw;
+    gap: 0;
+    padding: 0.5rem 1rem;
+  }
+  .vertical-panel-narrow .nav-item {
+    margin-bottom: 0;
+    margin-right: 0;
+    margin-left: 0;
+    border-radius: 10px;
+    width: 44px;
+    height: 44px;
+    font-size: 1.2rem;
+    flex: 0 0 auto;
+  }
+  .vertical-panel-narrow .nav-item i {
+    font-size: 1.3rem;
+  }
+  .vertical-panel-narrow .logout {
+    display: none !important;
+  }
+  .main-content, .main-content-expanded {
+    margin-left: 0 !important;
+    margin-bottom: 60px !important;
+  }
+  .vertical-panel-narrow .nav-icons-group {
+    flex-wrap: wrap;
+  }
+  .vertical-panel-narrow .nav-item[data-page="chatbot.html"] {
+    order: 1;
+  }
+  .vertical-panel-narrow .nav-item[data-page="taskManager.html"] {
+    order: 2;
+  }
+  .vertical-panel-narrow .nav-item[data-page="dashboard.html"] {
+    order: 3;
+  }
+  .vertical-panel-narrow .nav-item[data-page="notes.html"] {
+    order: 4;
+  }
+  .vertical-panel-narrow .nav-item[data-page="attendance.html"] {
+    order: 5;
+  }
+  .vertical-panel-narrow .nav-item[data-page="settings.html"] {
+    display: none !important;
+  }
+  .vertical-panel-narrow .nav-item#darkToggle {
+    display: none !important;
+  }
+  .vertical-panel-narrow .nav-icons-group {
+    justify-content: space-evenly;
+  }
+}
   </style>
 </head>
 <body>
@@ -632,27 +733,28 @@
   <img class="logo logo-dark" src="../logos/logo-dark.png" alt="logo" style="display: none;">
   <div class="expand-button"><i class="fas fa-chevron-right"></i></div>
 </div>
-
-      <div class="nav-item active" data-page="dashboard.html">
-        <i class="fas fa-th-large" title="Dashboard"></i>
-      </div>
-      <div class="nav-item" data-page="chatbot.html">
-        <i class="fa-solid fa-robot" title="AI Chatbot"></i>
-      </div>
-      <div class="nav-item" data-page="notes.html">
-        <i class="fas fa-sticky-note" title="Notes"></i>
-      </div>
-      <div class="nav-item" data-page="taskManager.html">
-        <i class="fas fa-tasks" title="Task Manager"></i>
-      </div>
-      <div class="nav-item" data-page="attendance.html">
-        <i class="fa-solid fa-calendar-days" title="Attendance Calculator"></i>
-      </div>
-      <div class="nav-item" data-page="settings.html">
-        <i class="fas fa-cog" title="Settings"></i>
-      </div>
-      <div class="nav-item" id="darkToggle">
-        <i class="fas fa-moon" title="Dark Mode"></i>
+      <div class="nav-icons-group">
+        <div class="nav-item" data-page="chatbot.html">
+          <i class="fa-solid fa-robot" title="AI Chatbot"></i>
+        </div>
+        <div class="nav-item" data-page="taskManager.html">
+          <i class="fas fa-tasks" title="Task Manager"></i>
+        </div>
+        <div class="nav-item active" data-page="dashboard.html">
+          <i class="fas fa-th-large" title="Dashboard"></i>
+        </div>
+        <div class="nav-item" data-page="notes.html">
+          <i class="fas fa-sticky-note" title="Notes"></i>
+        </div>
+        <div class="nav-item" data-page="attendance.html">
+          <i class="fa-solid fa-calendar-days" title="Attendance Calculator"></i>
+        </div>
+        <div class="nav-item" data-page="settings.html">
+          <i class="fas fa-cog" title="Settings"></i>
+        </div>
+        <div class="nav-item" id="darkToggle">
+          <i class="fas fa-moon" title="Dark Mode"></i>
+        </div>
       </div>
       <div class="spacer"></div>
       <div class="user-profile">
