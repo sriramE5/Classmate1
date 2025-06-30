@@ -527,7 +527,49 @@
         width: 40px;
         height: 40px;
     }
+    .header-settings-btn {
+      display: flex !important;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+    .header-settings-btn:hover {
+      background: var(--accent);
+      color: white;
+    }
   }
+
+  .header-settings-btn { display: none; }
+  @media (max-width: 700px) { .header-settings-btn { display: flex !important; } }
+
+/* Hide scrollbar for Chrome, Safari, and Opera */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge, and Firefox */
+html {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
+/* Ensure scrolling still works */
+body {
+  overflow: hidden;
+  height: 100vh;
+}
+
+.container {
+  overflow-y: auto;  /* Allow scrolling inside container */
+  height: calc(100vh - 70px);  /* Subtract header height */
+  padding-bottom: 20px;
+}
+  
 </style>
 </head>
 <body>
@@ -544,6 +586,9 @@
     <div class="header-actions">
       <button class="btn btn-primary refresh-btn" id="refreshBtn"> <!-- Added .btn .btn-primary -->
         <i class="fas fa-sync-alt"></i> <span>Refresh Data</span>
+      </button>
+      <button class="header-settings-btn" id="header-settings-btn" title="Settings">
+        <i class="fas fa-cog"></i>
       </button>
       <button class="theme-toggle" id="themeToggle" title="Toggle Theme">
         <i class="fas fa-sun"></i>
@@ -963,6 +1008,11 @@
 
   refreshBtn.addEventListener('click', refreshData);
   themeToggle.addEventListener('click', toggleTheme);
+
+  // Settings button functionality
+  document.getElementById('header-settings-btn').addEventListener('click', function() {
+    window.location.href = 'settings.html';
+  });
 
   window.addEventListener('DOMContentLoaded', initDashboard);
 </script>
