@@ -932,11 +932,13 @@
 
       .input-container {
         position: fixed;
-        bottom: 0;
+        bottom: 80px !important;
         left: 0;
         right: 0;
-        z-index: 1000;
-        padding-bottom: env(safe-area-inset-bottom, 1rem); /* iOS safe area support */
+        z-index: 1002;
+        background: var(--bg);
+        box-shadow: 0 -2px 16px rgba(0,0,0,0.08);
+        padding-bottom: env(safe-area-inset-bottom, 1rem);
       }
     }
 
@@ -1221,9 +1223,51 @@
 
     @media (max-width: 700px) {
       .theme-toggle-btn { display: inline-flex; }
+      header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        z-index: 1001;
+      }
+      .main-content {
+        padding-top: 70px !important;
+        padding-bottom: 90px !important;
+      }
+      .chat-container {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+      }
+      .input-container {
+        position: fixed;
+        bottom: 80px !important;
+        left: 0;
+        right: 0;
+        z-index: 1002;
+        background: var(--bg);
+        box-shadow: 0 -2px 16px rgba(0,0,0,0.08);
+        padding-bottom: env(safe-area-inset-bottom, 1rem);
+      }
+      .header-settings-btn {
+        display: flex !important;
+        background: none;
+        border: none;
+        color: var(--text-primary);
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+      }
+      .header-settings-btn:hover {
+        background: rgba(0, 0, 0, 0.1);
+      }
     }
 
     .theme-toggle-btn, #themeToggle { display: none !important; }
+
+    .header-settings-btn { display: none; }
+    @media (max-width: 700px) { .header-settings-btn { display: flex !important; } }
 
   </style>
 </head>
@@ -1258,6 +1302,9 @@
   <span class="classmate-title">Classmate AI</span>
 </div>-->
 <div class="header-right">
+  <button class="header-settings-btn" id="header-settings-btn" title="Settings">
+    <i class="fas fa-cog"></i>
+  </button>
   <button class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle Dark Mode">
     <i class="fas fa-moon"></i> <!-- Initial icon, will be updated by JS -->
   </button>
@@ -2451,6 +2498,18 @@ document.querySelectorAll('.dialog-modal').forEach(dialog => {
         }
     }
 
+    // Settings button functionality
+    document.getElementById('header-settings-btn').addEventListener('click', function() {
+      window.location.href = 'settings.html';
+    });
+
+    // Logout button functionality
+    // DELETE the line: document.getElementById('header-logout-btn').addEventListener('click', function() { ... });
+    // DELETE the entire function handleLogout() { ... }
+    // DELETE the entire function addLogoutButton() { ... }
+    // ... existing code ...
+
+    // Theme toggle functionality
 </script>
 </body>
 </html>
