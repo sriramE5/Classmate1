@@ -1144,7 +1144,20 @@ body {
       });
       
       // On page load, set iframe src to last visited page or default
-      const lastVisitedPage = localStorage.getItem('lastVisitedPage') || 'dashboard.html';
+      let lastVisitedPage = localStorage.getItem('lastVisitedPage');
+      // If not set or not a valid page, default to dashboard.html
+      const validPages = [
+        'dashboard.html',
+        'chatbot.html',
+        'notes.html',
+        'taskManager.html',
+        'attendance.html',
+        'settings.html'
+      ];
+      if (!lastVisitedPage || !validPages.includes(lastVisitedPage)) {
+        lastVisitedPage = 'dashboard.html';
+        localStorage.setItem('lastVisitedPage', lastVisitedPage);
+      }
       contentFrame.src = lastVisitedPage;
       // Set active class on nav items to match last visited page
       document.querySelectorAll('.nav-item, .nav-item-expanded').forEach(item => {
