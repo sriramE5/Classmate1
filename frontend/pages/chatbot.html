@@ -1238,6 +1238,7 @@
         left: 0;
         width: 100vw;
         z-index: 1001;
+        margin-bottom: 0;
       }
       .main-content {
         padding-top: 70px !important;
@@ -1249,13 +1250,15 @@
       }
       .input-container {
         position: fixed;
-        bottom: 80px !important;
+        bottom: 0;
         left: 0;
         right: 0;
-        z-index: 1002;
+        padding: 1rem;
         background: var(--bg);
+        border-top: 1px solid var(--border-color);
+        z-index: 1000;
         box-shadow: 0 -2px 16px rgba(0,0,0,0.08);
-        padding-bottom: env(safe-area-inset-bottom, 1rem);
+        padding-bottom: calc(env(safe-area-inset-bottom, 1rem) + 60px); /* Increased for nav bar */
       }
       .header-settings-btn {
         display: flex !important;
