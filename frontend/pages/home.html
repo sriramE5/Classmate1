@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -722,6 +721,21 @@ body {
     justify-content: space-evenly;
   }
 }
+
+/* Show expand arrow only on hover in static mode */
+.vertical-panel-narrow .expand-button {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.vertical-panel-narrow:hover .expand-button {
+  opacity: 1;
+  pointer-events: auto;
+}
+.vertical-panel-narrow.hide-arrow .expand-button {
+  display: none !important;
+  opacity: 0 !important;
+}
   </style>
 </head>
 <body>
@@ -735,17 +749,17 @@ body {
   <div class="expand-button"><i class="fas fa-chevron-right"></i></div>
 </div>
       <div class="nav-icons-group">
+        <div class="nav-item" data-page="dashboard.html">
+          <i class="fa-solid fa-chart-column" title="Dashboard"></i>
+        </div>
         <div class="nav-item" data-page="chatbot.html">
           <i class="fa-solid fa-robot" title="AI Chatbot"></i>
         </div>
-        <div class="nav-item" data-page="taskManager.html">
-          <i class="fas fa-tasks" title="Task Manager"></i>
-        </div>
-        <div class="nav-item active" data-page="dashboard.html">
-          <i class="fas fa-th-large" title="Dashboard"></i>
-        </div>
         <div class="nav-item" data-page="notes.html">
           <i class="fas fa-sticky-note" title="Notes"></i>
+        </div>
+        <div class="nav-item" data-page="taskManager.html">
+          <i class="fas fa-tasks" title="Task Manager"></i>
         </div>
         <div class="nav-item" data-page="attendance.html">
           <i class="fa-solid fa-calendar-days" title="Attendance Calculator"></i>
@@ -787,11 +801,11 @@ body {
       <div class="panel-section">
         <div class="section-header">MENU</div>
         <div class="nav-item-expanded active" data-page="dashboard.html">
-          <div class="nav-icon"><i class="fas fa-th-large"></i></div>
+          <div class="nav-icon"><i class="fa-solid fa-chart-column"></i></div>
           <span class="nav-text">Dashboard</span>
         </div>
         <div class="nav-item-expanded" data-page="chatbot.html">
-          <div class="nav-icon"><i class="fas fa-comment-dots"></i></div>
+          <div class="nav-icon"><i class="fa-solid fa-robot"></i></div>
           <span class="nav-text">AI Chatbot</span>
         </div>
         <div class="nav-item-expanded" data-page="notes.html">
@@ -980,10 +994,12 @@ body {
 
       // Function to handle panel expansion
       const expandPanel = () => {
-        narrowPanel.style.display = "none";
-        expandedPanel.style.display = "flex";
-        mainContent.classList.add("main-content-expanded");
-        localStorage.setItem("panelState", "expanded");
+        if (window.innerWidth > 700) {
+          narrowPanel.style.display = "none";
+          expandedPanel.style.display = "flex";
+          mainContent.classList.add("main-content-expanded");
+          localStorage.setItem("panelState", "expanded");
+        }
       };
 
       // Function to handle panel collapse
@@ -995,11 +1011,18 @@ body {
       };
 
       // Restore panel state
-      if (localStorage.getItem("panelState") === "expanded") {
+      if (window.innerWidth > 700 && localStorage.getItem("panelState") === "expanded") {
         expandPanel();
       } else {
         collapsePanel(); 
       }
+
+      // Always collapse panel on resize to mobile
+      window.addEventListener('resize', () => {
+        if (window.innerWidth <= 700) {
+          collapsePanel();
+        }
+      });
 
       // --- Expand Panel Behavior Mode ---
       function applyPanelExpandMode() {
@@ -1014,6 +1037,8 @@ body {
         narrowPanel.onmouseleave = null;
         expandedPanel.onmouseenter = null;
         expandedPanel.onmouseleave = null;
+        // Remove previous click listener
+        narrowPanel.onclick = null;
         if (mode === 'hover') {
           // Hover to expand/collapse
           narrowPanel.onmouseenter = expandPanel;
@@ -1024,6 +1049,17 @@ body {
           if (newExpandBtn) newExpandBtn.addEventListener('click', expandPanel);
           if (newCollapseBtn) newCollapseBtn.addEventListener('click', collapsePanel);
           narrowPanel.classList.remove('hide-arrow');
+          // Allow clicking anywhere on the panel except icons to expand
+          narrowPanel.onclick = function(e) {
+            // Don't expand if clicking on nav-item, darkToggle, or logout
+            const isNavItem = e.target.closest('.nav-item');
+            const isDarkToggle = e.target.closest('#darkToggle');
+            const isLogout = e.target.closest('#logoutBtnNarrow');
+            const isExpandBtn = e.target.closest('.expand-button');
+            if (!isNavItem && !isDarkToggle && !isLogout && !isExpandBtn) {
+              expandPanel();
+            }
+          };
         }
       }
       applyPanelExpandMode();
@@ -1121,6 +1157,10 @@ body {
 
       navItems.forEach((item) => {
         item.addEventListener("click", (e) => {
+          // Prevent default navigation for anchor tags
+          if (e.target.tagName === 'A' || e.target.closest('a')) {
+            e.preventDefault();
+          }
           const isLinkInside = e.target.closest('a'); 
           
           const targetIsToggle = item.id === "darkToggle" || item.id === "darkToggleExpanded";
@@ -1143,7 +1183,12 @@ body {
             document.querySelectorAll(`.nav-item[data-page="${pageToLoad}"], .nav-item-expanded[data-page="${pageToLoad}"]`).forEach(match => {
                 match.classList.add("active");
             });
-            contentFrame.src = pageToLoad; 
+            // Always load in iframe, never navigate top-level
+            if (contentFrame) {
+              contentFrame.src = pageToLoad;
+            }
+            // Prevent any default navigation
+            e.preventDefault();
             localStorage.setItem('lastVisitedPage', pageToLoad); // Save last visited page
           }
         });
