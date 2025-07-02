@@ -9,3 +9,4 @@ pymongo
 certifi
 google-genai
 markdown2
+motor
