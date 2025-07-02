@@ -853,118 +853,127 @@
     }
 
     @media (max-width: 1024px) {
-      /* Medium screens and below - treat like mobile */
-      .sidebar {
-        position: fixed;
-        left: calc(-1 * var(--sidebar-width)); 
-        top: 0;
-        height: 100%;
-        z-index: 1010;
-        box-shadow: 2px 0 5px rgba(0,0,0,0.2);
-        opacity: 1;
-        pointer-events: auto;
-        width: 85%; /* Slightly narrower on mobile */
-        max-width: var(--sidebar-width);
-        /* Sidebar is closed by default on mobile (no 'open' class initially) */
-      }
-      
-      .sidebar.open {
-        left: 0;
-      }
-      
-      .sidebar.open + .sidebar-overlay {
-        display: block;
-      }
-      
-      .sidebar.collapsed {
-        /* This class is mainly for desktop, ensure mobile default is closed */
-        left: calc(-1 * var(--sidebar-width)); 
-        opacity: 0;
-        pointer-events: none;
-      }
-      
-      .menu-toggle {
-        display: block; 
-      }
-      
-      .header-sidebar-toggle-btn {
-        display: none; 
-      }
-      
-      .header-center {
-        position: static;
-        transform: none;
-        flex-grow: 1;
-        text-align: center;
-      }
-      
-      header { 
-        padding: 0 1rem; 
-        justify-content: space-between;
-      }
-      
-      .chat-container, .input-container { 
-        padding: 1rem; 
-      }
-      
-      .message { 
-        max-width: 90%; 
-      }
-      
-      .bot { 
-        padding-right: 30px; 
-      }
-      
-      .message pre { 
-        padding-right: 50px; 
-      }
-      
-      #user-input { 
-        font-size: 0.95rem; 
-      }
-      
-      
-      main {
-        /* Adjust height calculation if needed based on input container changes */
-        height: calc(100vh - var(--header-height) - 100px); /* Approximate adjustment */
-        margin-bottom: 100px; /* Approximate adjustment */
-      }
+    /* Mobile layout fixes */
+    body {
+        overflow: hidden;
+        height: 100vh;
+    }
 
-      .input-container {
+    header {
         position: fixed;
-        bottom: 80px !important;
+        top: 0;
         left: 0;
         right: 0;
-        z-index: 1002;
-        background: var(--bg);
-        box-shadow: 0 -2px 16px rgba(0,0,0,0.08);
-        padding-bottom: env(safe-area-inset-bottom, 1rem);
-      }
+        z-index: 1001;
+        margin-bottom: 0;
     }
 
-    /* Additional adjustments for very small screens */
-    @media (max-width: 480px) {
-      .header-center {
-        font-size: 1rem;
-      }
-      
-      .message {
-        max-width: 95%;
-      }
-      
-      
-      
-      .input-buttons {
-        gap: 4px; /* Reduce gap slightly */
-      }
-      .input-button {
-        font-size: 1rem; /* Slightly smaller buttons */
-        padding: 6px;
-      }
-      #todo-list-option {
-        font-size: 1rem;
-      }
+    .main-content {
+        padding-top: var(--header-height);
+        padding-bottom: 120px; /* Space for input container */
+        height: 100vh;
+        overflow: hidden;
     }
+
+    .chat-container {
+        height: calc(100vh - var(--header-height) - 120px);
+        overflow-y: auto;
+        padding: 1rem;
+    }
+
+    .input-container {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 1rem;
+        background: var(--bg);
+        border-top: 1px solid var(--border-color);
+        z-index: 1000;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        height: 100vh;
+        width: 85%;
+        max-width: 320px;
+        z-index: 1010;
+        transition: left 0.3s ease;
+    }
+
+    .sidebar.open {
+        left: 0;
+    }
+
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 1005;
+    }
+
+    .sidebar.open + .sidebar-overlay {
+        display: block;
+    }
+
+    /* Adjust input wrapper for mobile */
+    .input-wrapper {
+        min-height: 50px;
+        padding: 8px 12px;
+    }
+
+    #user-input {
+        min-height: 40px;
+        max-height: 120px;
+    }
+
+    /* Button adjustments */
+    .input-button {
+        padding: 6px;
+        font-size: 1rem;
+    }
+
+    /* Hide header center on small screens */
+    .header-center {
+        display: none;
+    }
+
+    /* Adjust title size */
+    .classmate-title {
+        font-size: 1.2rem;
+        margin-left: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Extra small screen adjustments */
+    .chat-container {
+        padding: 0.75rem;
+    }
+
+    .input-container {
+        padding: 0.75rem;
+    }
+
+    .message {
+        max-width: 90%;
+    }
+
+    .input-buttons {
+        gap: 4px;
+    }
+
+    .classmate-title {
+        font-size: 1.1rem;
+    }
+}
     
     /* Drag and drop styles */
     .drag-area {
@@ -1596,24 +1605,20 @@ Remember to break your goals into phases and tasks.`;
     // --- END OF THEME SYNCHRONIZATION LOGIC ---
 
 
-    // Sidebar toggle functionality
-    function toggleSidebar() {
-        const mobileView = isMobileView();
-        if (mobileView) {
-            sidebar.classList.toggle("open");
-            sidebarOverlay.style.display = sidebar.classList.contains("open") ? "block" : "none";
-            sidebar.classList.remove("collapsed");
-            appContainer.classList.remove("sidebar-hidden");
-        } else {
-            sidebar.classList.toggle("collapsed");
-            appContainer.classList.toggle("sidebar-hidden");
-            localStorage.setItem("sidebarState_ClassMate", sidebar.classList.contains("collapsed") ? "collapsed" : "open");
-            sidebar.classList.remove("open");
-            sidebarOverlay.style.display = "none";
-        }
-        updateToggleButtonVisibility();
+    // Update the toggleSidebar function to handle mobile properly
+function toggleSidebar() {
+    const mobileView = isMobileView();
+    if (mobileView) {
+        sidebar.classList.toggle("open");
+        sidebarOverlay.style.display = sidebar.classList.contains("open") ? "block" : "none";
+        document.body.style.overflow = sidebar.classList.contains("open") ? "hidden" : "auto";
+    } else {
+        sidebar.classList.toggle("collapsed");
+        appContainer.classList.toggle("sidebar-hidden");
+        localStorage.setItem("sidebarState_ClassMate", sidebar.classList.contains("collapsed") ? "collapsed" : "open");
     }
-    
+    updateToggleButtonVisibility();
+}
     sidebarToggleBtn.addEventListener("click", toggleSidebar);
     headerSidebarToggleBtn.addEventListener("click", toggleSidebar);
     menuToggle.addEventListener("click", toggleSidebar);
@@ -2412,39 +2417,35 @@ document.querySelectorAll('.dialog-modal').forEach(dialog => {
     }
 
 
-    window.addEventListener("resize", () => {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(() => {
-            if (!isInitialLoad) { 
-                const mobileView = isMobileView();
-                const isCurrentlyOpenMobile = sidebar.classList.contains("open");
-                const isCurrentlyCollapsedDesktop = sidebar.classList.contains("collapsed");
-
-                if (mobileView) {
-                    sidebar.classList.remove("collapsed"); 
-                    appContainer.classList.remove("sidebar-hidden");
-                    if (!isCurrentlyOpenMobile) {
-                        sidebar.classList.remove("open");
-                        sidebarOverlay.style.display = "none";
-                    } else {
-                         sidebarOverlay.style.display = "block"; 
-                    }
-                } else {
-                    sidebar.classList.remove("open"); 
-                    sidebarOverlay.style.display = "none";
-                    const savedState = localStorage.getItem("sidebarState_ClassMate");
-                    if (savedState === "collapsed" || isCurrentlyCollapsedDesktop) {
-                         sidebar.classList.add("collapsed");
-                         appContainer.classList.add("sidebar-hidden");
-                    } else {
-                         sidebar.classList.remove("collapsed");
-                         appContainer.classList.remove("sidebar-hidden");
-                    }
-                }
-                updateToggleButtonVisibility();
+    // Update the resize handler
+window.addEventListener("resize", () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        const mobileView = isMobileView();
+        if (mobileView) {
+            // Ensure sidebar is closed by default on mobile
+            if (!sidebar.classList.contains("open")) {
+                sidebar.style.left = "-100%";
+                sidebarOverlay.style.display = "none";
+                document.body.style.overflow = "auto";
             }
-        }, 250); 
-    });
+        } else {
+            // Desktop behavior
+            const savedState = localStorage.getItem("sidebarState_ClassMate");
+            if (savedState === "collapsed") {
+                sidebar.classList.add("collapsed");
+                appContainer.classList.add("sidebar-hidden");
+            } else {
+                sidebar.classList.remove("collapsed");
+                appContainer.classList.remove("sidebar-hidden");
+            }
+            sidebar.style.left = "";
+            sidebarOverlay.style.display = "none";
+            document.body.style.overflow = "auto";
+        }
+        updateToggleButtonVisibility();
+    }, 250);
+});
 
     initializeApp();
 
