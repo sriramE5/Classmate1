@@ -1409,7 +1409,6 @@
     const sidebarSearchBtn = document.getElementById("sidebar-search-btn");
     const sidebarSearchInput = document.getElementById("sidebar-search-input");
     const serverUrl = "https://classmate1-ffw7.onrender.com";
-    const API_URL = "https://classmate-juji.onrender.com"; // API for Notes & Tasks
     const style = document.createElement("style"); 
     const toast = document.getElementById("toast");
     const themeToggleBtn = document.getElementById("theme-toggle-btn");
@@ -1498,29 +1497,6 @@ Remember to break your goals into phases and tasks.`;
     function getAuthToken() {
         return localStorage.getItem('auth_token');
     }
-
-    async function fetchWithAuth(url, options = {}) {
-        const token = getAuthToken();
-        if (!token) {
-            window.location.href = 'Login page.html'; 
-            throw new Error("User not authenticated");
-        }
-
-        const headers = {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-            ...options.headers,
-        };
-
-        const response = await fetch(url, { ...options, headers });
-
-        if (response.status === 401) {
-            window.location.href = 'Login page.html';
-            throw new Error("Session expired");
-        }
-        return response;
-    }
-
 
     async function fetchUserSettings() {
         const token = getAuthToken();
@@ -2496,49 +2472,40 @@ window.addEventListener("resize", () => {
         return hasGoal && (hasPhase || hasTasks) && hasStructure;
     }
 
-    async function saveToTaskMaster(content) {
-        const newTask = {
-            text: content,
-            pinned: false,
-            highlighted: false,
-            checkbox_states: {}
-        };
+    function saveToTaskMaster(content) {
         try {
-            const response = await fetchWithAuth(`${API_URL}/api/tasks`, {
-                method: 'POST',
-                body: JSON.stringify([newTask]) // API expects an array of tasks
+            const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            tasks.push({ 
+                text: content, 
+                pinned: false,
+                highlighted: false,
+                id: Date.now().toString() 
             });
-            if (!response.ok) {
-                throw new Error('Failed to save the task to the database.');
-            }
+            localStorage.setItem("tasks", JSON.stringify(tasks));
             showToast("To-do list saved to Task Manager!");
-        } catch (error) {
-            console.error("Failed to save to Task Manager:", error);
+        } catch (e) {
+            console.error("Failed to save to Task Manager:", e);
             showToast("Error saving To-Do list.", "error");
         }
     }
 
-    async function saveToNotes(title, content) {
-        const newNote = {
-            title: title.substring(0, 50) || "Untitled Note",
-            content: content,
-            type: "text",
-            pinned: false,
-            highlighted: false,
-            listItems: [],
-            attachments: []
-        };
+    function saveToNotes(title, content) {
         try {
-            const response = await fetchWithAuth(`${API_URL}/api/notes`, {
-                method: 'POST',
-                body: JSON.stringify(newNote)
+            const notes = JSON.parse(localStorage.getItem("notes")) || [];
+            const timestamp = new Date().toISOString();
+            notes.push({ 
+                id: Date.now().toString(),
+                title: title.substring(0, 50) || "Untitled Note", 
+                content: content,
+                created: timestamp,
+                updated: timestamp,
+                type: "text", 
+                timestamp: timestamp 
             });
-            if (!response.ok) {
-                throw new Error('Failed to save the note to the database.');
-            }
-            showToast("Saved to Notes!");
-        } catch (error) {
-            console.error("Failed to save note:", error);
+            localStorage.setItem("notes", JSON.stringify(notes));
+            showToast("Saved to notes!");
+        } catch (e) {
+            console.error("Failed to save note:", e);
             showToast("Error saving note.", "error");
         }
     }
