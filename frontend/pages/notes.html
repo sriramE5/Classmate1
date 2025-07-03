@@ -99,33 +99,6 @@
             overflow-y: auto;
             overflow-x: hidden; /* Prevent horizontal scrolling */
         }
-        
-        /* Page Loader */
-        #page-loader-notes {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--bg);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-            opacity: 1;
-            transition: opacity 0.3s ease-out;
-        }
-        #page-loader-notes .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid var(--text-secondary);
-            border-top-color: var(--accent);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
 
         .grid-bg {
             position: fixed;
@@ -629,9 +602,6 @@
             font-size: 1em;
             font-family: var(--font-primary);
             transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .btn-cancel {
@@ -1348,9 +1318,6 @@
     </style>
 </head>
 <body>
-    <div id="page-loader-notes">
-        <div class="spinner"></div>
-    </div>
 
     <header>
         <h1 class="notes-title"><i class="fa-solid fa-note-sticky"></i> My Notes</h1>
@@ -1477,7 +1444,7 @@
         <div class="attachment-viewer-content">
             <div class="attachment-viewer-header">
                 <div class="attachment-viewer-title">Attachment</div>
-                <button class="attachment-viewer-close">×</button>
+                <button class="attachment-viewer-close">&times;</button>
             </div>
             <div class="attachment-viewer-body" id="attachmentViewerBody">
                 <!-- Content will be dynamically inserted here -->
@@ -1497,638 +1464,952 @@
         </div>
     </div>
 
-
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            // --- State ---
-            let notes = [];
-            let currentNoteType = "text";
-            let editingNoteId = null;
-            let viewingNoteId = null;
-            let currentAttachments = [];
+      document.addEventListener("DOMContentLoaded", () => {
+          // Initialize notes from localStorage
+          let notes = JSON.parse(localStorage.getItem("notes")) || [];
+          
+          const mainFab = document.getElementById("mainFab");
+          const fabOptions = document.getElementById("fabOptions");
+          const textNoteBtn = document.getElementById("textNoteBtn");
+          const listNoteBtn = document.getElementById("listNoteBtn");
+          
+          const noteEditorModal = document.getElementById("noteEditorModal");
+          const modalTitle = document.getElementById("modalTitle");
+          const saveNoteBtn = document.getElementById("saveNoteBtn");
+          const cancelNoteBtn = document.getElementById("cancelNoteBtn");
+          const noteTitleInput = document.getElementById("noteTitleInput");
+          const noteContentInput = document.getElementById("noteContentInput");
+          const textNoteContent = document.getElementById("textNoteContent");
+          const listNoteContent = document.getElementById("listNoteContent");
+          const listItemsContainer = document.getElementById("listItemsContainer");
+          const addListItemBtn = document.getElementById("addListItemBtn");
+          
+          const noteViewModal = document.getElementById("noteViewModal");
+          const viewModalTitle = document.getElementById("viewModalTitle");
+          const viewNoteTitle = document.getElementById("viewNoteTitle");
+          const viewTextContent = document.getElementById("viewTextContent");
+          const viewListContent = document.getElementById("viewListContent");
+          const viewAttachments = document.getElementById("viewAttachments");
+          const closeViewBtn = document.getElementById("closeViewBtn");
+          const editNoteBtn = document.getElementById("editNoteBtn");
+          const viewMenuButton = document.getElementById("viewMenuButton");
+          const viewMenuDropdown = document.getElementById("viewMenuDropdown");
+          const editNoteMenuItem = document.getElementById("editNoteMenuItem");
+          const pinNoteMenuItem = document.getElementById("pinNoteMenuItem");
+          const deleteNoteMenuItem = document.getElementById("deleteNoteMenuItem");
+          
+          const notesContainer = document.getElementById("notesContainer");
+          const emptyNotesMessage = document.getElementById("emptyNotesMessage");
+          const fileInput = document.getElementById("fileInput");
+          const attachmentsPreview = document.getElementById("attachmentsPreview");
+          const attachmentViewerModal = document.getElementById("attachmentViewerModal");
+          const attachmentViewerBody = document.getElementById("attachmentViewerBody");
+          const attachmentViewerClose = document.querySelector(".attachment-viewer-close");
+          
+          let currentNoteType = "text";
+          let editingNoteIndex = null;
+          let viewingNoteIndex = null;
+          let currentAttachments = [];
+          let isPinned = false;
+          let activeMenuNoteIndex = null;
+          
+          // --- FAB Logic ---
+          mainFab.addEventListener("click", () => {
+              fabOptions.classList.toggle("show");
+              mainFab.classList.toggle("active"); // Toggle active class for rotation
+          });
+          
+          textNoteBtn.addEventListener("click", () => {
+              openCreateModal("text");
+              fabOptions.classList.remove("show");
+              mainFab.classList.remove("active"); // Remove active class
+          });
+          
+          listNoteBtn.addEventListener("click", () => {
+              openCreateModal("list");
+              fabOptions.classList.remove("show");
+              mainFab.classList.remove("active"); // Remove active class
+          });
+          
+          // --- Note Rendering Logic ---
+          function renderNotes() {
+            notesContainer.innerHTML = ""; // Clear previous notes
 
-            // --- DOM Elements ---
-            const pageLoader = document.getElementById("page-loader-notes");
-            const mainFab = document.getElementById("mainFab");
-            const fabOptions = document.getElementById("fabOptions");
-            const textNoteBtn = document.getElementById("textNoteBtn");
-            const listNoteBtn = document.getElementById("listNoteBtn");
-            const noteEditorModal = document.getElementById("noteEditorModal");
-            const modalTitle = document.getElementById("modalTitle");
-            const saveNoteBtn = document.getElementById("saveNoteBtn");
-            const cancelNoteBtn = document.getElementById("cancelNoteBtn");
-            const noteTitleInput = document.getElementById("noteTitleInput");
-            const noteContentInput = document.getElementById("noteContentInput");
-            const textNoteContent = document.getElementById("textNoteContent");
-            const listNoteContent = document.getElementById("listNoteContent");
-            const listItemsContainer = document.getElementById("listItemsContainer");
-            const addListItemBtn = document.getElementById("addListItemBtn");
-            const noteViewModal = document.getElementById("noteViewModal");
-            const viewModalTitle = document.getElementById("viewModalTitle");
-            const viewNoteTitle = document.getElementById("viewNoteTitle");
-            const viewTextContent = document.getElementById("viewTextContent");
-            const viewListContent = document.getElementById("viewListContent");
-            const viewAttachments = document.getElementById("viewAttachments");
-            const closeViewBtn = document.getElementById("closeViewBtn");
-            const editNoteBtn = document.getElementById("editNoteBtn");
-            const viewMenuButton = document.getElementById("viewMenuButton");
-            const viewMenuDropdown = document.getElementById("viewMenuDropdown");
-            const editNoteMenuItem = document.getElementById("editNoteMenuItem");
-            const pinNoteMenuItem = document.getElementById("pinNoteMenuItem");
-            const deleteNoteMenuItem = document.getElementById("deleteNoteMenuItem");
-            const notesContainer = document.getElementById("notesContainer");
-            const emptyNotesMessage = document.getElementById("emptyNotesMessage");
-            const fileInput = document.getElementById("fileInput");
-            const attachmentsPreview = document.getElementById("attachmentsPreview");
-            const attachmentViewerModal = document.getElementById("attachmentViewerModal");
-            const attachmentViewerBody = document.getElementById("attachmentViewerBody");
-            const attachmentViewerClose = document.querySelector(".attachment-viewer-close");
-
-            // --- API & Auth ---
-            const API_URL = "https://classmate-juji.onrender.com"; // Your server URL
-
-            function getAuthToken() {
-                return localStorage.getItem('auth_token');
-            }
-
-            async function fetchWithAuth(url, options = {}) {
-                const token = getAuthToken();
-                if (!token) {
-                    // Redirect to login or show error
-                    window.location.href = 'Login page.html'; 
-                    throw new Error("User not authenticated");
-                }
-
-                const headers = {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                    ...options.headers,
-                };
-
-                const response = await fetch(url, { ...options, headers });
-
-                if (response.status === 401) {
-                    // Handle token expiration
-                    window.location.href = 'Login page.html';
-                    throw new Error("Session expired");
-                }
-                return response;
-            }
-
-            async function fetchNotes() {
-                try {
-                    const response = await fetchWithAuth(`${API_URL}/api/notes`);
-                    if (!response.ok) throw new Error("Failed to fetch notes");
-                    notes = await response.json();
-                    // Ensure all note IDs are strings
-                    notes = notes.map(note => ({
-                        ...note,
-                        id: note.id || note._id // Handle both id and _id cases
-                    }));
-                    
-                    renderNotes();
-                } catch (error) {
-                    console.error(error);
-                    showProDialog({ title: "Error", message: "Could not load your notes. Please try again."});
-                }
-            }
-            
-            // --- Note Rendering Logic ---
-            function renderNotes() {
-                notesContainer.innerHTML = ""; 
-
-                if (notes.length === 0) {
+            if (notes.length === 0) {
                     notesContainer.appendChild(emptyNotesMessage);
-                    return;
-                }
-
-                const sortedNotes = [...notes].sort((a, b) => {
-                    if (a.pinned && !b.pinned) return -1;
-                    if (!a.pinned && b.pinned) return 1;
-                    return new Date(b.timestamp) - new Date(a.timestamp);
-                });
-
-                sortedNotes.forEach((note) => {
-                    const noteCard = document.createElement("div");
-                    noteCard.className = "note-card";
-                    if (note.pinned) noteCard.classList.add("pinned");
-                    if (note.highlighted) noteCard.classList.add("highlighted");
-
-                    const noteHeader = document.createElement("div");
-                    noteHeader.className = "note-card-header";
-
-                    const noteTitle = document.createElement("div");
-                    noteTitle.className = "note-card-title";
-                    noteTitle.textContent = note.title || "Untitled Note";
-
-                    const menuButton = document.createElement("button");
-                    menuButton.className = "menu-button";
-                    menuButton.innerHTML = '<i class="fas fa-ellipsis-v"></i>';
-                    menuButton.addEventListener("click", (event) => {
-                        event.stopPropagation();
-                        showNoteMenu(event, note.id);
-                    });
-
-                    noteHeader.appendChild(noteTitle);
-                    noteHeader.appendChild(menuButton);
-                    noteCard.appendChild(noteHeader);
-
-                    const typeTag = document.createElement("div");
-                    typeTag.className = "note-type-tag";
-                    typeTag.innerHTML = note.type === "text" ?
-                        '<i class="fas fa-file-alt" style="margin-right: 4px;"></i> Text' :
-                        '<i class="fas fa-list-ul" style="margin-right: 4px;"></i> List';
-                    noteCard.appendChild(typeTag);
-
-                    const contentSection = document.createElement("div");
-                    contentSection.className = "note-card-content-section";
-
-                    if (note.type === "text") {
-                        const content = document.createElement("div");
-                        content.className = "note-card-content";
-                        content.textContent = note.content;
-                        contentSection.appendChild(content);
-                    } else if (note.type === "list") {
-                        const listPreview = document.createElement("div");
-                        listPreview.className = "note-card-list-preview";
-                        const listItems = note.listItems || [];
-                        const itemsToShow = listItems.slice(0, 3);
-                        itemsToShow.forEach(item => {
-                            const listItem = document.createElement("div");
-                            listItem.className = `note-card-list-item ${item.checked ? 'checked' : ''}`;
-                            listItem.innerHTML = `<i class="far ${item.checked ? 'fa-check-square' : 'fa-square'}" style="margin-right: 4px;"></i><span>${item.text}</span>`;
-                            listPreview.appendChild(listItem);
-                        });
-                        if (listItems.length > 3) {
-                            const moreItems = document.createElement("div");
-                            moreItems.className = "note-card-list-item";
-                            moreItems.textContent = `+ ${listItems.length - 3} more items`;
-                            listPreview.appendChild(moreItems);
-                        }
-                        contentSection.appendChild(listPreview);
-                    }
-
-                    noteCard.appendChild(contentSection);
-
-                    if (note.attachments && note.attachments.length > 0) {
-                        const attachmentsContainer = document.createElement("div");
-                        attachmentsContainer.className = "note-card-attachments";
-                        const attachmentsToShow = note.attachments.slice(0, 3);
-                        attachmentsToShow.forEach(attachment => {
-                            const attachmentEl = document.createElement("div");
-                            attachmentEl.className = "note-card-attachment";
-                            if (attachment.type.startsWith("image/")) {
-                                attachmentEl.innerHTML = `<img src="${attachment.data}" alt="${attachment.name}">`;
-                            } else if (attachment.type === "application/pdf") {
-                                attachmentEl.innerHTML = `<div class="pdf-icon"><i class="fas fa-file-pdf" style="color: #ea4335;"></i><span>PDF</span></div>`;
-                            }
-                            attachmentsContainer.appendChild(attachmentEl);
-                        });
-                        if (note.attachments.length > 3) {
-                            const lastAttachment = attachmentsContainer.lastChild;
-                            const countBadge = document.createElement("div");
-                            countBadge.className = "attachment-count";
-                            countBadge.textContent = `+${note.attachments.length - 2}`;
-                            lastAttachment.appendChild(countBadge);
-                        }
-                        noteCard.appendChild(attachmentsContainer);
-                    }
-
-                    const footer = document.createElement("div");
-                    footer.className = "note-card-footer";
-                    const timestamp = document.createElement("div");
-                    timestamp.className = "note-card-timestamp";
-                    timestamp.textContent = new Date(note.timestamp).toLocaleDateString();
-                    footer.appendChild(timestamp);
-
-                    const statusIcons = document.createElement("div");
-                    statusIcons.className = "note-card-status";
-                    if (note.pinned) {
-                        statusIcons.innerHTML += '<i class="fas fa-thumbtack icon" style="margin-left: 8px; color: var(--accent);"></i>';
-                    }
-                    if (note.highlighted) {
-                        statusIcons.innerHTML += '<i class="fas fa-star icon" style="margin-left: 8px; color: #ffc107;"></i>';
-                    }
-                    footer.appendChild(statusIcons);
-                    noteCard.appendChild(footer);
-
-                    noteCard.addEventListener("click", () =>{
-                        const noteId = note.id || note._id;
-                        openViewModal(note.id)
-                    });
-
-                    notesContainer.appendChild(noteCard);
-                });
+                return;
             }
 
-            // --- List Item Logic ---
-            function addListItem(text = "", checked = false) {
-                const listItem = document.createElement("div");
-                listItem.className = "list-item";
-                
-                const checkbox = document.createElement("input");
-                checkbox.type = "checkbox";
-                checkbox.className = "list-item-checkbox";
-                checkbox.checked = checked;
-                
-                const input = document.createElement("input");
-                input.type = "text";
-                input.className = "list-item-input";
-                input.value = text;
-                input.placeholder = "List item";
-                
-                const removeBtn = document.createElement("button");
-                removeBtn.className = "list-item-remove";
-                removeBtn.innerHTML = "×";
-                removeBtn.addEventListener("click", () => listItem.remove());
-                
-                listItem.append(checkbox, input, removeBtn);
-                listItemsContainer.appendChild(listItem);
-                input.focus();
-            }
-
-            addListItemBtn.addEventListener("click", () => {
-                addListItem();
+            // Map notes with their original index before sorting
+            const sortedNotes = notes.map((note, index) => ({ note, originalIndex: index }))
+                .sort((a, b) => {
+                if (a.note.pinned && !b.note.pinned) return -1;
+                if (!a.note.pinned && b.note.pinned) return 1;
+                return new Date(b.note.timestamp) - new Date(a.note.timestamp);
             });
 
-            // --- Modal Logic (Create, Edit, View) ---
-            function openCreateModal(type) {
-                editingNoteId = null;
-                currentNoteType = type;
-                modalTitle.textContent = `Create ${type} Note`;
-                noteTitleInput.value = "";
-                noteContentInput.value = "";
-                listItemsContainer.innerHTML = "";
-                currentAttachments = [];
-                attachmentsPreview.innerHTML = "";
+            sortedNotes.forEach(({ note, originalIndex }) => {
+                const noteCard = document.createElement("div");
+                noteCard.className = "note-card";
+                if (note.pinned) noteCard.classList.add("pinned");
+                if (note.highlighted) noteCard.classList.add("highlighted");
 
-                textNoteContent.style.display = type === 'text' ? 'block' : 'none';
-                listNoteContent.style.display = type === 'list' ? 'block' : 'none';
-                if (type === 'list') addListItem();
-                
-                noteEditorModal.style.display = "block";
-                setTimeout(() => noteEditorModal.classList.add("show"), 10);
-                setTimeout(() => noteTitleInput.focus(), 300);
-            }
-            
-            async function openEditModal(noteId) {
-                try{
-                    const note = notes.find(n => n.id === noteId);
-                    if (!note) {
-                        showProDialog({ title: "Error", message: "Note not found" });
-                        return;
-                    }
-                    
-                    editingNoteId = noteId;
-                    currentNoteType = note.type;
-                    modalTitle.textContent = `Edit ${note.type} Note`;
-                    noteTitleInput.value = note.title;
-                    noteContentInput.value = note.content || "";
-                    currentAttachments = note.attachments ? [...note.attachments] : [];
-                    
-                    textNoteContent.style.display = note.type === 'text' ? 'block' : 'none';
-                    listNoteContent.style.display = note.type === 'list' ? 'block' : 'none';
-                    listItemsContainer.innerHTML = "";
-                    if(note.type === 'list') (note.listItems || []).forEach(item => addListItem(item.text, item.checked));
-    
-                    renderAttachmentPreviews();
-    
-                    noteEditorModal.style.display = "block";
-                    setTimeout(() => noteEditorModal.classList.add("show"), 10);
-                    setTimeout(() => noteTitleInput.focus(), 300);
-                }
+                const noteHeader = document.createElement("div");
+                noteHeader.className = "note-card-header";
 
-                catch (error) {
-                    console.error("Error opening edit modal:", error);
-                    showProDialog({ title: "Error", message: "Could not open note for editing" });
-                }
-            }
+                const noteTitle = document.createElement("div");
+                noteTitle.className = "note-card-title";
+                noteTitle.textContent = note.title || "Untitled Note";
 
-            async function openViewModal(noteId) {
-                const note = notes.find(n => n.id === noteId);
-                if (!note) return;
+                const menuButton = document.createElement("button");
+                menuButton.className = "menu-button";
+                menuButton.innerHTML = '<i class="fas fa-ellipsis-v"></i>';
+                menuButton.addEventListener("click", (event) => {
+                    event.stopPropagation();
+                    showNoteMenu(event, originalIndex); // Use real index!
+                });
 
-                viewingNoteId = noteId;
-                viewModalTitle.textContent = `${note.type.charAt(0).toUpperCase() + note.type.slice(1)} Note`;
-                viewNoteTitle.textContent = note.title;
+                noteHeader.appendChild(noteTitle);
+                noteHeader.appendChild(menuButton);
+                noteCard.appendChild(noteHeader);
 
-                viewTextContent.style.display = 'none';
-                viewListContent.style.display = 'none';
+                // Type tag
+                const typeTag = document.createElement("div");
+                typeTag.className = "note-type-tag";
+                typeTag.innerHTML = note.type === "text" ?
+                    '<i class="fas fa-file-alt" style="margin-right: 4px;"></i> Text' :
+                    '<i class="fas fa-list-ul" style="margin-right: 4px;"></i> List';
+                noteCard.appendChild(typeTag);
 
-                if (note.type === 'text') {
-                    viewTextContent.textContent = note.content;
-                    viewTextContent.style.display = 'block';
-                } else if (note.type === 'list') {
-                    viewListContent.innerHTML = "";
-                    (note.listItems || []).forEach((item, itemIndex) => {
+                // Content preview
+                const contentSection = document.createElement("div");
+                contentSection.className = "note-card-content-section";
+
+                if (note.type === "text") {
+                    const content = document.createElement("div");
+                    content.className = "note-card-content";
+                    content.textContent = note.content;
+                    contentSection.appendChild(content);
+                } else if (note.type === "list") {
+                    const listPreview = document.createElement("div");
+                    listPreview.className = "note-card-list-preview";
+                    const listItems = note.listItems || [];
+                    const itemsToShow = listItems.slice(0, 3);
+                    itemsToShow.forEach(item => {
                         const listItem = document.createElement("div");
-                        listItem.className = "view-mode-list-item";
-                        listItem.innerHTML = `
-                            <input type="checkbox" class="view-mode-checkbox" ${item.checked ? 'checked' : ''} data-item-index="${itemIndex}">
-                            <span class="view-mode-list-text ${item.checked ? 'checked' : ''}">${item.text}</span>`;
-                        viewListContent.appendChild(listItem);
+                        listItem.className = "note-card-list-item";
+                        if (item.checked) listItem.classList.add("checked");
+                        listItem.innerHTML = item.checked ?
+                            '<i class="fas fa-check-square" style="margin-right: 4px;"></i>' :
+                            '<i class="far fa-square" style="margin-right: 4px;"></i>';
+                        const itemText = document.createElement("span");
+                        itemText.textContent = item.text;
+                        listItem.appendChild(itemText);
+                        listPreview.appendChild(listItem);
                     });
-                    viewListContent.style.display = 'block';
+                    if (listItems.length > 3) {
+                        const moreItems = document.createElement("div");
+                        moreItems.className = "note-card-list-item";
+                        moreItems.textContent = `+ ${listItems.length - 3} more items`;
+                        listPreview.appendChild(moreItems);
+                    }
+                    contentSection.appendChild(listPreview);
                 }
 
-                viewAttachments.innerHTML = "";
+                noteCard.appendChild(contentSection);
+
+                // Attachments preview
                 if (note.attachments && note.attachments.length > 0) {
+                    const attachmentsContainer = document.createElement("div");
+                    attachmentsContainer.className = "note-card-attachments";
+                    const attachmentsToShow = note.attachments.slice(0, 3);
+                    attachmentsToShow.forEach(attachment => {
+                        const attachmentEl = document.createElement("div");
+                        attachmentEl.className = "note-card-attachment";
+                        if (attachment.type === "image") {
+                            const img = document.createElement("img");
+                            img.src = attachment.data;
+                            img.alt = attachment.name;
+                            attachmentEl.appendChild(img);
+                        } else if (attachment.type === "pdf") {
+                            const pdfIcon = document.createElement("div");
+                            pdfIcon.className = "pdf-icon";
+                            pdfIcon.innerHTML = '<i class="fas fa-file-pdf" style="color: #ea4335;"></i><span>PDF</span>';
+                            attachmentEl.appendChild(pdfIcon);
+                        }
+                        attachmentsContainer.appendChild(attachmentEl);
+                    });
+                    if (note.attachments.length > 3) {
+                        const lastAttachment = attachmentsContainer.lastChild;
+                        const countBadge = document.createElement("div");
+                        countBadge.className = "attachment-count";
+                        countBadge.textContent = `+${note.attachments.length - 2}`;
+                        lastAttachment.appendChild(countBadge);
+                    }
+                    noteCard.appendChild(attachmentsContainer);
+                }
+
+                // Footer with timestamp
+                const footer = document.createElement("div");
+                footer.className = "note-card-footer";
+                const timestamp = document.createElement("div");
+                timestamp.className = "note-card-timestamp";
+                const noteDate = new Date(note.timestamp);
+                const today = new Date();
+                const yesterday = new Date(today);
+                yesterday.setDate(yesterday.getDate() - 1);
+                let dateStr;
+                if (noteDate.toDateString() === today.toDateString()) {
+                    dateStr = "Today";
+                } else if (noteDate.toDateString() === yesterday.toDateString()) {
+                    dateStr = "Yesterday";
+                } else {
+                    dateStr = noteDate.toLocaleDateString();
+                }
+                timestamp.textContent = dateStr;
+                footer.appendChild(timestamp);
+
+                const statusIcons = document.createElement("div");
+                statusIcons.className = "note-card-status";
+                if (note.pinned) {
+                    const pinIcon = document.createElement("i");
+                    pinIcon.className = "fas fa-thumbtack icon";
+                    pinIcon.style.marginLeft = "8px";
+                    pinIcon.style.color = "var(--accent)";
+                    statusIcons.appendChild(pinIcon);
+                }
+                if (note.highlighted) {
+                    const highlightIcon = document.createElement("i");
+                    highlightIcon.className = "fas fa-star icon";
+                    highlightIcon.style.marginLeft = "8px";
+                    highlightIcon.style.color = "#ffc107";
+                    statusIcons.appendChild(highlightIcon);
+                }
+                footer.appendChild(statusIcons);
+
+                noteCard.appendChild(footer);
+
+                // Correct note view on click!
+                noteCard.addEventListener("click", () => {
+                    openViewModal(originalIndex); // Use real index
+                });
+
+                notesContainer.appendChild(noteCard);
+            });
+        }
+
+          // --- List Item Logic ---
+          function addListItem(text = "", checked = false) {
+              const listItem = document.createElement("div");
+              listItem.className = "list-item";
+              
+              const checkbox = document.createElement("input");
+              checkbox.type = "checkbox";
+              checkbox.className = "list-item-checkbox";
+              checkbox.checked = checked;
+              
+              const input = document.createElement("input");
+              input.type = "text";
+              input.className = "list-item-input";
+              input.value = text;
+              input.placeholder = "List item";
+              
+              const removeBtn = document.createElement("button");
+              removeBtn.className = "list-item-remove";
+              removeBtn.innerHTML = "&times;";
+              removeBtn.addEventListener("click", () => {
+                  listItem.remove();
+              });
+              
+              listItem.appendChild(checkbox);
+              listItem.appendChild(input);
+              listItem.appendChild(removeBtn);
+              
+              listItemsContainer.appendChild(listItem);
+              
+              // Focus on the new input
+              input.focus();
+          }
+          
+          function clearListItems() {
+              listItemsContainer.innerHTML = "";
+          }
+          
+          function populateListItems(items) {
+              clearListItems();
+              if (items && items.length > 0) {
+                  items.forEach(item => {
+                      addListItem(item.text, item.checked);
+                  });
+              } else {
+                  addListItem();
+              }
+          }
+          
+          function getListItems() {
+              const items = [];
+              const listItems = listItemsContainer.querySelectorAll(".list-item");
+              
+              listItems.forEach(item => {
+                  const checkbox = item.querySelector(".list-item-checkbox");
+                  const input = item.querySelector(".list-item-input");
+                  const text = input.value.trim();
+                  
+                  if (text) {
+                      items.push({
+                          text: text,
+                          checked: checkbox.checked
+                      });
+                  }
+              });
+              
+              return items;
+          }
+          
+          addListItemBtn.addEventListener("click", () => {
+              addListItem();
+          });
+          
+          // --- Modal Logic ---
+          function openCreateModal(type) {
+              currentNoteType = type;
+              modalTitle.textContent = `Create ${type === "text" ? "Text" : "List"} Note`;
+              
+              // Reset form
+              noteTitleInput.value = "";
+              noteContentInput.value = "";
+              listItemsContainer.innerHTML = "";
+              currentAttachments = [];
+              attachmentsPreview.innerHTML = "";
+              isPinned = false;
+              editingNoteIndex = null;
+              
+              // Show appropriate content section
+              textNoteContent.style.display = type === "text" ? "block" : "none";
+              listNoteContent.style.display = type === "list" ? "block" : "none";
+              
+              // If list type, add first empty item
+              if (type === "list") {
+                  addListItem();
+              }
+              
+              // Show modal
+              noteEditorModal.style.display = "block";
+              setTimeout(() => {
+                  noteEditorModal.classList.add("show");
+              }, 10);
+              
+              // Focus on title input
+              setTimeout(() => {
+                  noteTitleInput.focus();
+              }, 300);
+          }
+          
+          function openEditModal(noteIndex) {
+              editingNoteIndex = noteIndex;
+              const note = notes[noteIndex];
+              
+              noteTitleInput.value = note.title || "";
+              isPinned = note.pinned || false;
+              
+              // Set up attachments
+              currentAttachments = note.attachments ? JSON.parse(JSON.stringify(note.attachments)) : [];
+              
+              // Set up the modal based on note type
+              currentNoteType = note.type || "text";
+              
+              if (currentNoteType === "text") {
+                  textNoteContent.style.display = "block";
+                  listNoteContent.style.display = "none";
+                  modalTitle.textContent = "Edit Text Note";
+                  noteContentInput.value = note.content || "";
+              } else if (currentNoteType === "list") {
+                  textNoteContent.style.display = "none";
+                  listNoteContent.style.display = "block";
+                  modalTitle.textContent = "Edit List Note";
+                  populateListItems(note.listItems);
+              }
+              
+              // Render attachments if they exist
+              renderAttachmentPreviews();
+              
+              noteEditorModal.style.display = "block";
+              setTimeout(() => {
+                  noteEditorModal.classList.add("show");
+              }, 10);
+              
+              // Focus on title input
+              setTimeout(() => {
+                  noteTitleInput.focus();
+              }, 300);
+          }
+          
+          function openViewModal(index) {
+                const note = notes[index] || {};
+                viewingNoteIndex = index;
+                
+                // Set titles (new version improvement)
+                viewModalTitle.textContent = (note.type === "list") ? "List Note" : "Text Note";
+                viewNoteTitle.textContent = note.title || "Untitled Note"; // (old version fallback)
+                
+                // Content rendering (new version structure + old version interactivity)
+                viewTextContent.style.display = note.type === "text" ? "block" : "none";
+                viewListContent.style.display = note.type === "list" ? "block" : "none";
+                
+                if (note.type === "text") {
+                    viewTextContent.textContent = note.content || ""; // (old version fallback)
+                } 
+                else if (note.type === "list") {
+                  viewListContent.innerHTML = "";
+                    note.listItems?.forEach((item, itemIndex) => {
+                          const listItem = document.createElement("div");
+                          listItem.className = "view-mode-list-item";
+                          
+                          const checkbox = document.createElement("input");
+                          checkbox.type = "checkbox";
+                          checkbox.className = "view-mode-checkbox";
+                          checkbox.checked = item.checked;
+                        checkbox.disabled = false; // (old version interactivity)
+                        
+                        const text = document.createElement("span");
+                        text.className = "view-mode-list-text";
+                        if (item.checked) text.classList.add("checked");
+                        text.textContent = item.text;
+                        
+                        checkbox.addEventListener("change", () => {
+                            note.listItems[itemIndex].checked = checkbox.checked;
+                            localStorage.setItem("notes", JSON.stringify(notes));
+                            text.classList.toggle("checked", checkbox.checked);
+                            // Skip renderNotes() to avoid performance hit (compromise)
+                        });
+                        
+                        listItem.append(checkbox, text);
+                          viewListContent.appendChild(listItem);
+                      });
+              }
+              
+                // Attachments (new version hiding + old version filenames)
+              viewAttachments.innerHTML = "";
+                viewAttachments.style.display = "flex"; // (new version improvement)
+                if (note.attachments?.length) {
                     note.attachments.forEach(attach => {
                         const el = document.createElement("div");
                         el.className = "view-mode-attachment";
-                        el.onclick = () => openAttachmentViewer(attach);
-                        if (attach.type.startsWith("image/")) {
+                        
+                        if (attach.type === "image") {
                             el.innerHTML = `<img src="${attach.data}" alt="${attach.name}">`;
-                        } else if (attach.type === "application/pdf") {
-                            el.innerHTML = `<div class="pdf-icon" style="text-align:center;"><i class="fas fa-file-pdf" style="font-size: 2rem; color: #ea4335;"></i><span style="font-size:0.7rem; display:block; margin-top:5px;">${attach.name.slice(0, 10)}...</span></div>`;
+                        } 
+                        else if (attach.type === "pdf") {
+                            el.innerHTML = `
+                                <i class="fas fa-file-pdf" style="color:#ea4335"></i>
+                                <span>${attach.name.slice(0, 15)}${attach.name.length > 15 ? "..." : ""}</span>
+                            `;
                         }
+                        
+                        el.addEventListener("click", () => openAttachmentViewer(attach));
                         viewAttachments.appendChild(el);
                     });
+                } 
+                else {
+                    viewAttachments.style.display = "none"; // (new version improvement)
                 }
-
-                pinNoteMenuItem.innerHTML = `<i class="fas fa-thumbtack"></i> ${note.pinned ? "Unpin" : "Pin"}`;
-
-                noteViewModal.style.display = "block";
+                
+                // Pin toggle (new version style)
+              pinNoteMenuItem.innerHTML = `
+                  <i class="fas fa-thumbtack"></i>
+                  ${note.pinned ? "Unpin" : "Pin"}
+              `;
+              
+                // Show modal (both versions)
+              noteViewModal.style.display = "block";
                 setTimeout(() => noteViewModal.classList.add("show"), 10);
-            }
+          }
+          function closeEditorModal() {
+              noteEditorModal.classList.remove("show");
+              setTimeout(() => {
+                  noteEditorModal.style.display = "none";
+                  editingNoteIndex = null;
+                  noteTitleInput.value = "";
+                  noteContentInput.value = "";
+                  clearListItems();
+                  currentAttachments = [];
+                  isPinned = false;
+                  attachmentsPreview.innerHTML = "";
+              }, 300);
+          }
+          
+          function closeViewModal() {
+              noteViewModal.classList.remove("show");
+              setTimeout(() => {
+                  noteViewModal.style.display = "none";
+                  viewingNoteIndex = null;
+                  viewNoteTitle.textContent = "";
+                  viewTextContent.textContent = "";
+                  viewListContent.innerHTML = "";
+                  viewAttachments.innerHTML = "";
+                  viewMenuDropdown.classList.remove("show");
+              }, 300);
+          }
+          
+          // --- Menu Logic ---
+          function showNoteMenu(event, index) {
+              event.stopPropagation();
+              
+              const menu = document.createElement("div");
+              menu.className = "menu-dropdown show";
+              menu.id = "noteMenu";
+              
+              const editItem = document.createElement("div");
+              editItem.className = "menu-item edit-icon";
+              editItem.innerHTML = '<i class="fas fa-edit icon"></i> Edit';
+              editItem.addEventListener("click", () => {
+                  openEditModal(index);
+                  document.body.removeChild(menu);
+              });
+              
+              const pinItem = document.createElement("div");
+              pinItem.className = "menu-item pin-icon";
+              pinItem.innerHTML = notes[index].pinned ? 
+                  '<i class="fas fa-thumbtack icon"></i> Unpin' : 
+                  '<i class="fas fa-thumbtack icon"></i> Pin';
+              pinItem.addEventListener("click", () => {
+                  notes[index].pinned = !notes[index].pinned;
+                          localStorage.setItem("notes", JSON.stringify(notes));
+                          renderNotes();
+                  document.body.removeChild(menu);
+              });
+              
+              const highlightItem = document.createElement("div");
+              highlightItem.className = "menu-item highlight-icon";
+              highlightItem.innerHTML = notes[index].highlighted ? 
+                  '<i class="fas fa-star icon"></i> Remove Highlight' : 
+                  '<i class="fas fa-star icon"></i> Highlight';
+              highlightItem.addEventListener("click", () => {
+                  notes[index].highlighted = !notes[index].highlighted;
+                          localStorage.setItem("notes", JSON.stringify(notes));
+                          renderNotes();
+                  document.body.removeChild(menu);
+              });
+              
+              const deleteItem = document.createElement("div");
+              deleteItem.className = "menu-item delete-icon";
+              deleteItem.innerHTML = '<i class="fas fa-trash-alt icon"></i> Delete';
+              deleteItem.addEventListener("click", () => {
+                  showProDialog({
+                      title: "Delete Note",
+                      message: "Are you sure you want to delete this note?",
+                      confirmText: "Delete",
+                      cancelText: "Cancel",
+                      onConfirm: () => {
+                          notes.splice(index, 1);
+                              localStorage.setItem("notes", JSON.stringify(notes));
+                              renderNotes();
+                      },
+                      onCancel: () => {}
+                  });
+                  document.body.removeChild(menu);
+              });
+              
+              menu.appendChild(editItem);
+              menu.appendChild(pinItem);
+              menu.appendChild(highlightItem);
+              menu.appendChild(deleteItem);
+              
+              // Position the menu near the click
+              menu.style.position = "fixed";
+              menu.style.top = `${event.clientY}px`;
+              menu.style.left = `${event.clientX}px`;
+              
+              // Ensure menu is fully visible
+              document.body.appendChild(menu);
+              
+              // Adjust position if menu goes off screen
+              const menuRect = menu.getBoundingClientRect();
+              if (menuRect.right > window.innerWidth) {
+                  menu.style.left = `${event.clientX - menuRect.width}px`;
+              }
+              if (menuRect.bottom > window.innerHeight) {
+                  menu.style.top = `${event.clientY - menuRect.height}px`;
+              }
+              
+              // Close menu when clicking elsewhere
+              setTimeout(() => {
+                  const closeMenuHandler = (e) => {
+                      if (!menu.contains(e.target)) {
+                          document.body.removeChild(menu);
+                          document.removeEventListener("click", closeMenuHandler);
+                      }
+                  };
+                  document.addEventListener("click", closeMenuHandler);
+              }, 0);
+          }
+          
+          // --- Attachment Logic ---
+          fileInput.addEventListener("change", (event) => {
+            const files = event.target.files;
+            if (!files.length) return;
 
-            viewListContent.addEventListener('change', async (e) => {
-                if (e.target.matches('.view-mode-checkbox')) {
-                    const note = notes.find(n => n.id === viewingNoteId);
-                    const itemIndex = parseInt(e.target.dataset.itemIndex, 10);
-                    if (note && note.listItems[itemIndex]) {
-                        note.listItems[itemIndex].checked = e.target.checked;
-                        e.target.nextElementSibling.classList.toggle('checked', e.target.checked);
-                        // Update backend without full re-render for performance
-                        try {
-                            await fetchWithAuth(`${API_URL}/api/notes/${viewingNoteId}`, {
-                                method: 'PUT',
-                                body: JSON.stringify({ ...note, timestamp: new Date().toISOString() })
-                            });
-                            fetchNotes(); // Or just update local array if preferred
-                        } catch (error) {
-                            console.error("Failed to update list item state", error);
-                        }
-                    }
-                }
-            });
-
-            function closeEditorModal() {
-                noteEditorModal.classList.remove("show");
-                setTimeout(() => noteEditorModal.style.display = "none", 300);
-            }
-            function closeViewModal() {
-                noteViewModal.classList.remove("show");
-                setTimeout(() => noteViewModal.style.display = "none", 300);
-            }
-
-            function renderAttachmentPreviews() {
-                attachmentsPreview.innerHTML = "";
-                currentAttachments.forEach(attach => {
-                    const preview = document.createElement("div");
-                    preview.className = "attachment-preview";
-                    
-                    if (attach.type.startsWith("image/")) {
-                        preview.innerHTML = `
-                            <img src="${attach.data}" alt="${attach.name}">
-                            <div class="remove-attachment" data-name="${attach.name}">
-                                <svg class="icon-svg" viewBox="0 0 24 24">
-                                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-                                </svg>
-                            </div>
-                        `;
-                    } else if (attach.type === "application/pdf") {
-                        preview.innerHTML = `
-                            <div class="pdf-icon">
-                                <svg class="icon-svg" viewBox="0 0 24 24">
-                                    <path fill="#ea4335" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6z"/>
-                                </svg>
-                                <span>${attach.name.slice(0, 10)}...</span>
-                                <div class="remove-attachment" data-name="${attach.name}">
-                                    <svg class="icon-svg" viewBox="0 0 24 24">
-                                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-                                    </svg>
-                                </div>
-                            </div>
-                        `;
-                    }
-                    
-                    preview.querySelector(".remove-attachment").addEventListener("click", (e) => {
-                        e.stopPropagation();
-                        currentAttachments = currentAttachments.filter(a => a.name !== attach.name);
-                        renderAttachmentPreviews();
-                    });
-                    
-                    attachmentsPreview.appendChild(preview);
-                });
-            }
-            function readFileAsDataURL(file) {
-                return new Promise((resolve, reject) => {
+            Array.from(files).forEach(file => {
+                if (file.type.startsWith("image/") || file.type === "application/pdf") {
                     const reader = new FileReader();
-                    reader.onload = () => resolve(reader.result);
-                    reader.onerror = reject;
+
+                    reader.onload = (e) => {
+                        const attachment = {
+                            name: file.name,
+                            type: file.type.startsWith("image/") ? "image" : "pdf",
+                            data: e.target.result
+                        };
+
+                        currentAttachments.push(attachment);
+                        renderAttachmentPreviews();
+                    };
+
                     reader.readAsDataURL(file);
-                });
-            }
-            // Should be added to API calls in the DB version
-            async function handleApiError(response) {
-                if (!response.ok) {
-                    const error = await response.json().catch(() => ({}));
-                    showProDialog({ 
-                        title: "Error", 
-                        message: error.message || "An error occurred"
-                    });
-                    throw new Error(error.message || "API request failed");
-                }
-                return response;
-            }
-
-            // Should be added before saving notes
-            function validateNote(note) {
-                if (!note.title && !note.content && 
-                    (!note.listItems || note.listItems.length === 0) && 
-                    (!note.attachments || note.attachments.length === 0)) {
-                    showProDialog({
-                        title: "Empty Note",
-                        message: "Cannot save an empty note"
-                    });
-                    return false;
-                }
-                return true;
-            }
-            // --- Note Saving Logic ---
-            saveNoteBtn.addEventListener("click", async () => {
-                const title = noteTitleInput.value.trim();
-                const content = noteContentInput.value.trim();
-                const listItems = Array.from(listItemsContainer.querySelectorAll(".list-item")).map(item => ({
-                    text: item.querySelector(".list-item-input").value.trim(),
-                    checked: item.querySelector(".list-item-checkbox").checked
-                })).filter(item => item.text);
-
-                if (!title && !content && listItems.length === 0 && currentAttachments.length === 0) {
-                    showProDialog({ title: "Empty Note", message: "Cannot save an empty note." });
-                    return;
-                }
-                
-                const originalButtonHTML = saveNoteBtn.innerHTML;
-                saveNoteBtn.disabled = true;
-                saveNoteBtn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i> Saving...';
-
-                const noteData = {
-                    title: title || (currentNoteType === 'text' ? "Untitled Note" : "Untitled List"),
-                    type: currentNoteType,
-                    content: content,
-                    listItems: listItems,
-                    attachments: currentAttachments,
-                    pinned: editingNoteId ? (notes.find(n => n.id === editingNoteId)?.pinned || false) : false,
-                    highlighted: editingNoteId ? (notes.find(n => n.id === editingNoteId)?.highlighted || false) : false,
-                    // REMOVED: timestamp: new Date().toISOString()
-                };
-
-                try {
-                    const url = editingNoteId ? `${API_URL}/api/notes/${editingNoteId}` : `${API_URL}/api/notes`;
-                    const method = editingNoteId ? 'PUT' : 'POST';
-                    const response = await fetchWithAuth(url, { method, body: JSON.stringify(noteData) });
-
-                    if (!response.ok) throw new Error("Failed to save note");
-
-                    await fetchNotes(); // Refresh list from server
-                    closeEditorModal();
-                } catch (error) {
-                    console.error(error);
-                    showProDialog({ title: "Error", message: "Could not save the note." });
-                } finally {
-                    saveNoteBtn.disabled = false;
-                    saveNoteBtn.innerHTML = originalButtonHTML;
                 }
             });
 
-            // --- Menu Logic ---
-            function showNoteMenu(event, noteId) {
-                // Logic to create and position the menu
-                const existingMenu = document.getElementById("noteMenu");
-                if (existingMenu) existingMenu.remove();
-
-                const menu = document.createElement("div");
-                menu.className = "menu-dropdown show";
-                menu.id = "noteMenu";
-                
-                const note = notes.find(n => n.id === noteId);
-                if (!note) return;
-
-                menu.innerHTML = `
-                    <div class="menu-item" data-action="edit"><i class="fas fa-edit icon"></i> Edit</div>
-                    <div class="menu-item" data-action="pin"><i class="fas fa-thumbtack icon"></i> ${note.pinned ? 'Unpin' : 'Pin'}</div>
-                    <div class="menu-item" data-action="highlight"><i class="fas fa-star icon"></i> ${note.highlighted ? 'Unhighlight' : 'Highlight'}</div>
-                    <div class="menu-item" data-action="delete" style="color:#ea4335;"><i class="fas fa-trash-alt icon"></i> Delete</div>
-                `;
-                
-                menu.addEventListener('click', async (e) => {
-                    const action = e.target.closest('.menu-item')?.dataset.action;
-                    if (!action) return;
-                    menu.remove();
-
-                    const noteToUpdate = { ...note, timestamp: new Date().toISOString() };
-                    
-                    try {
-                        if (action === 'edit') {
-                            openEditModal(noteId);
-                        } else if (action === 'delete') {
-                            showProDialog({
-                                title: "Delete Note",
-                                message: "Are you sure you want to delete this note?",
-                                confirmText: "Delete",
-                                onConfirm: async () => {
-                                    await fetchWithAuth(`${API_URL}/api/notes/${noteId}`, { method: 'DELETE' });
-                                    fetchNotes();
-                                }
-                            });
-                        } else { // Pin or Highlight
-                            if (action === 'pin') noteToUpdate.pinned = !note.pinned;
-                            if (action === 'highlight') noteToUpdate.highlighted = !note.highlighted;
-                            
-                            await fetchWithAuth(`${API_URL}/api/notes/${noteId}`, {
-                                method: 'PUT',
-                                body: JSON.stringify(noteToUpdate)
-                            });
-                            fetchNotes();
-                        }
-                    } catch(error) {
-                        console.error(`Error performing action ${action}:`, error);
-                        showProDialog({ title: "Error", message: "Action failed. Please try again." });
-                    }
-                });
-
-                menu.style.position = "fixed";
-                menu.style.top = `${event.clientY}px`;
-                menu.style.left = `${event.clientX}px`;
-                document.body.appendChild(menu);
-
-                const menuRect = menu.getBoundingClientRect();
-                if (menuRect.right > window.innerWidth) menu.style.left = `${window.innerWidth - menuRect.width - 5}px`;
-                if (menuRect.bottom > window.innerHeight) menu.style.top = `${window.innerHeight - menuRect.height - 5}px`;
-
-                setTimeout(() => document.addEventListener('click', () => menu.remove(), { once: true }), 0);
-            }
-
-            // --- Attachment and FAB logic (mostly unchanged) ---
-            mainFab.addEventListener("click", () => {
-                fabOptions.classList.toggle("show");
-                mainFab.classList.toggle("active");
-            });
-            textNoteBtn.addEventListener("click", () => openCreateModal("text"));
-            listNoteBtn.addEventListener("click", () => openCreateModal("list"));
-            cancelNoteBtn.addEventListener("click", closeEditorModal);
-            closeViewBtn.addEventListener("click", closeViewModal);
-            editNoteBtn.addEventListener("click", () => {
-                if (viewingNoteId) {
-                    closeViewModal();
-                    setTimeout(() => openEditModal(viewingNoteId), 300);
-                }
-            });
-            
-            async function initializeApp() {
-                try {
-                    await fetchNotes();
-                } catch (err) {
-                    console.error("Failed to initialize app:", err);
-                } finally {
-                    if (pageLoader) {
-                        pageLoader.style.opacity = '0';
-                        setTimeout(() => {
-                            pageLoader.style.display = 'none';
-                        }, 300);
-                    }
-                }
-            }
-
-            // --- Initial Load ---
-            initializeApp();
-
-
-            // --- Theme Sync Logic ---
-            function applyThemeSynchronized() {
-                const isDark = localStorage.getItem("darkMode") === "enabled";
-                document.body.classList.toggle("dark-mode", isDark);
-            }
-            applyThemeSynchronized();
-            window.addEventListener('storage', (e) => e.key === 'darkMode' && applyThemeSynchronized());
-            window.addEventListener('themeChange', (e) => {
-                if (e.detail && typeof e.detail.darkMode === 'boolean') {
-                    document.body.classList.toggle("dark-mode", e.detail.darkMode);
-                }
-            });
-
-            // Other functions (addListItem, renderAttachmentPreviews, openAttachmentViewer, etc.) remain mostly the same
-            // But the event listeners that trigger them are inside the refactored functions above.
-            // Helper functions like `showProDialog` are assumed to be present.
+            // Reset file input for re-selection
+            fileInput.value = "";
         });
 
-        function showProDialog({title, message, onConfirm, onCancel, confirmText = 'OK', cancelText = 'Cancel'}) {
-            // Implementation from original file
-        }
-    </script>
+          function renderAttachmentPreviews() {
+            attachmentsPreview.innerHTML = "";
 
+            currentAttachments.forEach((attachment, index) => {
+                const previewEl = document.createElement("div");
+                previewEl.className = "attachment-preview";
+
+                // Image preview
+                if (attachment.type === "image") {
+                    const img = document.createElement("img");
+                    img.src = attachment.data;
+                    img.alt = attachment.name;
+                    previewEl.appendChild(img);
+                }
+
+                // PDF preview with name
+                else if (attachment.type === "pdf") {
+                    const pdfIcon = document.createElement("div");
+                    pdfIcon.className = "pdf-icon";
+                    pdfIcon.innerHTML = `
+                        <i class="fas fa-file-pdf" style="color: #ea4335; font-size: 2rem;"></i>
+                        <span>${attachment.name.length > 15 ? attachment.name.substring(0, 12) + "..." : attachment.name}</span>
+                    `;
+                    previewEl.appendChild(pdfIcon);
+                }
+
+                // Remove button
+                const removeBtn = document.createElement("div");
+                removeBtn.className = "remove-attachment";
+                removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                removeBtn.addEventListener("click", (event) => {
+                    event.stopPropagation();
+                    currentAttachments.splice(index, 1);
+                    renderAttachmentPreviews();
+                });
+
+                previewEl.appendChild(removeBtn);
+
+                // Click to view (if needed)
+                previewEl.addEventListener("click", () => {
+                    openAttachmentViewer(attachment);
+                });
+
+                attachmentsPreview.appendChild(previewEl);
+            });
+        }
+          
+          function openAttachmentViewer(attachment) {
+              attachmentViewerBody.innerHTML = "";
+              
+              if (attachment.type === "image") {
+                  const img = document.createElement("img");
+                  img.src = attachment.data;
+                  img.alt = attachment.name;
+                  attachmentViewerBody.appendChild(img);
+              } else if (attachment.type === "pdf") {
+                  const iframe = document.createElement("iframe");
+                  iframe.src = attachment.data;
+                  attachmentViewerBody.appendChild(iframe);
+              }
+              
+              attachmentViewerModal.style.display = "block";
+              setTimeout(() => {
+                  attachmentViewerModal.classList.add("show");
+              }, 10);
+          }
+  
+          // --- Note Saving Logic ---
+          saveNoteBtn.addEventListener("click", () => {
+              const title = noteTitleInput.value.trim();
+              const content = noteContentInput.value.trim();
+              let listItems = [];
+              if (currentNoteType === "list") {
+                  listItems = Array.from(listItemsContainer.querySelectorAll(".list-item-input")).map((input, idx) => ({
+                      text: input.value.trim(),
+                      checked: listItemsContainer.querySelectorAll(".list-item-checkbox")[idx].checked
+                  })).filter(item => item.text);
+              }
+              // Prevent saving empty notes
+              if (!title && !content && listItems.length === 0 && currentAttachments.length === 0) {
+                  showProDialog({
+                      title: "Empty Note",
+                      message: "Cannot save an empty note. Please add a title, content, list item, or attachment.",
+                      confirmText: "OK",
+                      cancelText: "__HIDE__",
+                      onConfirm: () => { noteTitleInput.focus(); },
+                      onCancel: null
+                  });
+                      return;
+              }
+              
+              let finalTitle = title;
+              if (!title) {
+                  if (currentNoteType === "text" && content) {
+                      // Use first line of content as title
+                      finalTitle = content.split("\n")[0].substring(0, 30) || "Untitled Note";
+                  } else if (currentNoteType === "list" && listItems.length > 0) {
+                      finalTitle = listItems[0].text.substring(0, 30) || "Untitled List";
+                  } else if (currentAttachments.length > 0) {
+                      finalTitle = currentAttachments[0].name || "Untitled Note";
+                  } else {
+                      finalTitle = currentNoteType === "text" ? "Untitled Note" : "Untitled List";
+                  }
+              }
+  
+              const note = {
+                  title: finalTitle,
+                  type: currentNoteType,
+                  content: currentNoteType === "text" ? content : "",
+                  listItems: currentNoteType === "list" ? listItems : [],
+                  attachments: currentAttachments.length > 0 ? JSON.parse(JSON.stringify(currentAttachments)) : [],
+                  pinned: isPinned,
+                  highlighted: editingNoteIndex !== null ? notes[editingNoteIndex].highlighted || false : false,
+                  timestamp: new Date().toISOString()
+              };
+  
+              if (editingNoteIndex !== null) {
+                  notes[editingNoteIndex] = note;
+              } else {
+                  notes.push(note);
+              }
+              
+              // Save to localStorage
+              localStorage.setItem("notes", JSON.stringify(notes));
+              
+              renderNotes();
+              closeEditorModal();
+          });
+          
+          cancelNoteBtn.addEventListener("click", closeEditorModal);
+          closeViewBtn.addEventListener("click", closeViewModal);
+          
+          editNoteBtn.addEventListener("click", () => {
+              if (viewingNoteIndex !== null) {
+                  const noteIndex = viewingNoteIndex;
+                  closeViewModal();
+                  setTimeout(() => {
+                      openEditModal(noteIndex);
+                  }, 300);
+              }
+          });
+          
+          // --- View Menu Logic ---
+          viewMenuButton.addEventListener("click", (event) => {
+              event.stopPropagation();
+              viewMenuDropdown.classList.toggle("show");
+
+              // Position the dropdown
+              const buttonRect = viewMenuButton.getBoundingClientRect();
+              viewMenuDropdown.style.top = `${buttonRect.bottom + 5}px`;
+              viewMenuDropdown.style.left = `${buttonRect.left - viewMenuDropdown.offsetWidth + buttonRect.width}px`;
+              
+              viewMenuDropdown.classList.toggle("show");
+          });
+          
+          editNoteMenuItem.addEventListener("click", () => {
+              if (viewingNoteIndex !== null) {
+                  const noteIndex = viewingNoteIndex;
+                  closeViewModal();
+                  setTimeout(() => {
+                      openEditModal(noteIndex);
+                  }, 300);
+              }
+
+              viewMenuDropdown.classList.remove("show");
+          });
+          
+          pinNoteMenuItem.addEventListener("click", () => {
+              if (viewingNoteIndex !== null) {
+                  const note = notes[viewingNoteIndex];
+                  note.pinned = !note.pinned;
+                  localStorage.setItem("notes", JSON.stringify(notes));
+                  
+                  // Update pin menu item text
+                  pinNoteMenuItem.innerHTML = `
+                      <i class="fas fa-thumbtack"></i>
+                      ${note.pinned ? "Unpin" : "Pin"}
+                  `;
+                  
+                  // Re-render notes in background
+                  renderNotes();
+              }
+              
+              viewMenuDropdown.classList.remove("show");
+          });
+          
+          // Add highlight menu item event listener
+          const highlightMenuItem = document.getElementById("highlightNoteMenuItem");
+          if (highlightMenuItem) {
+              highlightMenuItem.addEventListener("click", () => {
+                  if (viewingNoteIndex !== null) {
+                      const note = notes[viewingNoteIndex];
+                      note.highlighted = !note.highlighted;
+                      localStorage.setItem("notes", JSON.stringify(notes));
+                      
+                      // Re-render notes in background
+                      renderNotes();
+                  }
+                  
+                  viewMenuDropdown.classList.remove("show");
+              });
+          }
+          
+          deleteNoteMenuItem.addEventListener("click", () => {
+              if (viewingNoteIndex !== null) {
+                  showProDialog({
+                      title: "Delete Note",
+                      message: "Are you sure you want to delete this note?",
+                      confirmText: "Delete",
+                      cancelText: "Cancel",
+                      onConfirm: () => {
+                      notes.splice(viewingNoteIndex, 1);
+                      localStorage.setItem("notes", JSON.stringify(notes));
+                      closeViewModal();
+                      renderNotes();
+                      },
+                      onCancel: () => {}
+                  });
+                  }
+              viewMenuDropdown.classList.remove("show");
+          });
+          
+          // --- Global Event Listeners ---
+          document.addEventListener("click", (event) => {
+              // Close modals when clicking outside
+              if (event.target === noteEditorModal) {
+                  closeEditorModal();
+              }
+              if (event.target === noteViewModal) {
+                  closeViewModal();
+              }
+              if (event.target === attachmentViewerModal) {
+                  attachmentViewerModal.classList.remove("show");
+                  setTimeout(() => {
+                      attachmentViewerModal.style.display = "none";
+                  }, 300);
+              }
+              
+              // Close any open menu dropdown when clicking elsewhere
+              if (!event.target.closest(".menu-button") && !event.target.closest(".menu-dropdown")) {
+                  const openMenus = document.querySelectorAll(".menu-dropdown.show");
+                  openMenus.forEach(menu => menu.classList.remove("show"));
+                  activeMenuNoteIndex = null;
+              }
+              
+              // Close FAB options when clicking elsewhere
+              if (!event.target.closest(".fab-container")) {
+                  fabOptions.classList.remove("show");
+                  mainFab.classList.remove("active"); // Remove active class
+              }
+          });
+          
+          attachmentViewerClose.addEventListener("click", () => {
+              attachmentViewerModal.classList.remove("show");
+              setTimeout(() => {
+                  attachmentViewerModal.style.display = "none";
+              }, 300);
+          });
+
+          // Theme toggle functionality
+          const themeToggle = document.getElementById('themeToggle');
+          function applyThemeSynchronized() {
+              const parentDarkModeSetting = localStorage.getItem("darkMode");
+              const isDark = parentDarkModeSetting === "enabled";
+              document.body.classList.toggle("dark-mode", isDark);
+              // The CSS in notes (1).html already handles showing/hiding fa-sun/fa-moon
+              // based on the body.dark-mode class, so no manual icon style changes needed here.
+          }
+
+          // 1. Initial theme application on load
+          applyThemeSynchronized();
+
+          // 2. Listen for 'storage' events (when localStorage.darkMode changes elsewhere)
+          window.addEventListener('storage', (e) => {
+              if (e.key === 'darkMode') {
+                  applyThemeSynchronized();
+              }
+          });
+
+          // 3. Listen for 'themeChange' custom event dispatched by the parent to this iframe
+          window.addEventListener('themeChange', (e) => {
+              if (e.detail && typeof e.detail.darkMode === 'boolean') {
+                  document.body.classList.toggle("dark-mode", e.detail.darkMode);
+                  // CSS handles icon changes
+              }
+          });
+
+          // 4. Handle the notes page's own theme toggle button
+          if (themeToggle) {
+              themeToggle.addEventListener('click', () => {
+                  const bodyIsDarkNow = document.body.classList.toggle('dark-mode');
+                  // Update the shared 'darkMode' localStorage item
+                  localStorage.setItem('darkMode', bodyIsDarkNow ? 'enabled' : 'disabled');
+                  // The parent's 'storage' event listener will pick this up and update parent UI.
+                  // CSS handles local icon changes.
+              });
+          }
+          
+          // Initial render
+              renderNotes();
+          });
+          
+      // Professional dialog show/hide utility
+      function showProDialog({title, message, onConfirm, onCancel, confirmText = 'OK', cancelText = 'Cancel'}) {
+          const modal = document.getElementById('proDialogModal');
+          document.getElementById('proDialogHeader').textContent = title;
+          document.getElementById('proDialogBody').textContent = message;
+          const confirmBtn = document.getElementById('proDialogConfirm');
+          const cancelBtn = document.getElementById('proDialogCancel');
+          confirmBtn.textContent = confirmText;
+          // Hide cancel button if cancelText is __HIDE__
+          if (cancelText === '__HIDE__') {
+            cancelBtn.style.display = 'none';
+          } else {
+            cancelBtn.style.display = '';
+            cancelBtn.textContent = cancelText;
+          }
+          modal.classList.add('show');
+          confirmBtn.onclick = () => { modal.classList.remove('show'); if (onConfirm) onConfirm(); };
+          cancelBtn.onclick = () => { modal.classList.remove('show'); if (onCancel) onCancel(); };
+          modal.onclick = (e) => { if (e.target === modal) { modal.classList.remove('show'); if (onCancel) onCancel(); } };
+      }
+
+      // Settings button functionality
+      document.getElementById('settingsBtn').addEventListener('click', function() {
+        window.location.href = 'settings.html';
+      });
+
+      // Theme toggle functionality
+      document.getElementById('themeToggle').addEventListener('click', () => {
+        const bodyIsDarkNow = document.body.classList.toggle('dark-mode');
+        // Update the shared 'darkMode' localStorage item
+        localStorage.setItem('darkMode', bodyIsDarkNow ? 'enabled' : 'disabled');
+        // The parent's 'storage' event listener will pick this up and update parent UI.
+        // CSS handles local icon changes.
+      });
+    </script>
 
 </body>
 </html>
