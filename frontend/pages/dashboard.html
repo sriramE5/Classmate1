@@ -4,36 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Progress Dashboard</title>
-<!-- CORRECTED FONT AWESOME: Using CSS instead of JS for animations -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <style>
-  /* Page Loader */
-  #page-loader-dashboard {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: var(--bg);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 10000;
-      opacity: 1;
-      transition: opacity 0.3s ease-out;
-  }
-  #page-loader-dashboard .spinner {
-      width: 50px;
-      height: 50px;
-      border: 5px solid var(--text-secondary);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-  }
-  @keyframes spin {
-      to { transform: rotate(360deg); }
-  }
-
   /* Modern CSS Reset & Base Styles */
   :root {
     /* THEME VARIABLES from notes.html/settings.html */
@@ -602,9 +573,6 @@ body {
 </style>
 </head>
 <body>
-<div id="page-loader-dashboard">
-    <div class="spinner"></div>
-</div>
 <div class="grid-bg"></div> <!-- Grid background -->
 <div class="container">
   <header>
@@ -690,44 +658,13 @@ body {
   </div>
 </div>
 
+<!-- Font Awesome for icons -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
 <!-- Chart.js for visualizations -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-  // --- START: API & AUTH HELPERS ---
-  const API_URL = "https://classmate-juji.onrender.com";
-
-  function getAuthToken() {
-    return localStorage.getItem('auth_token');
-  }
-
-  async function fetchWithAuth(url, options = {}) {
-    const token = getAuthToken();
-    if (!token) {
-      console.error("User not authenticated. Redirecting to login.");
-      // In a real app, you might want a more graceful handling
-      // window.location.href = 'Login page.html'; 
-      throw new Error("User not authenticated");
-    }
-
-    const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-      ...options.headers,
-    };
-
-    const response = await fetch(url, { ...options, headers });
-
-    if (response.status === 401) {
-      console.error("Session expired. Redirecting to login.");
-      // window.location.href = 'Login page.html';
-      throw new Error("Session expired");
-    }
-    return response;
-  }
-  // --- END: API & AUTH HELPERS ---
-
-  // Main data object
+  // Sample data - in a real app, this would come from your task manager's localStorage
   let dashboardData = {
     goals: [],
     activities: [],
@@ -735,7 +672,6 @@ body {
   };
 
   // DOM Elements
-  const pageLoader = document.getElementById('page-loader-dashboard');
   const totalGoalsEl = document.getElementById('totalGoals');
   const completedGoalsEl = document.getElementById('completedGoals');
   const totalTasksEl = document.getElementById('totalTasks');
@@ -749,28 +685,18 @@ body {
   let goalChart, taskChart;
 
   // Initialize the dashboard
-  async function initDashboard() {
-    try {
-        applyTheme();
-        await loadData();
-        renderStats();
-        renderGoalCards();
-        renderActivityLog();
-        initCharts();
-    } catch (error) {
-        console.error("Dashboard initialization failed:", error);
-    } finally {
-        if (pageLoader) {
-            pageLoader.style.opacity = '0';
-            setTimeout(() => {
-                pageLoader.style.display = 'none';
-            }, 300);
-        }
-    }
+  function initDashboard() {
+    applyTheme();
+    loadData();
+    renderStats();
+    renderGoalCards();
+    renderActivityLog();
+    initCharts();
   }
 
   // Theme management functions
   function applyTheme() {
+    // Check localStorage for the shared 'darkMode' key
     const darkModeEnabled = localStorage.getItem('darkMode') === 'enabled';
     document.body.classList.toggle('dark-mode', darkModeEnabled);
   }
@@ -778,85 +704,71 @@ body {
   function toggleTheme() {
     const isDarkNow = document.body.classList.toggle('dark-mode');
     localStorage.setItem('darkMode', isDarkNow ? 'enabled' : 'disabled');
+    // The 'storage' event listener below will handle synchronization if other tabs are open.
   }
 
+  // Listen for theme changes from other tabs/pages via localStorage
   window.addEventListener('storage', (e) => {
     if (e.key === 'darkMode') {
-      applyTheme();
-      if (goalChart) goalChart.destroy();
-      if (taskChart) taskChart.destroy();
-      initCharts();
+      applyTheme(); // Re-apply theme based on the new value
+      // Update charts if they need to be re-rendered with new theme colors
+      if (goalChart && taskChart) {
+          // You might need to destroy and re-init charts if their colors are theme-dependent
+          // For now, this just re-applies body class. Chart.js colors are hardcoded.
+      }
     }
   });
 
 
-  // Load data from API instead of localStorage
-  async function loadData() {
-    try {
-        const [tasksResponse, notesResponse] = await Promise.all([
-            fetchWithAuth(`${API_URL}/api/tasks`),
-            fetchWithAuth(`${API_URL}/api/notes`)
-        ]);
-
-        if (!tasksResponse.ok) throw new Error('Failed to fetch tasks from API');
-        if (!notesResponse.ok) throw new Error('Failed to fetch notes from API');
-
-        const tasksData = await tasksResponse.json();
-        const notesData = await notesResponse.json();
+  // Load data from localStorage (from both task manager and notes app)
+  function loadData() {
+    const tasksData = JSON.parse(localStorage.getItem('tasks')) || [];
+    const checkboxStates = JSON.parse(localStorage.getItem('checkboxStates')) || {};
+    
+    dashboardData.goals = tasksData.map((task, taskArrayIndex) => { // Added taskArrayIndex
+      const goalTitle = task.text.split('\n')[0].trim().replace(/^Goal:\s*/, '');
+      const phases = task.text.split(/Phase\s*\d*:/i).slice(1);
+      let totalTasksInGoal = 0;
+      let completedTasksInGoal = 0;
+      
+      phases.forEach((phaseBlock, phaseIndex) => {
+        const lines = phaseBlock.trim().split('\n').map(l => l.trim()).filter(Boolean);
+        if (lines.length <= 1) return;
         
-        dashboardData.goals = tasksData.map((task, taskArrayIndex) => {
-            const goalTitle = task.text.split('\n')[0].trim().replace(/^Goal:\s*/, '');
-            const phases = task.text.split(/Phase\s*\d*:/i).slice(1);
-            let totalTasksInGoal = 0;
-            let completedTasksInGoal = 0;
-            
-            const checkboxStates = task.checkbox_states || {};
-
-            phases.forEach((phaseBlock, phaseIndex) => {
-                const lines = phaseBlock.trim().split('\n').map(l => l.trim()).filter(Boolean);
-                if (lines.length <= 1) return;
-                
-                const phaseTasks = lines.slice(1);
-                totalTasksInGoal += phaseTasks.length;
-                
-                phaseTasks.forEach((_, taskItemIndex) => {
-                    const checkboxId = `task_${taskArrayIndex}_phase_${phaseIndex}_item_${taskItemIndex}`;
-                    if (checkboxStates[checkboxId]) {
-                        completedTasksInGoal++;
-                    }
-                });
-            });
-            
-            return {
-                id: task.id || task._id,
-                title: goalTitle,
-                totalTasks: totalTasksInGoal,
-                completedTasks: completedTasksInGoal,
-                pinned: task.pinned || false,
-                highlighted: task.highlighted || false,
-                lastUpdated: task.updatedAt || new Date().toISOString()
-            };
+        const phaseTasks = lines.slice(1);
+        totalTasksInGoal += phaseTasks.length;
+        
+        phaseTasks.forEach((_, taskItemIndex) => {
+          // Use taskArrayIndex here for unique IDs across all goals if tasksData order is stable
+          const checkboxId = `task_${taskArrayIndex}_phase_${phaseIndex}_item_${taskItemIndex}`;
+          if (checkboxStates[checkboxId]) {
+            completedTasksInGoal++;
+          }
         });
-        
-        dashboardData.notes = notesData.map(note => ({
-            ...note,
-            id: note.id || note._id
-        }));
-        
-        if ((dashboardData.goals.length > 0 || dashboardData.notes.length > 0) && dashboardData.activities.length === 0) {
-            generateSampleActivity();
-        }
-
-    } catch (error) {
-        console.error("Error loading dashboard data:", error);
-        dashboardData.goals = [];
-        dashboardData.notes = [];
-        dashboardData.activities = [];
+      });
+      
+      return {
+        id: 'goal-' + Math.random().toString(36).substr(2, 9), // Keep random ID for now
+        title: goalTitle,
+        totalTasks: totalTasksInGoal,
+        completedTasks: completedTasksInGoal,
+        pinned: task.pinned || false,
+        highlighted: task.highlighted || false,
+        lastUpdated: new Date().toISOString() // Placeholder
+      };
+    });
+    
+    const notesData = JSON.parse(localStorage.getItem('notes')) || [];
+    dashboardData.notes = notesData;
+    
+    if ((dashboardData.goals.length > 0 || dashboardData.notes.length > 0) && dashboardData.activities.length === 0) {
+      generateSampleActivity();
     }
   }
 
   function generateSampleActivity() {
     const activities = [];
+    // Simplified sample generation
     dashboardData.goals.forEach(goal => {
       activities.push({
         id: 'act-g-' + goal.id, action: 'created', item: 'goal', title: goal.title,
@@ -990,30 +902,37 @@ body {
     const isDarkMode = document.body.classList.contains('dark-mode');
     const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
     const textColor = isDarkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)';
+    // Chart.js global defaults
     Chart.defaults.borderColor = gridColor;
     Chart.defaults.color = textColor;
+
 
     const goalCtx = document.getElementById('goalChart').getContext('2d');
     const totalGoalsVal = dashboardData.goals.length;
     const completedGoalsVal = dashboardData.goals.filter(g => g.totalTasks > 0 && g.completedTasks === g.totalTasks).length;
     
-    const completedColor = getComputedStyle(document.documentElement).getPropertyValue('--success').trim() || 'rgba(34, 197, 94, 0.8)';
-    const incompleteColor = isDarkMode ? 'rgba(55, 65, 81, 0.8)' : 'rgba(226, 232, 240, 0.8)';
+    // Define colors based on theme, ideally from CSS vars if Chart.js could easily consume them.
+    // Hardcoding for now, matching the original intent but consider CSS vars for future.
+    const completedColor = getComputedStyle(document.documentElement).getPropertyValue('--success').trim() || 'rgba(34, 197, 94, 0.8)'; // Greenish
+    const incompleteColorLight = 'rgba(226, 232, 240, 0.8)'; // Light gray
+    const incompleteColorDark = 'rgba(55, 65, 81, 0.8)'; // Darker gray for dark mode
+    const incompleteColor = isDarkMode ? incompleteColorDark : incompleteColorLight;
+
 
     goalChart = new Chart(goalCtx, {
-      type: 'doughnut',
+      type: 'doughnut', // Changed to doughnut for a modern look
       data: {
         labels: ['Completed', 'Incomplete'],
         datasets: [{
           data: [completedGoalsVal, totalGoalsVal - completedGoalsVal],
           backgroundColor: [completedColor, incompleteColor],
-          borderColor: [completedColor, incompleteColor],
+          borderColor: [completedColor, incompleteColor], // or var(--card-bg) for separation
           borderWidth: 1,
           hoverOffset: 8
         }]
       },
       options: {
-        responsive: true, maintainAspectRatio: false, cutout: '60%',
+        responsive: true, maintainAspectRatio: false, cutout: '60%', // Doughnut specific
         plugins: {
           legend: { position: 'bottom', labels: { padding: 20 } },
           tooltip: {
@@ -1028,7 +947,7 @@ body {
     const taskCtx = document.getElementById('taskChart').getContext('2d');
     const totalTasksVal = dashboardData.goals.reduce((sum, goal) => sum + goal.totalTasks, 0);
     const completedTasksVal = dashboardData.goals.reduce((sum, goal) => sum + goal.completedTasks, 0);
-    const taskAccentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || 'rgba(139, 92, 246, 0.8)';
+    const taskAccentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || 'rgba(139, 92, 246, 0.8)'; // Purple/Accent
 
     taskChart = new Chart(taskCtx, {
       type: 'doughnut',
@@ -1056,50 +975,41 @@ body {
     });
   }
 
-  async function refreshData() {
-    // Set loading state on the button
-    refreshBtn.disabled = true;
-    const icon = refreshBtn.querySelector('i');
-    const span = refreshBtn.querySelector('span');
-    const originalIconClass = icon.className;
-    icon.className = 'fas fa-spinner fa-spin';
-    if(span) span.textContent = 'Refreshing...';
-
-    try {
-        dashboardData.activities = []; 
-        await loadData();
-        renderStats();
-        renderGoalCards();
-        renderActivityLog();
-        
-        // Update charts
-        const totalGoalsVal = dashboardData.goals.length;
-        const completedGoalsVal = dashboardData.goals.filter(g => g.totalTasks > 0 && g.completedTasks === g.totalTasks).length;
-        const totalTasksVal = dashboardData.goals.reduce((sum, goal) => sum + goal.totalTasks, 0);
-        const completedTasksVal = dashboardData.goals.reduce((sum, goal) => sum + goal.completedTasks, 0);
-        
-        if (goalChart) {
-            goalChart.data.datasets[0].data = [completedGoalsVal, totalGoalsVal - completedGoalsVal];
-            goalChart.update();
-        }
-        if (taskChart) {
-            taskChart.data.datasets[0].data = [completedTasksVal, totalTasksVal - completedTasksVal];
-            taskChart.update();
-        }
-    } catch (error) {
-        console.error("Failed to refresh data:", error);
-    } finally {
-        // Reset button state
-        refreshBtn.disabled = false;
-        icon.className = originalIconClass; // Reset to original icon
-        if(span) span.textContent = 'Refresh Data';
+  function refreshData() {
+    // Clear existing activities before reloading data to avoid duplicates if generateSampleActivity runs again
+    dashboardData.activities = []; 
+    loadData();
+    renderStats();
+    renderGoalCards();
+    renderActivityLog();
+    
+    // Update charts
+    const totalGoalsVal = dashboardData.goals.length;
+    const completedGoalsVal = dashboardData.goals.filter(g => g.totalTasks > 0 && g.completedTasks === g.totalTasks).length;
+    const totalTasksVal = dashboardData.goals.reduce((sum, goal) => sum + goal.totalTasks, 0);
+    const completedTasksVal = dashboardData.goals.reduce((sum, goal) => sum + goal.completedTasks, 0);
+    
+    if (goalChart) {
+        goalChart.data.datasets[0].data = [completedGoalsVal, totalGoalsVal - completedGoalsVal];
+        goalChart.update();
+    }
+    if (taskChart) {
+        taskChart.data.datasets[0].data = [completedTasksVal, totalTasksVal - completedTasksVal];
+        taskChart.update();
     }
   }
 
-  // Event Listeners
+  // Listen for storage events to update when notes or tasks change
+  window.addEventListener('storage', function(e) {
+    if (e.key === 'notes' || e.key === 'tasks' || e.key === 'checkboxStates') {
+      refreshData();
+    }
+  });
+
   refreshBtn.addEventListener('click', refreshData);
   themeToggle.addEventListener('click', toggleTheme);
 
+  // Settings button functionality
   document.getElementById('header-settings-btn').addEventListener('click', function() {
     window.location.href = 'settings.html';
   });
