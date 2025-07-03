@@ -18,8 +18,8 @@ from datetime import datetime, timedelta
 load_dotenv() 
 # MONGO_URI = os.getenv("MONGO_URI")
 # SECRET_KEY = os.getenv("SECRET_KEY")
-MONGO_URI = os.environ.get("MONGO_URI")
-SECRET_KEY = os.environ.get("SECRET_KEY")
+MONGO_URI = os.environ.get('MONGO_URI')
+SECRET_KEY = os.environ.get('SECRET_KEY')
 ALGORITHM = "HS256"
 
 # ---------------- FastAPI Setup ----------------
