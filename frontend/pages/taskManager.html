@@ -99,33 +99,6 @@
     overflow-x: hidden;
   }
 
-  /* Page Loader */
-  #page-loader-taskmanager {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: var(--bg);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 10000;
-      opacity: 1;
-      transition: opacity 0.3s ease-out;
-  }
-  #page-loader-taskmanager .spinner {
-      width: 50px;
-      height: 50px;
-      border: 5px solid var(--text-secondary);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-  }
-  @keyframes spin {
-      to { transform: rotate(360deg); }
-  }
-
   .grid-bg {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background-image: 
@@ -1107,10 +1080,6 @@ body {
 </style>
 </head>
 <body>
-<div id="page-loader-taskmanager">
-    <div class="spinner"></div>
-</div>
-
 <div class="grid-bg"></div>
 
 <div class="container">
@@ -1146,7 +1115,7 @@ Phase 2:
 - React Basics"></textarea>
           <div style="margin-top: 1rem; text-align: right;">
             <button class="btn btn-primary" id="saveGoalBtn">
-              <i class="fa-solid fa-floppy-disk" style="margin-right: 8px;"></i> Add Tasks
+              <span class="btn-icon"><i class="fa-solid fa-floppy-disk"></i></span>
             </button>
           </div>
         </div>
@@ -1163,7 +1132,7 @@ Phase 2:
   <div class="modal" id="taskModal">
     <div class="modal-header">
       <h2 class="modal-title" id="modalTitle">Task Title</h2>
-      <button class="modal-close" id="modalCloseBtn" aria-label="Close modal">×</button>
+      <button class="modal-close" id="modalCloseBtn" aria-label="Close modal">&times;</button>
     </div>
     <div class="modal-body">
       <div class="modal-actions">
@@ -1181,7 +1150,7 @@ Phase 2:
   <div class="modal edit-modal" id="editModal">
     <div class="modal-header">
       <h2 class="modal-title">Edit Task</h2>
-      <button class="modal-close" id="editModalCloseBtn" aria-label="Close modal">×</button>
+      <button class="modal-close" id="editModalCloseBtn" aria-label="Close modal">&times;</button>
     </div>
     <div class="modal-body">
       <div class="edit-form">
@@ -1240,32 +1209,7 @@ Phase 2:
 </div>
 
 <script>
-  // --- API & Auth Helpers (from notes.html) ---
-  const API_URL = "https://classmate-juji.onrender.com";
-  function getAuthToken() {
-    return localStorage.getItem('auth_token');
-  }
-  async function fetchWithAuth(url, options = {}) {
-    const token = getAuthToken();
-    if (!token) {
-      window.location.href = 'Login page.html';
-      throw new Error("User not authenticated");
-    }
-    const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-      ...options.headers,
-    };
-    const response = await fetch(url, { ...options, headers });
-    if (response.status === 401) {
-      window.location.href = 'Login page.html';
-      throw new Error("Session expired");
-    }
-    return response;
-  }
-
   // DOM Elements
-  const pageLoader = document.getElementById('page-loader-taskmanager');
   const inputPanel = document.getElementById('inputPanel');
   const inputPanelHeader = document.getElementById('inputPanelHeader');
   const inputText = document.getElementById('inputText');
@@ -1348,30 +1292,11 @@ Phase 2:
   });
 
   // Load data from localStorage
-  async function loadData() {
-    try {
-      const response = await fetchWithAuth(`${API_URL}/api/tasks`);
-      if (!response.ok) throw new Error("Failed to fetch tasks");
-      const data = await response.json();
-      tasks = data.map(task => ({
-        ...task,
-        id: task.id || task._id // ensure id field
-      }));
-      // Merge all checkbox states
-      checkboxStates = {};
-      tasks.forEach((task, idx) => {
-        if (task.checkbox_states) {
-          Object.entries(task.checkbox_states).forEach(([key, val]) => {
-            checkboxStates[key] = val;
-          });
-        }
-      });
-      sortTasks();
-      renderTaskCards();
-    } catch (error) {
-      console.error(error);
-      showToast("Could not load your tasks. Please try again.");
-    }
+  function loadData() {
+    tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    checkboxStates = JSON.parse(localStorage.getItem('checkboxStates')) || {};
+    
+    sortTasks();
   }
   
   function sortTasks() {
@@ -1382,69 +1307,12 @@ Phase 2:
     });
   }
 
-  async function saveData() {
-    // Save all tasks (create new or update existing)
-    try {
-      // Separate new and existing tasks
-      const newTasks = tasks.filter(t => !t.id);
-      const existingTasks = tasks.filter(t => t.id);
-      // Create new tasks
-      if (newTasks.length > 0) {
-        const response = await fetchWithAuth(`${API_URL}/api/tasks`, {
-          method: 'POST',
-          body: JSON.stringify(newTasks.map(t => ({
-            text: t.text,
-            pinned: t.pinned,
-            highlighted: t.highlighted,
-            checkbox_states: {},
-          })))
-        });
-        if (!response.ok) throw new Error("Failed to create tasks");
-        const created = await response.json();
-        // Replace new tasks with created ones
-        tasks = existingTasks.concat(created.map(t => ({ ...t, id: t.id || t._id })));
-      }
-      // Update existing tasks
-      for (const task of existingTasks) {
-        await fetchWithAuth(`${API_URL}/api/tasks/${task.id}`, {
-          method: 'PUT',
-          body: JSON.stringify({
-            text: task.text,
-            pinned: task.pinned,
-            highlighted: task.highlighted
-          })
-        });
-      }
-      showToast("Tasks saved successfully!");
-      await loadData();
-    } catch (error) {
-      console.error(error);
-      showToast("Error saving tasks.");
-    }
+  function saveData() {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
   }
 
-  async function saveCheckboxStates() {
-    // Save checkbox states for each task
-    try {
-      for (const task of tasks) {
-        // Extract only the states for this task
-        const prefix = `task_${tasks.indexOf(task)}_`;
-        const taskCheckboxStates = {};
-        Object.entries(checkboxStates).forEach(([key, val]) => {
-          if (key.startsWith(prefix)) {
-            taskCheckboxStates[key] = val;
-          }
-        });
-        await fetchWithAuth(`${API_URL}/api/tasks/${task.id}/states`, {
-          method: 'PATCH',
-          body: JSON.stringify({ checkbox_states: taskCheckboxStates })
-        });
-      }
-      // Toast removed for smoother experience
-    } catch (error) {
-      console.error(error);
-      showToast("Error saving checkbox states.");
-    }
+  function saveCheckboxStates() {
+    localStorage.setItem('checkboxStates', JSON.stringify(checkboxStates));
   }
 
   function getTaskCompletionPercentage(taskIndex) {
@@ -1473,106 +1341,61 @@ Phase 2:
     return totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
   }
 
-  async function saveGoal() {
+  function saveGoal() {
     const input = inputText.value.trim();
     if (!input) return;
-
-    const originalButtonHTML = saveGoalBtn.innerHTML;
-    saveGoalBtn.disabled = true;
-    saveGoalBtn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i> Adding...';
-
-    try {
-        const goalBlocks = input.split(/Goal:\s*/).map(b => b.trim()).filter(Boolean);
-        const newTasks = goalBlocks.map(block => ({ text: block, pinned: false, highlighted: false, checkbox_states: {} }));
-        const response = await fetchWithAuth(`${API_URL}/api/tasks`, {
-            method: 'POST',
-            body: JSON.stringify(newTasks)
-        });
-        if (!response.ok) throw new Error("Failed to create tasks");
-        await loadData();
-        inputText.value = '';
-        inputPanel.classList.remove('open');
-        showToast("Tasks saved successfully!");
-    } catch (error) {
-        console.error(error);
-        showToast("Error saving tasks.");
-    } finally {
-        saveGoalBtn.disabled = false;
-        saveGoalBtn.innerHTML = originalButtonHTML;
-    }
+    
+    const goalBlocks = input.split(/Goal:\s*/).map(b => b.trim()).filter(Boolean);
+    goalBlocks.forEach(block => {
+      if (block) tasks.push({ text: block, pinned: false, highlighted: false });
+    });
+    
+    sortTasks();
+    saveData();
+    inputText.value = '';
+    inputPanel.classList.remove('open');
+    renderTaskCards();
+    
+    showToast("Tasks saved successfully!");
   }
 
-  async function deleteTask(index) {
+  function deleteTask(index) {
     showProDialog({
       title: "Delete Task",
       message: "Are you sure you want to delete this task?",
       confirmText: "Delete",
       cancelText: "Cancel",
-      onConfirm: async () => {
-        try {
-          const task = tasks[index];
-          await fetchWithAuth(`${API_URL}/api/tasks/${task.id}`, { method: 'DELETE' });
-          tasks.splice(index, 1);
-          if (modalOpenIndex === index) closeModal();
-          await loadData();
-        } catch (error) {
-          console.error(error);
-          showToast("Error deleting task.");
-        }
+      onConfirm: () => {
+        tasks.splice(index, 1);
+        saveData();
+        if (modalOpenIndex === index) closeModal();
+        if (selectedTaskIndex === index) selectedTaskIndex = -1;
+        renderTaskCards();
       },
       onCancel: () => {}
     });
   }
 
-  async function togglePin(index) {
-    try {
-      const task = tasks[index];
-      const newPinState = !task.pinned;
-
-      await fetchWithAuth(`${API_URL}/api/tasks/${task.id}`, {
-        method: 'PUT',
-        body: JSON.stringify({ pinned: newPinState })
-      });
-
-      // --- FIX: Instantly update the modal's class if it's the one being viewed ---
-      if (modalOpenIndex === index) {
-        taskModal.classList.toggle('pinned', newPinState);
-      }
-      
-      // Refresh the entire state from the server to ensure consistency
-      await loadData();
-
-    } catch (error) {
-      console.error(error);
-      showToast("Error updating pin state.");
+  function togglePin(index) {
+    tasks[index].pinned = !tasks[index].pinned;
+    sortTasks();
+    saveData();
+    renderTaskCards();
+    if (modalOpenIndex === index) {
+      taskModal.classList.toggle('pinned', tasks[index].pinned);
     }
   }
 
-  async function toggleHighlight(index) {
-    try {
-      const task = tasks[index];
-      const newHighlightState = !task.highlighted;
-
-      await fetchWithAuth(`${API_URL}/api/tasks/${task.id}`, {
-        method: 'PUT',
-        body: JSON.stringify({ highlighted: newHighlightState })
-      });
-
-      // --- FIX: Instantly update the modal's class if it's the one being viewed ---
-      if (modalOpenIndex === index) {
-        taskModal.classList.toggle('highlighted', newHighlightState);
-      }
-      
-      // Refresh the entire state from the server to ensure consistency
-      await loadData();
-      
-    } catch (error) {
-      console.error(error);
-      showToast("Error updating highlight state.");
+  function toggleHighlight(index) {
+    tasks[index].highlighted = !tasks[index].highlighted;
+    saveData();
+    renderTaskCards();
+    if (modalOpenIndex === index) {
+      taskModal.classList.toggle('highlighted', tasks[index].highlighted);
     }
   }
 
-  async function editTask(index) {
+  function editTask(index) {
     editingTaskIndex = index;
     editTaskText.value = tasks[index].text;
     editModalOverlay.style.display = 'flex';
@@ -1725,7 +1548,7 @@ Phase 2:
       phaseTasks.forEach((taskText, taskItemIndex) => {
         const checkboxId = `task_${taskIndex}_phase_${phaseIndex}_item_${taskItemIndex}`;
         const isChecked = checkboxStates[checkboxId] || false;
-        const safeTaskText = taskText.replace(/'/g, "'").replace(/"/g, '"');
+        const safeTaskText = taskText.replace(/'/g, "&#39;").replace(/"/g, '&quot;');
         html += `
           <div class="task-item">
             <input type="checkbox" class="task-checkbox" 
@@ -1748,10 +1571,10 @@ Phase 2:
     modalPhases.innerHTML = html;
   }
 
-  async function toggleCheckbox(checkboxId) {
+  function toggleCheckbox(checkboxId) {
     checkboxStates[checkboxId] = !checkboxStates[checkboxId];
-    await saveCheckboxStates();
-    renderTaskCards();
+    saveCheckboxStates();
+    renderTaskCards(); 
   }
 
   // Add this function globally so it can be called from HTML
@@ -1771,36 +1594,17 @@ Phase 2:
     editModalOverlay.classList.remove('show');
     setTimeout(() => editModalOverlay.style.display = 'none', 300);
   });
-  
-  editSaveBtn.addEventListener('click', async () => {
-    if (editingTaskIndex < 0) return;
-
-    const originalButtonHTML = editSaveBtn.innerHTML;
-    editSaveBtn.disabled = true;
-    editSaveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-    
-    try {
-      const task = tasks[editingTaskIndex];
-      const newText = editTaskText.value;
-      await fetchWithAuth(`${API_URL}/api/tasks/${task.id}`, {
-        method: 'PUT',
-        body: JSON.stringify({ text: newText })
-      });
-      await loadData();
+  editSaveBtn.addEventListener('click', () => {
+    if (editingTaskIndex >= 0) {
+      tasks[editingTaskIndex].text = editTaskText.value;
+      saveData();
+      renderTaskCards();
       if (modalOpenIndex === editingTaskIndex) {
-        // Also update the title of the open modal
-        modalTitle.textContent = newText.split('\n')[0];
         renderModalPhases(editingTaskIndex);
       }
       editModalOverlay.classList.remove('show');
       setTimeout(() => editModalOverlay.style.display = 'none', 300);
       showToast("Task updated successfully!");
-    } catch (error) {
-      console.error(error);
-      showToast("Error updating task.");
-    } finally {
-      editSaveBtn.disabled = false;
-      editSaveBtn.innerHTML = originalButtonHTML;
     }
   });
 
@@ -1829,21 +1633,8 @@ Phase 2:
     }
   });
 
-  // --- Initial Load ---
-  async function initializeApp() {
-    try {
-      await loadData();
-    } catch(err) {
-      console.error("Initialization failed:", err);
-    } finally {
-      if (pageLoader) {
-        pageLoader.style.opacity = '0';
-        setTimeout(() => { pageLoader.style.display = 'none'; }, 300);
-      }
-    }
-  }
-
-  initializeApp();
+  loadData();
+  renderTaskCards();
 
   // Professional dialog show/hide utility
   function showProDialog({title, message, onConfirm, onCancel, confirmText = 'OK', cancelText = 'Cancel'}) {
