@@ -24,6 +24,7 @@
       --btn-primary-bg: linear-gradient(135deg, #a18dff, #7d5fff);
       --btn-secondary-bg: linear-gradient(135deg, #ff3a8c, #ff6b6b);
       --btn-hover: brightness(1.05);
+       --code-bg: #f7f7f7;
       --glow: 0 0 20px rgba(138, 143, 255, 0.4);
       --border-color: #cccccc;          /* Border and outlines */
       --font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -37,6 +38,7 @@
       --bg: #121212;
       --bg-secondary: #1e1e1e;
       --bg-tertiary: #2d2d2d;
+      --code-bg: #1e1e1e;
       --text-primary: #f5f5f5;
       --text-secondary: #aaaaaa;
       --border-color: #444444;
@@ -128,7 +130,7 @@
 
 /* Adjust code block colors for dark mode */
 .dark-mode .message pre {
-  background-color: #1e1e1e;
+  background-color: var(--code-bg);
 }
 
 .dark-mode .message code {
@@ -146,7 +148,29 @@
   color: var(--text-primary);
   border-color: var(--border-color);
 }
+.copy-code-btn {
+  font-size: 0.75em;
+  padding: 3px 8px;
+  background-color: rgba(0, 0, 0, 0.05); /* Light mode */
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #333;
+  transition: all 0.2s ease;
+}
 
+.copy-code-btn:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode overrides */
+.dark-mode .copy-code-btn {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ccc;
+}
+
+.dark-mode .copy-code-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
 /* Adjust todo list for dark mode */
 .dark-mode .todo-list-content {
   background-color: var(--bg-tertiary);
@@ -573,7 +597,7 @@
     .bot { align-self: flex-start; background-color: var(--bg-tertiary); color: var(--text-primary); border-bottom-left-radius: 0; padding-right: 40px; /* Increased padding for menu */ }
     .message .chat-content p:first-child { margin-top: 0; }
     .message .chat-content p:last-child { margin-bottom: 0; }
-    .message pre { background-color: #282c34; padding: 1rem; border-radius: var(--border-radius); overflow-x: auto; margin: 0.5rem 0; position: relative; padding-right: 60px; }
+    .message pre { background-color:  var(--code-bg); padding: 1rem; padding-top: 2rem; padding-left: 1rem; border-radius: var(--border-radius); overflow-x: auto; margin: 0.5rem 0; position: relative; padding-right: 60px; }
     .message code { font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 0.9em; }
     .message .code-copy-btn-container { position: absolute; top: 8px; right: 8px; }
 
@@ -2081,12 +2105,7 @@ document.querySelectorAll('.dialog-modal').forEach(dialog => {
                     
                     const copyButton = document.createElement("button");
                     copyButton.innerHTML = "<i class=\"far fa-copy\"></i> Copy";
-                    copyButton.classList.add("input-button"); 
-                    copyButton.style.fontSize = "0.8em";
-                    copyButton.style.padding = "4px 8px";
-                    copyButton.style.backgroundColor = "rgba(255,255,255,0.1)";
-                    copyButton.style.border = "1px solid rgba(255,255,255,0.2)";
-                    copyButton.style.color = "#ccc";
+                    copyButton.classList.add("copy-code-btn"); 
                     copyButton.onclick = () => {
                         navigator.clipboard.writeText(block.textContent).then(() => {
                             copyButton.innerHTML = "<i class=\"fas fa-check\"></i> Copied!";
