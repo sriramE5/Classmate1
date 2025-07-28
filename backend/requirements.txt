@@ -7,6 +7,8 @@ python-jose
 pymongo
 motor
 certifi
+python-multipart
+
 
 # Gemini API
 google-genai
