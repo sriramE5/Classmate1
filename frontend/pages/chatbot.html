@@ -2591,21 +2591,29 @@ window.addEventListener("resize", () => {
       const formData = new FormData();
       formData.append("file", file);
       try {
-        const resp = await fetch("/api/upload", {
+        const token = getAuthToken();
+        const resp = await fetch(`${serverUrl}/api/upload`, {
           method: "POST",
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
           body: formData
         });
         const data = await resp.json();
         if (resp.ok) {
           ragStatus.textContent = `Uploaded: ${file.name} (${data.chunks} chunks)`;
           ragFileUploaded = true;
+          showToast(`File uploaded successfully! You can now ask questions about ${file.name}.`);
         } else {
           ragStatus.textContent = data.error || "Upload failed.";
           ragFileUploaded = false;
+          showToast("File upload failed. Please try again.", "error");
         }
       } catch (err) {
+        console.error("Upload error:", err);
         ragStatus.textContent = "Upload error.";
         ragFileUploaded = false;
+        showToast("Network error during upload. Please check your connection.", "error");
       }
     });
 
@@ -2625,9 +2633,13 @@ window.addEventListener("resize", () => {
         addMessageToUI("user", messageText);
         saveMessage("user", messageText);
         try {
-          const resp = await fetch("/api/rag_chat", {
+          const token = getAuthToken();
+          const resp = await fetch(`${serverUrl}/api/rag_chat`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { 
+              "Content-Type": "application/json",
+              'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify({ query: messageText })
           });
           const data = await resp.json();
@@ -2635,12 +2647,17 @@ window.addEventListener("resize", () => {
             addMessageToUI("bot", data.answer || "No answer.");
             saveMessage("bot", data.answer || "No answer.");
           } else {
-            addMessageToUI("bot", data.error || "RAG error.");
-            saveMessage("bot", data.error || "RAG error.");
+            const errorMsg = data.error || "RAG error.";
+            addMessageToUI("bot", errorMsg);
+            saveMessage("bot", errorMsg);
+            showToast("RAG processing failed. Please try again.", "error");
           }
         } catch (err) {
-          addMessageToUI("bot", "RAG request failed.");
-          saveMessage("bot", "RAG request failed.");
+          console.error("RAG request error:", err);
+          const errorMsg = "RAG request failed. Please check your connection.";
+          addMessageToUI("bot", errorMsg);
+          saveMessage("bot", errorMsg);
+          showToast("Network error during RAG processing.", "error");
         } finally {
           messageBeingSent = false;
           userInput.disabled = false;
