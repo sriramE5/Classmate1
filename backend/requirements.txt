@@ -1,12 +1,31 @@
 fastapi
 uvicorn
 python-dotenv
-pydantic
 pydantic[email]
 passlib[bcrypt]
 python-jose
 pymongo
-certifi
-google-genai
-markdown2
 motor
+certifi
+
+# Gemini API
+google-genai
+
+# Markdown rendering
+markdown2
+
+# LangChain for RAG
+langchain
+langchain-community
+langchain-google-genai
+chromadb
+
+# File handling
+python-docx
+PyPDF2  # or pdfminer.six (used by PyPDFLoader, depends on LangChain version)
+
+# Vector storage
+tiktoken  # tokenizer required by LangChain text splitters
+
+# Optional: For persistent Chroma DB with FAISS fallback
+faiss-cpu  # optional, depends on backend
