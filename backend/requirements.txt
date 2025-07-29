@@ -25,7 +25,9 @@ chromadb
 
 # File handling
 python-docx
-PyPDF2  # or pdfminer.six (used by PyPDFLoader, depends on LangChain version)
+pypdf  # Required for PyPDFLoader in LangChain
+PyPDF2  # Alternative PDF library
+pdfminer.six  # Additional PDF processing support
 
 # Vector storage
 tiktoken  # tokenizer required by LangChain text splitters
