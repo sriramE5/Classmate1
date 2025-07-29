@@ -72,6 +72,14 @@ async def upload_file(file: UploadFile = File(...), current_user: dict = Depends
             try:
                 loader = PyPDFLoader(tmp_path)
                 pages = loader.load()
+            except ImportError as e:
+                if "pypdf" in str(e):
+                    raise HTTPException(
+                        status_code=500, 
+                        detail="PDF processing library not installed. Please contact administrator."
+                    )
+                else:
+                    raise HTTPException(status_code=400, detail=f"Error reading PDF file: {str(e)}")
             except Exception as e:
                 raise HTTPException(status_code=400, detail=f"Error reading PDF file: {str(e)}")
         elif file.filename.lower().endswith(".docx"):
@@ -201,16 +209,34 @@ async def upload_health_check():
         import tempfile
         import os
         
+        # Check PDF dependencies specifically
+        try:
+            import pypdf
+            pdf_status = "available"
+        except ImportError:
+            pdf_status = "missing pypdf"
+        
+        try:
+            import PyPDF2
+            pypdf2_status = "available"
+        except ImportError:
+            pypdf2_status = "missing PyPDF2"
+        
         # Check if API keys are configured
         api_key = api_key1 or api_key2
         if not api_key:
             return {"status": "error", "message": "API keys not configured"}
         
         return {
-            "status": "healthy",
-            "message": "Upload service is ready",
+            "status": "healthy" if pdf_status == "available" else "warning",
+            "message": "Upload service is ready" if pdf_status == "available" else "PDF support may be limited",
             "supported_formats": ["PDF", "DOCX"],
-            "max_file_size": "10MB"
+            "max_file_size": "10MB",
+            "dependencies": {
+                "pypdf": pdf_status,
+                "PyPDF2": pypdf2_status,
+                "python-docx": "available"
+            }
         }
     except ImportError as e:
         return {"status": "error", "message": f"Missing dependency: {str(e)}"}
