@@ -194,7 +194,7 @@ async def rag_chat(
     vectorstore = get_user_vectorstore(user_id, embeddings)
     retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={"k": K_RETRIEVAL})
     rag_chain = RetrievalQA.from_chain_type(
-        llm=ChatGoogleGenerativeAI(model="gemini-2.0-pro", api_key=api_key),
+        llm=ChatGoogleGenerativeAI(model="gemini-2.0-flash", api_key=api_key),
         retriever=retriever,
         return_source_documents=True
     )
@@ -222,7 +222,7 @@ async def chat(req: ChatRequest, as_markdown: bool = Query(False)):
     try:
         # First try with client1
         try:
-            reply_text = await generate_reply(req.prompt, ChatGoogleGenerativeAI(model="gemini-2.0-pro", api_key=api_key))
+            reply_text = await generate_reply(req.prompt, ChatGoogleGenerativeAI(model="gemini-2.0-flash", api_key=api_key))
         except Exception as e1:
             return {"reply": f"Error: {str(e1)}"}
         if as_markdown:
