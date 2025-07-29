@@ -217,19 +217,16 @@ async def rag_chat(
         raise HTTPException(status_code=500, detail=f"RAG error: {e}")
 
 # Endpoint: Regular chat (non-RAG)
-@router.post("/api/chat")
-async def chat(req: ChatRequest, as_markdown: bool = Query(False)):
+@router.post("api/chat")  # Regular chat endpoint
+async def chat(req: ChatRequest):
     try:
-        # First try with client1
-        try:
-            reply_text = await generate_reply(req.prompt, ChatGoogleGenerativeAI(model="gemini-2.0-flash", api_key=api_key))
-        except Exception as e1:
-            return {"reply": f"Error: {str(e1)}"}
-        if as_markdown:
-            reply_text = markdown2.markdown(reply_text)
-        return {"reply": reply_text}
+        llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", api_key=api_key)
+        response = llm.invoke(req.prompt)
+        return {"reply": response}
     except Exception as e:
         return {"reply": f"Error: {str(e)}"}
+
+
 
 # Helper: Generate reply for /api/chat
 async def generate_reply(prompt: str, client):
