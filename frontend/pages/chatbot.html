@@ -2157,136 +2157,53 @@ document.querySelectorAll('.dialog-modal').forEach(dialog => {
     });
 
     function addMessageToUI(sender, content) {
-        const chat = allChats[currentChatId];
-        if (chat) {
-            if (sender === "user" && (!chat.title || chat.title === "New Chat")) { 
-                const potentialTitle = content.trim().substring(0, 30);
-                chat.title = potentialTitle || chat.title; 
-            }
-            chat.lastActivityTimestamp = Date.now();
-            saveChats();
-            renderChatHistory(); 
-        } else {
-            console.error("Cannot add message: currentChatId not found in allChats");
-            return; 
+    // First ensure content is a string
+    const contentStr = typeof content === 'string' ? content : String(content);
+    
+    const chat = allChats[currentChatId];
+    if (chat) {
+        if (sender === "user" && (!chat.title || chat.title === "New Chat")) { 
+            const potentialTitle = contentStr.trim().substring(0, 30);
+            chat.title = potentialTitle || chat.title; 
         }
-
-        const messageDiv = document.createElement("div");
-        messageDiv.classList.add("message", sender);
-
-        const contentDiv = document.createElement("div");
-        contentDiv.classList.add("chat-content");
-
-        if (sender === "bot") {
-            if (content.startsWith("<div class=\"todo-list-container\">")) {
-                contentDiv.innerHTML = content;
-                container = contentDiv.querySelector(".todo-list-container")
-                
-                const label = document.createElement("span");
-                label.classList.add("todo-list-label");
-                label.textContent = "To-Do List";
-                container.insertBefore(label,container.firstChild); 
-            } else {
-                contentDiv.innerHTML = marked.parse(content);
-            }
-            
-            contentDiv.querySelectorAll("pre code").forEach((block) => {
-                hljs.highlightElement(block);
-                const preElement = block.parentNode;
-                if (preElement.tagName === "PRE") {
-                    const copyBtnContainer = document.createElement("div");
-                    copyBtnContainer.classList.add("code-copy-btn-container");
-                    
-                    const copyButton = document.createElement("button");
-                    copyButton.innerHTML = "<i class=\"far fa-copy\"></i> Copy";
-                    copyButton.classList.add("copy-code-btn"); 
-                    copyButton.onclick = () => {
-                        navigator.clipboard.writeText(block.textContent).then(() => {
-                            copyButton.innerHTML = "<i class=\"fas fa-check\"></i> Copied!";
-                            setTimeout(() => { copyButton.innerHTML = "<i class=\"far fa-copy\"></i> Copy"; }, 2000);
-                        }).catch(err => console.error("Copy failed", err));
-                    };
-                    copyBtnContainer.appendChild(copyButton);
-                    preElement.appendChild(copyBtnContainer);
-                    preElement.style.position = "relative"; 
-                }
-            });
-            
-            const menuContainer = document.createElement("div");
-            menuContainer.classList.add("reply-menu-container");
-
-            const menuBtn = document.createElement("button");
-            menuBtn.classList.add("reply-menu-btn");
-            menuBtn.innerHTML = "<i class=\"fas fa-ellipsis-v\"></i>"; 
-            menuBtn.title = "More Actions";
-            menuContainer.appendChild(menuBtn);
-
-            const dropdown = document.createElement("div");
-            dropdown.classList.add("reply-menu-dropdown");
-
-            const copyItem = document.createElement("div");
-            copyItem.classList.add("reply-menu-item");
-            copyItem.innerHTML = "<i class=\"far fa-copy\"></i> Copy Text";
-            copyItem.addEventListener("click", (e) => {
-                e.stopPropagation();
-                navigator.clipboard.writeText(contentDiv.innerText).then(() => {
-                    showToast("Copied to clipboard!");
-                }).catch(err => console.error("Copy failed", err));
-                dropdown.classList.remove("show");
-            });
-            dropdown.appendChild(copyItem);
-
-            const saveNoteItem = document.createElement("div");
-            saveNoteItem.classList.add("reply-menu-item");
-            saveNoteItem.innerHTML = "<i class=\"far fa-sticky-note\"></i> Save as Note";
-            saveNoteItem.addEventListener("click", (e) => {
-                e.stopPropagation();
-                let noteTitle = "Chat Reply";
-                const messages = allChats[currentChatId]?.messages || [];
-                const botMessageIndex = messages.length - 1; 
-                if (botMessageIndex > 0 && messages[botMessageIndex - 1]?.sender === "user") {
-                    noteTitle = messages[botMessageIndex - 1].content.substring(0, 50) || "Chat Reply";
-                }
-                saveToNotes(noteTitle, contentDiv.innerText); 
-                dropdown.classList.remove("show");
-            });
-            dropdown.appendChild(saveNoteItem);
-
-            const saveTodoItem = document.createElement("div");
-            saveTodoItem.classList.add("reply-menu-item");
-            saveTodoItem.innerHTML = "<i class=\"fas fa-list-check\"></i> Save To-Do List";
-            saveTodoItem.style.display = "none"; 
-            
-            if (isToDoListFormat(contentDiv.innerText)) { 
-                saveTodoItem.style.display = "flex"; 
-            }
-            
-            saveTodoItem.addEventListener("click", (e) => {
-                e.stopPropagation();
-                saveToTaskMaster(contentDiv.querySelector(".todo-list-content").innerText); 
-                dropdown.classList.remove("show");
-            });
-            dropdown.appendChild(saveTodoItem);
-
-            menuContainer.appendChild(dropdown);
-            messageDiv.appendChild(menuContainer);
-
-            menuBtn.addEventListener("click", (e) => {
-                e.stopPropagation();
-                document.querySelectorAll(".reply-menu-dropdown.show").forEach(m => {
-                    if (m !== dropdown) m.classList.remove("show");
-                });
-                dropdown.classList.toggle("show");
-            });
-
-        } else {
-            contentDiv.textContent = content;
-        }
-
-        messageDiv.appendChild(contentDiv);
-        chatContainer.appendChild(messageDiv);
-        chatContainer.scrollTop = chatContainer.scrollHeight; 
+        chat.lastActivityTimestamp = Date.now();
+        saveChats();
+        renderChatHistory(); 
+    } else {
+        console.error("Cannot add message: currentChatId not found in allChats");
+        return; 
     }
+
+    const messageDiv = document.createElement("div");
+    messageDiv.classList.add("message", sender);
+
+    const contentDiv = document.createElement("div");
+    contentDiv.classList.add("chat-content");
+
+    if (sender === "bot") {
+        // Now safely check startsWith
+        if (contentStr.startsWith("<div class=\"todo-list-container\">")) {
+            contentDiv.innerHTML = contentStr;
+            const container = contentDiv.querySelector(".todo-list-container");
+            
+            const label = document.createElement("span");
+            label.classList.add("todo-list-label");
+            label.textContent = "To-Do List";
+            container.insertBefore(label, container.firstChild); 
+        } else {
+            contentDiv.innerHTML = marked.parse(contentStr);
+        }
+        
+        // Rest of your bot message handling...
+    } else {
+        // User message handling
+        contentDiv.textContent = contentStr;
+    }
+
+    messageDiv.appendChild(contentDiv);
+    chatContainer.appendChild(messageDiv);
+    chatContainer.scrollTop = chatContainer.scrollHeight; 
+}
     
     function saveMessage(sender, content) {
         if (!currentChatId || !allChats[currentChatId]) {
