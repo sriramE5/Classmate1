@@ -4,7 +4,7 @@ python-dotenv
 pydantic[email]
 passlib[bcrypt]
 bcrypt==4.0.1
-python-jose
+python-jose 
 pymongo
 motor
 certifi
