@@ -92,7 +92,7 @@ async def upload_file(file: UploadFile = File(...), current_user: dict = Depends
                 raise HTTPException(status_code=400, detail=f"Error reading DOCX file: {str(e)}")
         
         # Split into chunks
-        splitter = RecursiveCharacterTextSplitter(chunk_size=300, chunk_overlap=50, separators=['\n\n', '\n', ' '])
+        splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100, separators=['\n\n', '\n', ' '])
         chunks = splitter.split_documents(pages)
         
         if not chunks:
@@ -105,7 +105,7 @@ async def upload_file(file: UploadFile = File(...), current_user: dict = Depends
         
         embeddings = GoogleGenerativeAIEmbeddings(model='models/embedding-001', google_api_key=api_key)
         vectorstore = Chroma.from_documents(documents=chunks, embedding=embeddings)
-        vector_index = vectorstore.as_retriever(search_kwargs={'k':8})
+        vector_index = vectorstore.as_retriever(search_kwargs={'k':16})
         
         # RAG model
         rag_model = RetrievalQA.from_chain_type(
