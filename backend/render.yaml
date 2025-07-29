@@ -6,7 +6,9 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port 10000
     envVars:
-      - key: GEMINI_API_KEY
+      - key: GEMINI_API_KEY1
+        value: AIzaSyCNskuNEMATDRNbZjnDaCoV1G5I9oSlzXE
+      - key: GEMINI_API_KEY2
         value: AIzaSyCNskuNEMATDRNbZjnDaCoV1G5I9oSlzXE
       - key: MONGO_URI
         value: mongodb+srv://evvganesh1:Ganesh714714@classmate.optdtwr.mongodb.net/?retryWrites=true&w=majority&appName=Classmate&tls=true
