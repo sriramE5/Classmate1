@@ -2720,6 +2720,14 @@ window.addEventListener("resize", () => {
       ragFileUploaded = false;
     });
 
+    // Update endpoints for advanced RAG
+    const uploadEndpoint = `${serverUrl}/api/upload`;
+    const filesEndpoint = `${serverUrl}/api/files`;
+    const deleteFileEndpoint = `${serverUrl}/api/delete_file`;
+    const ragChatEndpoint = `${serverUrl}/api/rag_chat`;
+    const chatEndpoint = `${serverUrl}/api/chat`;
+
+    // File upload logic
     ragUploadBtn.addEventListener("click", () => {
       ragFileInput.click();
     });
@@ -2727,90 +2735,142 @@ window.addEventListener("resize", () => {
     ragFileInput.addEventListener("change", async (e) => {
       const file = e.target.files[0];
       if (!file) return;
-      
-      // Check file type
-      const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-      if (!allowedTypes.includes(file.type)) {
-        showToast("Please select a valid PDF or DOCX file.", "error");
-        return;
-      }
-      
-      // Check file size (max 10MB)
-      const maxSize = 10 * 1024 * 1024; // 10MB
-      if (file.size > maxSize) {
-        showToast("File size too large. Please select a file smaller than 10MB.", "error");
-        return;
-      }
-      
       ragStatus.textContent = "Uploading...";
       const formData = new FormData();
       formData.append("file", file);
-      
       try {
         const token = getAuthToken();
-        if (!token) {
-          showToast("Authentication required. Please log in again.", "error");
-          return;
-        }
-        
-        console.log("Uploading file:", file.name, "Size:", file.size, "Type:", file.type);
-        
-        const resp = await fetch(`${serverUrl}/api/upload`, {
+        const resp = await fetch(uploadEndpoint, {
           method: "POST",
           headers: {
             'Authorization': `Bearer ${token}`
           },
           body: formData
         });
-        
-        console.log("Upload response status:", resp.status);
-        
-        if (!resp.ok) {
-          let errorMessage = `HTTP ${resp.status}`;
-          try {
-            const errorData = await resp.json();
-            errorMessage = errorData.detail || errorData.error || errorMessage;
-          } catch {
-            const errorText = await resp.text();
-            errorMessage = errorText || errorMessage;
-          }
-          console.error("Upload failed:", resp.status, errorMessage);
-          throw new Error(`HTTP ${resp.status}: ${errorMessage}`);
+        let data;
+        try {
+          data = await resp.json();
+        } catch {
+          data = {};
         }
-        
-        const data = await resp.json();
-        console.log("Upload response data:", data);
-        
-        ragStatus.textContent = `Uploaded: ${file.name} (${data.chunks} chunks)`;
-        ragFileUploaded = true;
-        showToast(`File uploaded successfully! You can now ask questions about ${file.name}.`);
-        
-        // Hide upload section after successful upload
-        setTimeout(() => {
-          fileUploadSection.style.display = "none";
-          toggleUploadBtn.innerHTML = '<i class="fas fa-check"></i>';
-          toggleUploadBtn.title = "File uploaded - Click to upload another";
-          toggleUploadBtn.style.color = '#4CAF50';
-        }, 2000);
-        
+        if (resp.ok) {
+          ragStatus.textContent = `Uploaded: ${file.name} (${data.chunks || '?'} chunks)`;
+          ragFileUploaded = true;
+          showToast(`File uploaded successfully! You can now ask questions about ${file.name}.`);
+          // Optionally refresh file list
+          await refreshFileList();
+        } else {
+          ragStatus.textContent = data.detail || data.error || "Upload failed.";
+          ragFileUploaded = false;
+          showToast("File upload failed. Please try again.", "error");
+        }
       } catch (err) {
-        console.error("Upload error:", err);
         ragStatus.textContent = "Upload error.";
         ragFileUploaded = false;
-        
-        if (err.message.includes('HTTP 413')) {
-          showToast("File too large. Please select a smaller file.", "error");
-        } else if (err.message.includes('HTTP 415')) {
-          showToast("Unsupported file type. Please select a PDF or DOCX file.", "error");
-        } else if (err.message.includes('HTTP 401')) {
-          showToast("Authentication failed. Please log in again.", "error");
-        } else if (err.message.includes('HTTP 500')) {
-          showToast("Server error. Please try again later.", "error");
-        } else {
-          showToast("Network error during upload. Please check your connection.", "error");
-        }
+        showToast("Network error during upload. Please check your connection.", "error");
       }
     });
+
+    // List files UI logic
+    async function refreshFileList() {
+      const token = getAuthToken();
+      try {
+        const resp = await fetch(filesEndpoint, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await resp.json();
+        const fileListDiv = document.getElementById("file-list");
+        if (!fileListDiv) return;
+        fileListDiv.innerHTML = "";
+        if (data.files && data.files.length > 0) {
+          data.files.forEach(file => {
+            const fileItem = document.createElement("div");
+            fileItem.className = "file-item";
+            fileItem.innerHTML = `${file.file_name} <button class='delete-file-btn' data-fname='${file.file_name}'>🗑️</button>`;
+            fileListDiv.appendChild(fileItem);
+          });
+          // Add delete logic
+          fileListDiv.querySelectorAll('.delete-file-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+              const fname = btn.getAttribute('data-fname');
+              await deleteFile(fname);
+              await refreshFileList();
+            });
+          });
+        } else {
+          fileListDiv.textContent = "No files uploaded.";
+        }
+      } catch (err) {
+        // Optionally show error
+      }
+    }
+
+    async function deleteFile(fileName) {
+      const token = getAuthToken();
+      try {
+        await fetch(`${deleteFileEndpoint}?file_name=${encodeURIComponent(fileName)}`, {
+          method: "DELETE",
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        showToast(`Deleted file: ${fileName}`);
+      } catch (err) {
+        showToast("Failed to delete file.", "error");
+      }
+    }
+
+    // Call refreshFileList() on page load or after upload
+    // ... existing code ...
+    // RAG chat logic
+    sendMessage = async function() {
+      if (ragFileUploaded) {
+        const messageText = userInput.value.trim();
+        if (!messageText || messageBeingSent) return;
+        messageBeingSent = true;
+        sendButton.disabled = true;
+        loadingIndicator.style.display = "flex";
+        userInput.value = "";
+        userInput.dispatchEvent(new Event("input"));
+        userInput.placeholder = "ClassMate is thinking...";
+        userInput.disabled = true;
+        addMessageToUI("user", messageText);
+        saveMessage("user", messageText);
+        try {
+          const token = getAuthToken();
+          const resp = await fetch(ragChatEndpoint, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ query: messageText })
+          });
+          const data = await resp.json();
+          if (resp.ok) {
+            addMessageToUI("bot", data.answer || "No answer.");
+            saveMessage("bot", data.answer || "No answer.");
+          } else {
+            addMessageToUI("bot", data.detail || data.error || "RAG error.");
+            saveMessage("bot", data.detail || data.error || "RAG error.");
+          }
+        } catch (err) {
+          addMessageToUI("bot", "RAG request failed.");
+          saveMessage("bot", "RAG request failed.");
+        } finally {
+          messageBeingSent = false;
+          userInput.disabled = false;
+          userInput.placeholder = "Ask ClassMate";
+          sendButton.disabled = userInput.value.trim() === "";
+          userInput.focus();
+          loadingIndicator.style.display = "none";
+        }
+        return;
+      }
+      // fallback to original chat endpoint
+      origSendMessage();
+    }
+    // ... existing code ...
+    // Add a <div id="file-list"></div> in your HTML where you want the file list to appear.
+    // ... existing code ...
 
     // Patch sendMessage to use RAG if a file is uploaded
     const origSendMessage = sendMessage;
