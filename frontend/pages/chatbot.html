@@ -2676,11 +2676,35 @@ window.addEventListener("resize", () => {
     let ragFileUploaded = false;
 
     // Toggle file upload section
-    toggleUploadBtn.addEventListener("click", () => {
+    toggleUploadBtn.addEventListener("click", async () => {
       fileUploadSection.style.display = fileUploadSection.style.display === "none" ? "block" : "none";
       if (fileUploadSection.style.display === "block") {
         toggleUploadBtn.innerHTML = '<i class="fas fa-times"></i>';
         toggleUploadBtn.title = "Close Upload";
+        
+        // Test upload service health
+        try {
+          const token = getAuthToken();
+          const healthResp = await fetch(`${serverUrl}/api/upload/health`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          
+          if (healthResp.ok) {
+            const healthData = await healthResp.json();
+            if (healthData.status === "healthy") {
+              console.log("Upload service is healthy:", healthData);
+            } else {
+              console.warn("Upload service warning:", healthData);
+              showToast("Upload service may have issues. Please try anyway.", "error");
+            }
+          } else {
+            console.warn("Upload service health check failed:", healthResp.status);
+          }
+        } catch (err) {
+          console.warn("Could not check upload service health:", err);
+        }
       } else {
         toggleUploadBtn.innerHTML = '<i class="fas fa-plus"></i>';
         toggleUploadBtn.title = "Upload PDF/DOCX";
@@ -2742,9 +2766,16 @@ window.addEventListener("resize", () => {
         console.log("Upload response status:", resp.status);
         
         if (!resp.ok) {
-          const errorText = await resp.text();
-          console.error("Upload failed:", resp.status, errorText);
-          throw new Error(`HTTP ${resp.status}: ${errorText}`);
+          let errorMessage = `HTTP ${resp.status}`;
+          try {
+            const errorData = await resp.json();
+            errorMessage = errorData.detail || errorData.error || errorMessage;
+          } catch {
+            const errorText = await resp.text();
+            errorMessage = errorText || errorMessage;
+          }
+          console.error("Upload failed:", resp.status, errorMessage);
+          throw new Error(`HTTP ${resp.status}: ${errorMessage}`);
         }
         
         const data = await resp.json();
@@ -2811,7 +2842,13 @@ window.addEventListener("resize", () => {
             addMessageToUI("bot", data.answer || "No answer.");
             saveMessage("bot", data.answer || "No answer.");
           } else {
-            const errorMsg = data.error || "RAG error.";
+            let errorMsg = "RAG error.";
+            try {
+              const errorData = await resp.json();
+              errorMsg = errorData.detail || errorData.error || errorMsg;
+            } catch {
+              errorMsg = data.error || errorMsg;
+            }
             addMessageToUI("bot", errorMsg);
             saveMessage("bot", errorMsg);
             showToast("RAG processing failed. Please try again.", "error");
