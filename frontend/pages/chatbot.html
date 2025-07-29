@@ -684,6 +684,81 @@
     .toast.error { background-color: #e53935; } /* Error style for toast */
 
 
+    /* File Upload Section Styles */
+    .file-upload-section {
+      background-color: var(--bg-secondary);
+      border-radius: var(--border-radius);
+      margin-bottom: 1rem;
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+    }
+    
+    .file-upload-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      background-color: var(--bg-tertiary);
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .file-upload-title {
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+    }
+    
+    .file-upload-cancel {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 4px;
+      border-radius: 50%;
+      transition: all 0.2s;
+    }
+    
+    .file-upload-cancel:hover {
+      background-color: rgba(255, 0, 0, 0.1);
+      color: #ff4444;
+    }
+    
+    .file-upload-content {
+      padding: 1rem;
+    }
+    
+    .file-upload-btn {
+      background: var(--btn-primary-bg);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius);
+      padding: 0.75rem 1.5rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .file-upload-btn:hover {
+      filter: var(--btn-hover);
+      transform: translateY(-1px);
+    }
+    
+    /* Dark mode adjustments for file upload */
+    .dark-mode .file-upload-section {
+      background-color: var(--bg-secondary);
+      border-color: var(--border-color);
+    }
+    
+    .dark-mode .file-upload-header {
+      background-color: var(--bg-tertiary);
+      border-color: var(--border-color);
+    }
+
     /* Input container */
     .input-container {
       display: flex;
@@ -1369,17 +1444,26 @@
 </div>
 </main>
 <div class="input-container">
+<div class="file-upload-section" id="file-upload-section" style="display: none;">
+  <div class="file-upload-header">
+    <span class="file-upload-title">File Upload</span>
+    <button class="file-upload-cancel" id="file-upload-cancel" title="Cancel Upload"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="file-upload-content">
+    <button class="file-upload-btn" id="rag-upload-btn" title="Upload PDF/DOCX"><i class="fas fa-upload"></i> Choose File</button>
+    <input type="file" id="rag-file-input" accept=".pdf,.docx" style="display:none" />
+    <div id="rag-status" style="margin-top:8px;font-size:0.9em;color:#7d5fff;"></div>
+  </div>
+</div>
 <div class="input-wrapper">
 <textarea id="user-input" placeholder="Ask ClassMate" rows="1"></textarea>
 <div class="input-buttons">
-  <button class="input-button" id="rag-upload-btn" title="Upload PDF/DOCX"><i class="fas fa-plus"></i></button>
-  <input type="file" id="rag-file-input" accept=".pdf,.docx" style="display:none" />
+  <button class="input-button" id="toggle-upload-btn" title="Upload PDF/DOCX"><i class="fas fa-plus"></i></button>
   <button class="input-button" id="todo-list-option" title="To-Do List"><i class="fas fa-list-check"></i></button>
   <button class="input-button" id="mic-button" title="Speak"><i class="fas fa-microphone"></i></button>
   <button class="input-button" id="send-button" title="Send Message"><i class="fas fa-paper-plane"></i></button>
 </div>
 </div>
-<div id="rag-status" style="margin-top:4px;font-size:0.95em;color:#7d5fff;"></div>
 </div>
 </div>
 </div>
@@ -1916,6 +2000,14 @@ function toggleSidebar() {
                  return;
              }
         }
+        
+        // Reset file upload state
+        ragFileUploaded = false;
+        ragStatus.textContent = "";
+        fileUploadSection.style.display = "none";
+        toggleUploadBtn.innerHTML = '<i class="fas fa-plus"></i>';
+        toggleUploadBtn.title = "Upload PDF/DOCX";
+        toggleUploadBtn.style.color = '';
 
 
         const newChatId = `chat_${Date.now()}`;
@@ -2575,10 +2667,34 @@ window.addEventListener("resize", () => {
 
     // Theme toggle functionality
 
+    const toggleUploadBtn = document.getElementById("toggle-upload-btn");
+    const fileUploadSection = document.getElementById("file-upload-section");
+    const fileUploadCancel = document.getElementById("file-upload-cancel");
     const ragUploadBtn = document.getElementById("rag-upload-btn");
     const ragFileInput = document.getElementById("rag-file-input");
     const ragStatus = document.getElementById("rag-status");
     let ragFileUploaded = false;
+
+    // Toggle file upload section
+    toggleUploadBtn.addEventListener("click", () => {
+      fileUploadSection.style.display = fileUploadSection.style.display === "none" ? "block" : "none";
+      if (fileUploadSection.style.display === "block") {
+        toggleUploadBtn.innerHTML = '<i class="fas fa-times"></i>';
+        toggleUploadBtn.title = "Close Upload";
+      } else {
+        toggleUploadBtn.innerHTML = '<i class="fas fa-plus"></i>';
+        toggleUploadBtn.title = "Upload PDF/DOCX";
+      }
+    });
+
+    // Cancel file upload
+    fileUploadCancel.addEventListener("click", () => {
+      fileUploadSection.style.display = "none";
+      toggleUploadBtn.innerHTML = '<i class="fas fa-plus"></i>';
+      toggleUploadBtn.title = "Upload PDF/DOCX";
+      ragStatus.textContent = "";
+      ragFileUploaded = false;
+    });
 
     ragUploadBtn.addEventListener("click", () => {
       ragFileInput.click();
@@ -2587,11 +2703,34 @@ window.addEventListener("resize", () => {
     ragFileInput.addEventListener("change", async (e) => {
       const file = e.target.files[0];
       if (!file) return;
+      
+      // Check file type
+      const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      if (!allowedTypes.includes(file.type)) {
+        showToast("Please select a valid PDF or DOCX file.", "error");
+        return;
+      }
+      
+      // Check file size (max 10MB)
+      const maxSize = 10 * 1024 * 1024; // 10MB
+      if (file.size > maxSize) {
+        showToast("File size too large. Please select a file smaller than 10MB.", "error");
+        return;
+      }
+      
       ragStatus.textContent = "Uploading...";
       const formData = new FormData();
       formData.append("file", file);
+      
       try {
         const token = getAuthToken();
+        if (!token) {
+          showToast("Authentication required. Please log in again.", "error");
+          return;
+        }
+        
+        console.log("Uploading file:", file.name, "Size:", file.size, "Type:", file.type);
+        
         const resp = await fetch(`${serverUrl}/api/upload`, {
           method: "POST",
           headers: {
@@ -2599,21 +2738,46 @@ window.addEventListener("resize", () => {
           },
           body: formData
         });
-        const data = await resp.json();
-        if (resp.ok) {
-          ragStatus.textContent = `Uploaded: ${file.name} (${data.chunks} chunks)`;
-          ragFileUploaded = true;
-          showToast(`File uploaded successfully! You can now ask questions about ${file.name}.`);
-        } else {
-          ragStatus.textContent = data.error || "Upload failed.";
-          ragFileUploaded = false;
-          showToast("File upload failed. Please try again.", "error");
+        
+        console.log("Upload response status:", resp.status);
+        
+        if (!resp.ok) {
+          const errorText = await resp.text();
+          console.error("Upload failed:", resp.status, errorText);
+          throw new Error(`HTTP ${resp.status}: ${errorText}`);
         }
+        
+        const data = await resp.json();
+        console.log("Upload response data:", data);
+        
+        ragStatus.textContent = `Uploaded: ${file.name} (${data.chunks} chunks)`;
+        ragFileUploaded = true;
+        showToast(`File uploaded successfully! You can now ask questions about ${file.name}.`);
+        
+        // Hide upload section after successful upload
+        setTimeout(() => {
+          fileUploadSection.style.display = "none";
+          toggleUploadBtn.innerHTML = '<i class="fas fa-check"></i>';
+          toggleUploadBtn.title = "File uploaded - Click to upload another";
+          toggleUploadBtn.style.color = '#4CAF50';
+        }, 2000);
+        
       } catch (err) {
         console.error("Upload error:", err);
         ragStatus.textContent = "Upload error.";
         ragFileUploaded = false;
-        showToast("Network error during upload. Please check your connection.", "error");
+        
+        if (err.message.includes('HTTP 413')) {
+          showToast("File too large. Please select a smaller file.", "error");
+        } else if (err.message.includes('HTTP 415')) {
+          showToast("Unsupported file type. Please select a PDF or DOCX file.", "error");
+        } else if (err.message.includes('HTTP 401')) {
+          showToast("Authentication failed. Please log in again.", "error");
+        } else if (err.message.includes('HTTP 500')) {
+          showToast("Server error. Please try again later.", "error");
+        } else {
+          showToast("Network error during upload. Please check your connection.", "error");
+        }
       }
     });
 
