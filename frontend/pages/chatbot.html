@@ -2156,10 +2156,15 @@ document.querySelectorAll('.dialog-modal').forEach(dialog => {
         }
     });
 
+   
     function addMessageToUI(sender, content) {
     // First ensure content is a string
-    const contentStr = typeof content === 'string' ? content : String(content);
-    
+    let contentStr = content;
+    if (typeof content !== 'string') {
+        console.warn('Non-string content received:', content);
+        contentStr = JSON.stringify(content);
+    }
+
     const chat = allChats[currentChatId];
     if (chat) {
         if (sender === "user" && (!chat.title || chat.title === "New Chat")) { 
@@ -2169,9 +2174,6 @@ document.querySelectorAll('.dialog-modal').forEach(dialog => {
         chat.lastActivityTimestamp = Date.now();
         saveChats();
         renderChatHistory(); 
-    } else {
-        console.error("Cannot add message: currentChatId not found in allChats");
-        return; 
     }
 
     const messageDiv = document.createElement("div");
@@ -2182,7 +2184,7 @@ document.querySelectorAll('.dialog-modal').forEach(dialog => {
 
     if (sender === "bot") {
         // Now safely check startsWith
-        if (contentStr.startsWith("<div class=\"todo-list-container\">")) {
+        if (typeof contentStr === 'string' && contentStr.startsWith("<div class=\"todo-list-container\">")) {
             contentDiv.innerHTML = contentStr;
             const container = contentDiv.querySelector(".todo-list-container");
             
@@ -2191,19 +2193,21 @@ document.querySelectorAll('.dialog-modal').forEach(dialog => {
             label.textContent = "To-Do List";
             container.insertBefore(label, container.firstChild); 
         } else {
-            contentDiv.innerHTML = marked.parse(contentStr);
+            // Handle both string and object responses
+            const contentToParse = typeof contentStr === 'string' ? contentStr : contentStr.reply || contentStr.answer || JSON.stringify(contentStr);
+            contentDiv.innerHTML = marked.parse(contentToParse);
         }
         
         // Rest of your bot message handling...
     } else {
-        // User message handling
         contentDiv.textContent = contentStr;
     }
 
     messageDiv.appendChild(contentDiv);
     chatContainer.appendChild(messageDiv);
-    chatContainer.scrollTop = chatContainer.scrollHeight; 
+    chatContainer.scrollTop = chatContainer.scrollHeight;
 }
+
     
     function saveMessage(sender, content) {
         if (!currentChatId || !allChats[currentChatId]) {
