@@ -2314,7 +2314,7 @@ document.querySelectorAll('.dialog-modal').forEach(dialog => {
 
     // ... existing code ...
     // Save the original sendMessage before overwriting
-    const origSendMessage = sendMessage;
+    let origSendMessage = sendMessage;
 
     // Overwrite sendMessage to handle RAG and fallback to normal chat
     sendMessage = async function() {
@@ -2823,65 +2823,7 @@ window.addEventListener("resize", () => {
     // ... existing code ...
 
     // Patch sendMessage to use RAG if a file is uploaded
-    const origSendMessage = sendMessage;
-    sendMessage = async function() {
-      if (ragFileUploaded) {
-        const messageText = userInput.value.trim();
-        if (!messageText || messageBeingSent) return;
-        messageBeingSent = true;
-        sendButton.disabled = true;
-        loadingIndicator.style.display = "flex";
-        userInput.value = "";
-        userInput.dispatchEvent(new Event("input"));
-        userInput.placeholder = "ClassMate is thinking...";
-        userInput.disabled = true;
-        addMessageToUI("user", messageText);
-        saveMessage("user", messageText);
-        try {
-          const token = getAuthToken();
-          const resp = await fetch(`${serverUrl}/api/rag_chat`, {
-            method: "POST",
-            headers: { 
-              "Content-Type": "application/json",
-              'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ query: messageText })
-          });
-          const data = await resp.json();
-          if (resp.ok) {
-            addMessageToUI("bot", data.answer || "No answer.");
-            saveMessage("bot", data.answer || "No answer.");
-          } else {
-            let errorMsg = "RAG error.";
-            try {
-              const errorData = await resp.json();
-              errorMsg = errorData.detail || errorData.error || errorMsg;
-            } catch {
-              errorMsg = data.error || errorMsg;
-            }
-            addMessageToUI("bot", errorMsg);
-            saveMessage("bot", errorMsg);
-            showToast("RAG processing failed. Please try again.", "error");
-          }
-        } catch (err) {
-          console.error("RAG request error:", err);
-          const errorMsg = "RAG request failed. Please check your connection.";
-          addMessageToUI("bot", errorMsg);
-          saveMessage("bot", errorMsg);
-          showToast("Network error during RAG processing.", "error");
-        } finally {
-          messageBeingSent = false;
-          userInput.disabled = false;
-          userInput.placeholder = "Ask ClassMate";
-          sendButton.disabled = userInput.value.trim() === "";
-          userInput.focus();
-          loadingIndicator.style.display = "none";
-        }
-        return;
-      }
-      // fallback to original
-      origSendMessage();
-    }
+    
 </script>
 </body>
 </html>
