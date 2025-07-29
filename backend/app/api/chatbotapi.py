@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Query, UploadFile, File, Form
+from fastapi import APIRouter, Query, UploadFile, File, Form, Depends, HTTPException, status
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import os
@@ -14,6 +14,7 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGener
 from langchain.vectorstores import Chroma
 from langchain.chains import RetrievalQA
 import docx
+from app.api.userapi import get_current_user
 
 # Load environment variables
 load_dotenv()
@@ -47,47 +48,90 @@ def extract_docx_text(docx_path):
     return "\n".join([para.text for para in doc.paragraphs if para.text.strip()])
 
 @router.post("/api/upload")
-async def upload_file(file: UploadFile = File(...)):
+async def upload_file(file: UploadFile = File(...), current_user: dict = Depends(get_current_user)):
     global vectorstore, vector_index, rag_model
-    # Save uploaded file to temp
-    with tempfile.NamedTemporaryFile(delete=False, suffix=file.filename[-5:]) as tmp:
-        shutil.copyfileobj(file.file, tmp)
-        tmp_path = tmp.name
-    # Load and split document
-    if file.filename.lower().endswith(".pdf"):
-        loader = PyPDFLoader(tmp_path)
-        pages = loader.load()
-    elif file.filename.lower().endswith(".docx"):
-        text = extract_docx_text(tmp_path)
-        # Wrap as LangChain Document
-        from langchain.docstore.document import Document
-        pages = [Document(page_content=text)]
-    else:
-        return JSONResponse({"error": "Unsupported file type. Only PDF and DOCX allowed."}, status_code=400)
-    # Split into chunks
-    splitter = RecursiveCharacterTextSplitter(chunk_size=300, chunk_overlap=50, separators=['\n\n', '\n', ' '])
-    chunks = splitter.split_documents(pages)
-    # Embeddings and vectorstore
-    api_key = api_key1 or api_key2
-    embeddings = GoogleGenerativeAIEmbeddings(model='models/embedding-001', google_api_key=api_key)
-    vectorstore = Chroma.from_documents(documents=chunks, embedding=embeddings)
-    vector_index = vectorstore.as_retriever(search_kwargs={'k':8})
-    # RAG model
-    rag_model = RetrievalQA.from_chain_type(
-        ChatGoogleGenerativeAI(model="gemini-2.0-flash", api_key=api_key),
-        retriever=vector_index,
-        return_source_documents=True
-    )
-    return {"message": "File uploaded and processed successfully.", "chunks": len(chunks)}
+    
+    # Validate file type
+    if not file.filename.lower().endswith(('.pdf', '.docx')):
+        raise HTTPException(status_code=400, detail="Unsupported file type. Only PDF and DOCX allowed.")
+    
+    # Validate file size (max 10MB)
+    max_size = 10 * 1024 * 1024  # 10MB
+    if file.size and file.size > max_size:
+        raise HTTPException(status_code=413, detail="File too large. Maximum size is 10MB.")
+    
+    tmp_path = None
+    try:
+        # Save uploaded file to temp
+        with tempfile.NamedTemporaryFile(delete=False, suffix=file.filename[-5:]) as tmp:
+            shutil.copyfileobj(file.file, tmp)
+            tmp_path = tmp.name
+        
+        # Load and split document
+        if file.filename.lower().endswith(".pdf"):
+            try:
+                loader = PyPDFLoader(tmp_path)
+                pages = loader.load()
+            except Exception as e:
+                raise HTTPException(status_code=400, detail=f"Error reading PDF file: {str(e)}")
+        elif file.filename.lower().endswith(".docx"):
+            try:
+                text = extract_docx_text(tmp_path)
+                # Wrap as LangChain Document
+                from langchain.docstore.document import Document
+                pages = [Document(page_content=text)]
+            except Exception as e:
+                raise HTTPException(status_code=400, detail=f"Error reading DOCX file: {str(e)}")
+        
+        # Split into chunks
+        splitter = RecursiveCharacterTextSplitter(chunk_size=300, chunk_overlap=50, separators=['\n\n', '\n', ' '])
+        chunks = splitter.split_documents(pages)
+        
+        if not chunks:
+            raise HTTPException(status_code=400, detail="No readable content found in the file.")
+        
+        # Embeddings and vectorstore
+        api_key = api_key1 or api_key2
+        if not api_key:
+            raise HTTPException(status_code=500, detail="API key not configured.")
+        
+        embeddings = GoogleGenerativeAIEmbeddings(model='models/embedding-001', google_api_key=api_key)
+        vectorstore = Chroma.from_documents(documents=chunks, embedding=embeddings)
+        vector_index = vectorstore.as_retriever(search_kwargs={'k':8})
+        
+        # RAG model
+        rag_model = RetrievalQA.from_chain_type(
+            ChatGoogleGenerativeAI(model="gemini-2.0-flash", api_key=api_key),
+            retriever=vector_index,
+            return_source_documents=True
+        )
+        
+        return {"message": "File uploaded and processed successfully.", "chunks": len(chunks)}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+    finally:
+        # Clean up temporary file
+        if tmp_path and os.path.exists(tmp_path):
+            try:
+                os.unlink(tmp_path)
+            except:
+                pass
 
 class RAGRequest(BaseModel):
     query: str
 
 @router.post("/api/rag_chat")
-async def rag_chat(req: RAGRequest):
+async def rag_chat(req: RAGRequest, current_user: dict = Depends(get_current_user)):
     global rag_model
     if rag_model is None:
-        return JSONResponse({"error": "No document uploaded yet."}, status_code=400)
+        raise HTTPException(status_code=400, detail="No document uploaded yet. Please upload a file first.")
+    
+    if not req.query or not req.query.strip():
+        raise HTTPException(status_code=400, detail="Query cannot be empty.")
+    
     try:
         response = rag_model({"query": req.query})
         answer = response["result"]
@@ -95,7 +139,7 @@ async def rag_chat(req: RAGRequest):
         sources = [doc.metadata.get("source", "") for doc in response.get("source_documents", [])]
         return {"answer": answer, "sources": sources}
     except Exception as e:
-        return {"error": str(e)}
+        raise HTTPException(status_code=500, detail=f"Error processing query: {str(e)}")
 
 async def generate_reply(prompt: str, client):
     response = client.models.generate_content(
@@ -146,3 +190,29 @@ async def get_performance():
         "completed": completed,
         "percent": percent
     }
+
+@router.get("/api/upload/health")
+async def upload_health_check():
+    """Health check for upload functionality"""
+    try:
+        # Check if required dependencies are available
+        import langchain
+        import docx
+        import tempfile
+        import os
+        
+        # Check if API keys are configured
+        api_key = api_key1 or api_key2
+        if not api_key:
+            return {"status": "error", "message": "API keys not configured"}
+        
+        return {
+            "status": "healthy",
+            "message": "Upload service is ready",
+            "supported_formats": ["PDF", "DOCX"],
+            "max_file_size": "10MB"
+        }
+    except ImportError as e:
+        return {"status": "error", "message": f"Missing dependency: {str(e)}"}
+    except Exception as e:
+        return {"status": "error", "message": f"Service error: {str(e)}"}
