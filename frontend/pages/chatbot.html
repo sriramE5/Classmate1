@@ -1396,18 +1396,20 @@
   </style>
 </head>
 <body>
-<div id="page-loader-chatbot"> <div class="spinner"></div>
+<div id="page-loader-chatbot"> <!-- Page loader element -->
+    <div class="spinner"></div>
 </div>
 
 <div class="app-container" id="app-container">
 <aside class="sidebar" id="sidebar">
 <div class="sidebar-header">
-<button class="sidebar-toggle-btn" id="sidebar-toggle-btn" title="Toggle Sidebar"><svg fill="currentColor" height="1em" style="display: block; vertical-align: middle;" viewBox="0 0 24 24" width="1em" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="M3 6C3 5.44772 3.44772 5 4 5H20C20.5523 5 21 5.44772 21 6C21 6.55228 20.5523 7 20 7H4C3.44772 7 3 6.55228 3 6ZM3 12C3 11.4477 3.44772 11 4 11H20C20.5523 11 21 11.4477 21 12C21 12.5523 20.5523 13 20 13H4C3.44772 13 3 12.5523 3 12ZM4 17C3.44772 17 3 17.4477 3 18C3 18.5523 3.44772 19 4 19H20C20.5523 19 21 18.5523 21 18C21 17.4477 20.5523 17 20 17H4Z" fill="currentColor" fill-rule="evenodd"></path></svg></button>
+<button class="sidebar-toggle-btn" id="sidebar-toggle-btn" title="Toggle Sidebar"><svg fill="currentColor" height="1em" style="display: block; vertical-align: middle;" viewbox="0 0 24 24" width="1em" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="M3 6C3 5.44772 3.44772 5 4 5H20C20.5523 5 21 5.44772 21 6C21 6.55228 20.5523 7 20 7H4C3.44772 7 3 6.55228 3 6ZM3 12C3 11.4477 3.44772 11 4 11H20C20.5523 11 21 11.4477 21 12C21 12.5523 20.5523 13 20 13H4C3.44772 13 3 12.5523 3 12ZM4 17C3.44772 17 3 17.4477 3 18C3 18.5523 3.44772 19 4 19H20C20.5523 19 21 18.5523 21 18C21 17.4477 20.5523 17 20 17H4Z" fill="currentColor" fill-rule="evenodd"></path></svg></button>
 <button class="sidebar-search-btn" id="sidebar-search-btn" title="Search Chats"><i class="fas fa-search"></i></button>
 </div>
 <input class="sidebar-search-input" id="sidebar-search-input" placeholder="Search chats..." type="text"/>
 <button class="btn btn-primary new-chat-btn" id="new-chat-btn"><i class="fas fa-plus"></i> New Chat</button>
 <ul class="chat-history-list" id="chat-history-list">
+<!-- Chat history items will be loaded here by JS -->
 </ul>
 
 </aside>
@@ -1415,21 +1417,27 @@
 <div class="main-content" id="main-content">
 <header>
 <div class="header-left">
-<button class="header-sidebar-toggle-btn" id="header-sidebar-toggle-btn" title="Toggle Sidebar"><svg fill="currentColor" height="1em" style="display: block; vertical-align: middle;" viewBox="0 0 24 24" width="1em" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="M3 6C3 5.44772 3.44772 5 4 5H20C20.5523 5 21 5.44772 21 6C21 6.55228 20.5523 7 20 7H4C3.44772 7 3 6.55228 3 6ZM3 12C3 11.4477 3.44772 11 4 11H20C20.5523 11 21 11.4477 21 12C21 12.5523 20.5523 13 20 13H4C3.44772 13 3 12.5523 3 12ZM4 17C3.44772 17 3 17.4477 3 18C3 18.5523 3.44772 19 4 19H20C20.5523 19 21 18.5523 21 18C21 17.4477 20.5523 17 20 17H4Z" fill="currentColor" fill-rule="evenodd"></path></svg></button>
-<button class="menu-toggle" id="menu-toggle" title="Open Chat History"><svg fill="currentColor" height="1em" style="display: block; vertical-align: middle;" viewBox="0 0 24 24" width="1em" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="M3 6C3 5.44772 3.44772 5 4 5H20C20.5523 5 21 5.44772 21 6C21 6.55228 20.5523 7 20 7H4C3.44772 7 3 6.55228 3 6ZM3 12C3 11.4477 3.44772 11 4 11H20C20.5523 11 21 11.4477 21 12C21 12.5523 20.5523 13 20 13H4C3.44772 13 3 12.5523 3 12ZM4 17C3.44772 17 3 17.4477 3 18C3 18.5523 3.44772 19 4 19H20C20.5523 19 21 18.5523 21 18C21 17.4477 20.5523 17 20 17H4Z" fill="currentColor" fill-rule="evenodd"></path></svg></button>
+<button class="header-sidebar-toggle-btn" id="header-sidebar-toggle-btn" title="Toggle Sidebar"><svg fill="currentColor" height="1em" style="display: block; vertical-align: middle;" viewbox="0 0 24 24" width="1em" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="M3 6C3 5.44772 3.44772 5 4 5H20C20.5523 5 21 5.44772 21 6C21 6.55228 20.5523 7 20 7H4C3.44772 7 3 6.55228 3 6ZM3 12C3 11.4477 3.44772 11 4 11H20C20.5523 11 21 11.4477 21 12C21 12.5523 20.5523 13 20 13H4C3.44772 13 3 12.5523 3 12ZM4 17C3.44772 17 3 17.4477 3 18C3 18.5523 3.44772 19 4 19H20C20.5523 19 21 18.5523 21 18C21 17.4477 20.5523 17 20 17H4Z" fill="currentColor" fill-rule="evenodd"></path></svg></button>
+<button class="menu-toggle" id="menu-toggle" title="Open Chat History"><svg fill="currentColor" height="1em" style="display: block; vertical-align: middle;" viewbox="0 0 24 24" width="1em" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="M3 6C3 5.44772 3.44772 5 4 5H20C20.5523 5 21 5.44772 21 6C21 6.55228 20.5523 7 20 7H4C3.44772 7 3 6.55228 3 6ZM3 12C3 11.4477 3.44772 11 4 11H20C20.5523 11 21 11.4477 21 12C21 12.5523 20.5523 13 20 13H4C3.44772 13 3 12.5523 3 12ZM4 17C3.44772 17 3 17.4477 3 18C3 18.5523 3.44772 19 4 19H20C20.5523 19 21 18.5523 21 18C21 17.4477 20.5523 17 20 17H4Z" fill="currentColor" fill-rule="evenodd"></path></svg></button>
 <span class="classmate-title">Classmate AI</span>
 </div>
+<!--<div class="header-center">
+
+  <span class="classmate-title">Classmate AI</span>
+</div>-->
 <div class="header-right">
   <button class="header-settings-btn" id="header-settings-btn" title="Settings">
     <i class="fas fa-cog"></i>
   </button>
   <button class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle Dark Mode">
-    <i class="fas fa-moon"></i> </button>
+    <i class="fas fa-moon"></i> <!-- Initial icon, will be updated by JS -->
+  </button>
 </div>
 
 </header>
 <main>
 <div class="chat-container" id="chat-container">
+<!-- Chat messages will be loaded here -->
 </div>
 <div class="loading-indicator" id="loading-indicator">
 <span></span><span></span><span></span>
@@ -1459,8 +1467,11 @@
 </div>
 </div>
 </div>
+</div>
+<!-- Toast notification element -->
 <div class="toast" id="toast"></div>
 
+<!-- Rename Chat Dialog -->
 <div class="dialog-modal" id="rename-dialog">
     <div class="dialog-content">
         <div class="dialog-header">
@@ -1478,6 +1489,7 @@
     </div>
 </div>
 
+<!-- Delete Chat Dialog -->
 <div class="dialog-modal" id="delete-dialog">
     <div class="dialog-content">
         <div class="dialog-header">
