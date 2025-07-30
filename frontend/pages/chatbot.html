@@ -1444,7 +1444,9 @@
     const toast = document.getElementById("toast");
     const themeToggleBtn = document.getElementById("theme-toggle-btn");
     const pageLoader = document.getElementById('page-loader-chatbot');
-
+    const ragUploadBtn = document.getElementById("rag-upload-btn");
+    const ragFileInput = document.getElementById("rag-file-input");
+    const ragStatus = document.getElementById("rag-status");
 
     let currentChatId = null;
     let allChats = {}; 
@@ -1456,8 +1458,8 @@
     let resizeTimeout;
     let chatToRename = null;
     let chatToDelete = null;
-    
-    let currentUserSettings = null; // To store fetched user settings
+    let ragFileUploaded = false;
+    let currentUserSettings = null;
 
     let defaultPromptBase = `You are **ClassMate**, an AI-powered student assistant designed to help users manage academics, track goals, organize tasks, and stay motivated. You have a friendly, supportive, and helpful personality. Your tone adapts to the user — casual if they're casual, serious when they are serious.
 
@@ -1563,7 +1565,6 @@ Remember to break your goals into phases and tasks.`;
             if (window.parent && window.parent !== window) {
                 window.parent.postMessage({ type: 'logout', reason: 'no_token_chatbot' }, '*');
             }
-            // Potentially redirect to login if standalone, or disable chat features
             return null;
         }
 
@@ -1578,8 +1579,6 @@ Remember to break your goals into phases and tasks.`;
                 localStorage.removeItem('auth_token');
                 if (window.parent && window.parent !== window) {
                     window.parent.postMessage({ type: 'logout', reason: 'unauthorized_chatbot_settings' }, '*');
-                } else {
-                    // Handle standalone redirect if necessary, e.g., window.location.href = 'login.html';
                 }
                 return null;
             }
@@ -1602,7 +1601,6 @@ Remember to break your goals into phases and tasks.`;
         }
     }
 
-
     function checkForQueryParameters() {
         const urlParams = new URLSearchParams(window.location.search);
         const query = urlParams.get("query");
@@ -1610,7 +1608,6 @@ Remember to break your goals into phases and tasks.`;
         if (query) {
             userInput.value = decodeURIComponent(query);
             userInput.dispatchEvent(new Event("input")); 
-            // setTimeout(() => sendMessage(), 500);
         }
     }
 
@@ -1618,16 +1615,15 @@ Remember to break your goals into phases and tasks.`;
         return window.innerWidth <= 1024 || window.innerHeight < 200; 
     }
 
-    // --- START OF THEME SYNCHRONIZATION LOGIC ---
     function applyThemeSynchronized() {
-        const parentDarkModeSetting = localStorage.getItem("darkMode"); // Use the SHARED key
+        const parentDarkModeSetting = localStorage.getItem("darkMode");
         const isNowDark = parentDarkModeSetting === "enabled";
         document.body.classList.toggle("dark-mode", isNowDark);
         if (themeToggleBtn) { 
             themeToggleBtn.innerHTML = isNowDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
             themeToggleBtn.title = isNowDark ? "Toggle Light Mode" : "Toggle Dark Mode";
         }
-         if (pageLoader) { // Update page loader background if visible
+         if (pageLoader) {
             pageLoader.style.backgroundColor = getComputedStyle(document.body).getPropertyValue('--bg');
         }
     }
@@ -1638,7 +1634,7 @@ Remember to break your goals into phases and tasks.`;
         if (e.key === 'darkMode') {
             applyThemeSynchronized();
         }
-        if (e.key === 'auth_token' && !e.newValue) { // Token removed externally
+        if (e.key === 'auth_token' && !e.newValue) {
             showToast("Logged out. Please log in again.", "error", 5000);
             if (window.parent && window.parent !== window) {
                 window.parent.postMessage({ type: 'logout', reason: 'token_cleared_external_chatbot' }, '*');
@@ -1662,7 +1658,7 @@ Remember to break your goals into phases and tasks.`;
     if (themeToggleBtn) {
         themeToggleBtn.addEventListener("click", () => {
             const bodyIsDarkNow = document.body.classList.toggle("dark-mode");
-            localStorage.setItem("darkMode", bodyIsDarkNow ? "enabled" : "disabled"); // Update SHARED key
+            localStorage.setItem("darkMode", bodyIsDarkNow ? "enabled" : "disabled");
             themeToggleBtn.innerHTML = bodyIsDarkNow ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
             themeToggleBtn.title = bodyIsDarkNow ? "Toggle Light Mode" : "Toggle Dark Mode";
              if (pageLoader) {
@@ -1670,23 +1666,21 @@ Remember to break your goals into phases and tasks.`;
             }
         });
     }
-    // --- END OF THEME SYNCHRONIZATION LOGIC ---
 
-
-    // Update the toggleSidebar function to handle mobile properly
-function toggleSidebar() {
-    const mobileView = isMobileView();
-    if (mobileView) {
-        sidebar.classList.toggle("open");
-        sidebarOverlay.style.display = sidebar.classList.contains("open") ? "block" : "none";
-        document.body.style.overflow = sidebar.classList.contains("open") ? "hidden" : "auto";
-    } else {
-        sidebar.classList.toggle("collapsed");
-        appContainer.classList.toggle("sidebar-hidden");
-        localStorage.setItem("sidebarState_ClassMate", sidebar.classList.contains("collapsed") ? "collapsed" : "open");
+    function toggleSidebar() {
+        const mobileView = isMobileView();
+        if (mobileView) {
+            sidebar.classList.toggle("open");
+            sidebarOverlay.style.display = sidebar.classList.contains("open") ? "block" : "none";
+            document.body.style.overflow = sidebar.classList.contains("open") ? "hidden" : "auto";
+        } else {
+            sidebar.classList.toggle("collapsed");
+            appContainer.classList.toggle("sidebar-hidden");
+            localStorage.setItem("sidebarState_ClassMate", sidebar.classList.contains("collapsed") ? "collapsed" : "open");
+        }
+        updateToggleButtonVisibility();
     }
-    updateToggleButtonVisibility();
-}
+
     sidebarToggleBtn.addEventListener("click", toggleSidebar);
     headerSidebarToggleBtn.addEventListener("click", toggleSidebar);
     menuToggle.addEventListener("click", toggleSidebar);
@@ -1907,16 +1901,13 @@ function toggleSidebar() {
 
     function startNewChat(switchToNew = true) {
         if (currentChatId && allChats[currentChatId] && allChats[currentChatId].messages.length === 0) {
-            // If current chat is new and empty, don't create another one, just stay
-             if (switchToNew) { // If called with switchToNew=true, it means user explicitly clicked "New Chat"
-                // Proceed to create a new one even if current is empty, but only if currentChatId is not null
-                 if(currentChatId === null) { /* no chat exists, so proceed */ }
-                 else { /* a chat exists, could be empty, but new chat was clicked */ }
-             } else { // if called with switchToNew=false (e.g. initial load, or after delete), don't create if current is empty
-                 return;
-             }
+            if (switchToNew) {
+                if(currentChatId === null) { }
+                else { }
+            } else {
+                return;
+            }
         }
-
 
         const newChatId = `chat_${Date.now()}`;
         allChats[newChatId] = {
@@ -1976,86 +1967,86 @@ function toggleSidebar() {
     }
 
     function renameChat(chatId) {
-    chatToRename = chatId;
-    const chat = allChats[chatId];
-    const dialog = document.getElementById('rename-dialog');
-    const input = document.getElementById('rename-input');
-    
-    input.value = chat.title || `Chat ${chatId.substring(0, 4)}`;
-    dialog.classList.add('show');
-    
-    setTimeout(() => {
-        input.focus();
-        input.select();
-    }, 100);
-}
-
-function deleteChat(chatId) {
-    chatToDelete = chatId;
-    const chat = allChats[chatId];
-    const dialog = document.getElementById('delete-dialog');
-    const textElement = document.getElementById('delete-confirm-text');
-    
-    textElement.textContent = `Are you sure you want to delete "${chat.title || 'this chat permanently'}"?`;
-    dialog.classList.add('show');
-}
-
-document.getElementById('rename-cancel-btn').addEventListener('click', () => {
-    document.getElementById('rename-dialog').classList.remove('show');
-    chatToRename = null;
-});
-
-document.getElementById('rename-confirm-btn').addEventListener('click', () => {
-    const newTitle = document.getElementById('rename-input').value.trim();
-    if (newTitle && chatToRename && allChats[chatToRename]) {
-        allChats[chatToRename].title = newTitle;
-        saveChats();
-        renderChatHistory();
-    }
-    document.getElementById('rename-dialog').classList.remove('show');
-    chatToRename = null;
-});
-
-document.getElementById('delete-cancel-btn').addEventListener('click', () => {
-    document.getElementById('delete-dialog').classList.remove('show');
-    chatToDelete = null;
-});
-
-document.getElementById('delete-confirm-btn').addEventListener('click', () => {
-    if (chatToDelete && allChats[chatToDelete]) {
-        delete allChats[chatToDelete];
-        saveChats();
+        chatToRename = chatId;
+        const chat = allChats[chatId];
+        const dialog = document.getElementById('rename-dialog');
+        const input = document.getElementById('rename-input');
         
-        if (currentChatId === chatToDelete) {
-            const remainingChatIds = Object.keys(allChats);
-            if (remainingChatIds.length > 0) {
-                switchChat(remainingChatIds[0]);
-            } else {
-                startNewChat();
-            }
-        } else {
+        input.value = chat.title || `Chat ${chatId.substring(0, 4)}`;
+        dialog.classList.add('show');
+        
+        setTimeout(() => {
+            input.focus();
+            input.select();
+        }, 100);
+    }
+
+    function deleteChat(chatId) {
+        chatToDelete = chatId;
+        const chat = allChats[chatId];
+        const dialog = document.getElementById('delete-dialog');
+        const textElement = document.getElementById('delete-confirm-text');
+        
+        textElement.textContent = `Are you sure you want to delete "${chat.title || 'this chat permanently'}"?`;
+        dialog.classList.add('show');
+    }
+
+    document.getElementById('rename-cancel-btn').addEventListener('click', () => {
+        document.getElementById('rename-dialog').classList.remove('show');
+        chatToRename = null;
+    });
+
+    document.getElementById('rename-confirm-btn').addEventListener('click', () => {
+        const newTitle = document.getElementById('rename-input').value.trim();
+        if (newTitle && chatToRename && allChats[chatToRename]) {
+            allChats[chatToRename].title = newTitle;
+            saveChats();
             renderChatHistory();
         }
-    }
-    document.getElementById('delete-dialog').classList.remove('show');
-    chatToDelete = null;
-});
+        document.getElementById('rename-dialog').classList.remove('show');
+        chatToRename = null;
+    });
 
-document.getElementById('rename-input').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        document.getElementById('rename-confirm-btn').click();
-    }
-});
+    document.getElementById('delete-cancel-btn').addEventListener('click', () => {
+        document.getElementById('delete-dialog').classList.remove('show');
+        chatToDelete = null;
+    });
 
-document.querySelectorAll('.dialog-modal').forEach(dialog => {
-    dialog.addEventListener('click', (e) => {
-        if (e.target === dialog) {
-            dialog.classList.remove('show');
-            chatToRename = null;
-            chatToDelete = null;
+    document.getElementById('delete-confirm-btn').addEventListener('click', () => {
+        if (chatToDelete && allChats[chatToDelete]) {
+            delete allChats[chatToDelete];
+            saveChats();
+            
+            if (currentChatId === chatToDelete) {
+                const remainingChatIds = Object.keys(allChats);
+                if (remainingChatIds.length > 0) {
+                    switchChat(remainingChatIds[0]);
+                } else {
+                    startNewChat();
+                }
+            } else {
+                renderChatHistory();
+            }
+        }
+        document.getElementById('delete-dialog').classList.remove('show');
+        chatToDelete = null;
+    });
+
+    document.getElementById('rename-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            document.getElementById('rename-confirm-btn').click();
         }
     });
-});
+
+    document.querySelectorAll('.dialog-modal').forEach(dialog => {
+        dialog.addEventListener('click', (e) => {
+            if (e.target === dialog) {
+                dialog.classList.remove('show');
+                chatToRename = null;
+                chatToDelete = null;
+            }
+        });
+    });
 
     newChatBtn.addEventListener("click", () => {
         startNewChat();
@@ -2207,7 +2198,6 @@ document.querySelectorAll('.dialog-modal').forEach(dialog => {
                  console.error(`Current chat ID ${currentChatId} is invalid.`);
                  switchChat(Object.keys(allChats)[0]); 
             }
-            // After potential recovery, try saving again if chat is now valid
             if (currentChatId && allChats[currentChatId]) {
                  allChats[currentChatId].messages.push({ sender, content });
                  saveChats();
@@ -2218,6 +2208,35 @@ document.querySelectorAll('.dialog-modal').forEach(dialog => {
         }
         allChats[currentChatId].messages.push({ sender, content });
         saveChats();
+    }
+
+    async function sendRAGMessage(messageText) {
+        try {
+            const token = getAuthToken();
+            if (!token) {
+                throw new Error("Authentication required");
+            }
+
+            const response = await fetch(`${serverUrl}/api/rag_chat`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ query: messageText })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || "RAG query failed");
+            }
+
+            const data = await response.json();
+            return data.answer || "No answer found in documents";
+        } catch (err) {
+            console.error("RAG error:", err);
+            return `RAG error: ${err.message}`;
+        }
     }
 
     async function sendMessage() {
@@ -2242,77 +2261,80 @@ document.querySelectorAll('.dialog-modal').forEach(dialog => {
         addMessageToUI("user", messageText);
         saveMessage("user", messageText); 
 
-        // --- DYNAMIC PROMPT CONSTRUCTION ---
-        let basePromptForAPI = isToDoListModeActive ? todoListPrompt : defaultPromptBase;
-
-        if (currentUserSettings && currentUserSettings.chatbot_customization_enabled && !isToDoListModeActive) {
-            let customizationInstructions = "\n\n--- USER CUSTOMIZATION ---\n";
-            if (currentUserSettings.chatbot_nickname) {
-                customizationInstructions += `The user prefers to be called "${currentUserSettings.chatbot_nickname}". Please address them by this name.\n`;
-            } else {
-                customizationInstructions += "Address the user generally (e.g., 'User', or based on conversation context if no specific name preference is set).\n";
-            }
-
-            switch (currentUserSettings.chatbot_tone) {
-                case "professional_concise":
-                    customizationInstructions += "Adopt a professional and concise tone in your responses.\n";
-                    break;
-                case "humorous_witty":
-                    customizationInstructions += "Adopt a humorous and witty tone. Be creative and engaging, but remain helpful and on-topic.\n";
-                    break;
-                case "custom":
-                    if (!currentUserSettings.chatbot_custom_instructions) {
-                         customizationInstructions += "Maintain a friendly and supportive tone (default for custom with no specific instructions).\n";
-                    }
-                    // If custom_instructions exist, they will be added below and might dictate the tone.
-                    break;
-                default: // friendly_supportive or any other/undefined value
-                    customizationInstructions += "Maintain a friendly and supportive tone.\n";
-            }
-
-            if (currentUserSettings.chatbot_custom_instructions) {
-                customizationInstructions += `Adhere to the following user-provided guidelines for your responses: (dont cross ethics) "${currentUserSettings.chatbot_custom_instructions}"\n`;
-            }
-
-            if (currentUserSettings.chatbot_user_context) {
-                customizationInstructions += `Keep this user-specific context in mind: "${currentUserSettings.chatbot_user_context}"\n`;
-            }
-            customizationInstructions += "--- END USER CUSTOMIZATION ---\n";
-            basePromptForAPI += customizationInstructions;
-        }
-        // --- END DYNAMIC PROMPT CONSTRUCTION ---
-
-        const currentMessages = allChats[currentChatId]?.messages || [];
-        const historySlice = currentMessages.slice(-10); // Send last 10 messages (5 turns approx)
-        const conversationHistoryForAPI = historySlice
-            .map(msg => `${msg.sender === "user" ? "User" : "AI"}: ${msg.content}`)
-            .join("\n");
-
-        let finalPrompt;
-        if (isToDoListModeActive) {
-            finalPrompt = basePromptForAPI + "\n\nConversation History (leading to To-Do request):\n" + conversationHistoryForAPI;
-            // The user's latest message is already part of conversationHistoryForAPI as it's added before this function call.
-            // If needed, it could be explicitly added: finalPrompt += "\n\nUser's latest message for To-Do: " + messageText;
-        } else {
-            finalPrompt = basePromptForAPI + "\n\nConversation History:\n" + conversationHistoryForAPI;
-        }
-
         try {
-            const response = await fetch(`${serverUrl}/api/chat`, { 
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ prompt: finalPrompt }), 
-            });
+            let botResponse;
+            
+            if (ragFileUploaded) {
+                botResponse = await sendRAGMessage(messageText);
+            } else {
+                let basePromptForAPI = isToDoListModeActive ? todoListPrompt : defaultPromptBase;
 
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+                if (currentUserSettings && currentUserSettings.chatbot_customization_enabled && !isToDoListModeActive) {
+                    let customizationInstructions = "\n\n--- USER CUSTOMIZATION ---\n";
+                    if (currentUserSettings.chatbot_nickname) {
+                        customizationInstructions += `The user prefers to be called "${currentUserSettings.chatbot_nickname}". Please address them by this name.\n`;
+                    } else {
+                        customizationInstructions += "Address the user generally (e.g., 'User', or based on conversation context if no specific name preference is set).\n";
+                    }
+
+                    switch (currentUserSettings.chatbot_tone) {
+                        case "professional_concise":
+                            customizationInstructions += "Adopt a professional and concise tone in your responses.\n";
+                            break;
+                        case "humorous_witty":
+                            customizationInstructions += "Adopt a humorous and witty tone. Be creative and engaging, but remain helpful and on-topic.\n";
+                            break;
+                        case "custom":
+                            if (!currentUserSettings.chatbot_custom_instructions) {
+                                 customizationInstructions += "Maintain a friendly and supportive tone (default for custom with no specific instructions).\n";
+                            }
+                            break;
+                        default:
+                            customizationInstructions += "Maintain a friendly and supportive tone.\n";
+                    }
+
+                    if (currentUserSettings.chatbot_custom_instructions) {
+                        customizationInstructions += `Adhere to the following user-provided guidelines for your responses: (dont cross ethics) "${currentUserSettings.chatbot_custom_instructions}"\n`;
+                    }
+
+                    if (currentUserSettings.chatbot_user_context) {
+                        customizationInstructions += `Keep this user-specific context in mind: "${currentUserSettings.chatbot_user_context}"\n`;
+                    }
+                    customizationInstructions += "--- END USER CUSTOMIZATION ---\n";
+                    basePromptForAPI += customizationInstructions;
+                }
+
+                const currentMessages = allChats[currentChatId]?.messages || [];
+                const historySlice = currentMessages.slice(-10);
+                const conversationHistoryForAPI = historySlice
+                    .map(msg => `${msg.sender === "user" ? "User" : "AI"}: ${msg.content}`)
+                    .join("\n");
+
+                let finalPrompt;
+                if (isToDoListModeActive) {
+                    finalPrompt = basePromptForAPI + "\n\nConversation History (leading to To-Do request):\n" + conversationHistoryForAPI;
+                } else {
+                    finalPrompt = basePromptForAPI + "\n\nConversation History:\n" + conversationHistoryForAPI;
+                }
+
+                const response = await fetch(`${serverUrl}/api/chat`, { 
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${getAuthToken()}`
+                    },
+                    body: JSON.stringify({ prompt: finalPrompt }), 
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+                }
+
+                const data = await response.json();
+                botResponse = data.reply || "Sorry, I couldn't process that.";
             }
 
-            const data = await response.json();
-            let botResponse = data.reply || "Sorry, I couldn\\'t process that.";            
             if (isToDoListModeActive && botResponse.includes("Goal:") && botResponse.includes("Phase")) { 
                 const todoContainer = document.createElement("div");
                 todoContainer.classList.add("todo-list-container");
@@ -2324,7 +2346,6 @@ document.querySelectorAll('.dialog-modal').forEach(dialog => {
                 
                 addMessageToUI("bot", todoContainer.outerHTML);
                 saveMessage("bot", todoContainer.outerHTML); 
-
             } else {
                 addMessageToUI("bot", botResponse);
                 saveMessage("bot", botResponse);
@@ -2339,7 +2360,7 @@ document.querySelectorAll('.dialog-modal').forEach(dialog => {
 
         } catch (error) {
             console.error("Error sending message:", error);
-            const errorMsg = `Sorry, there was an error connecting to the assistant. Please ensure you're connected to a network and try again. (Details: ${error.message})`;
+            const errorMsg = `Sorry, there was an error: ${error.message}`;
             addMessageToUI("bot", errorMsg);
             saveMessage("bot", errorMsg);
         } finally {
@@ -2357,6 +2378,56 @@ document.querySelectorAll('.dialog-modal').forEach(dialog => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault(); 
             sendMessage();
+        }
+    });
+
+    ragUploadBtn.addEventListener("click", () => {
+        ragFileInput.click();
+    });
+
+    ragFileInput.addEventListener("change", async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        const validTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+        if (!validTypes.includes(file.type)) {
+            showToast("Only PDF and DOCX files are allowed", "error");
+            return;
+        }
+
+        const token = getAuthToken();
+        if (!token) {
+            showToast("Please log in to upload files", "error");
+            return;
+        }
+
+        ragStatus.textContent = "Uploading...";
+        const formData = new FormData();
+        formData.append("file", file);
+        
+        try {
+            const resp = await fetch(`${serverUrl}/api/upload`, {
+                method: "POST",
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
+            });
+            
+            if (!resp.ok) {
+                const errorData = await resp.json();
+                throw new Error(errorData.detail || "Upload failed");
+            }
+            
+            const data = await resp.json();
+            ragStatus.textContent = `Uploaded: ${file.name} (${data.chunks} chunks indexed)`;
+            ragFileUploaded = true;
+            showToast("File uploaded and indexed successfully");
+        } catch (err) {
+            console.error("Upload error:", err);
+            ragStatus.textContent = "Upload failed";
+            ragFileUploaded = false;
+            showToast(err.message || "Upload error", "error");
         }
     });
 
@@ -2427,90 +2498,14 @@ document.querySelectorAll('.dialog-modal').forEach(dialog => {
 
     function showToast(message, type = 'normal', duration = 3000) {
         toast.textContent = message;
-        toast.className = 'toast show'; // Reset classes
+        toast.className = 'toast show';
         if (type === 'error') {
             toast.classList.add('error');
         }
-        // Add other types like 'success', 'warning' if needed
         setTimeout(() => {
             toast.classList.remove('show');
         }, duration);
     }
-
-
-    async function initializeApp() {
-        if(pageLoader) pageLoader.style.display = 'flex';
-        
-        applyThemeSynchronized(); // Apply theme early, page loader bg depends on it.
-        
-        await fetchUserSettings(); // Fetch settings before loading chats or other initializations
-
-        if(pageLoader) {
-            pageLoader.style.opacity = '0';
-            setTimeout(() => { pageLoader.style.display = 'none'; }, 300); // Hide after transition
-        }
-        
-        loadChats(); 
-        const savedState = localStorage.getItem("sidebarState_ClassMate");
-        const mobileView = isMobileView();
-
-        if (mobileView) {
-            sidebar.classList.remove("open");
-            sidebar.classList.remove("collapsed"); 
-            appContainer.classList.remove("sidebar-hidden");
-            sidebarOverlay.style.display = "none";
-        } else {
-            if (savedState === "open") {
-                sidebar.classList.remove("collapsed");
-                appContainer.classList.remove("sidebar-hidden");
-            } else { // Default to collapsed on desktop if no state or "collapsed"
-                sidebar.classList.add("collapsed");
-                appContainer.classList.add("sidebar-hidden");
-            }
-            sidebar.classList.remove("open"); 
-            sidebarOverlay.style.display = "none";
-        }
-        
-        updateToggleButtonVisibility(); 
-        userInput.dispatchEvent(new Event("input")); 
-        sendButton.disabled = true; 
-        isInitialLoad = false; 
-
-        checkForQueryParameters();
-    }
-
-
-    // Update the resize handler
-window.addEventListener("resize", () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => {
-        const mobileView = isMobileView();
-        if (mobileView) {
-            // Ensure sidebar is closed by default on mobile
-            if (!sidebar.classList.contains("open")) {
-                sidebar.style.left = "-100%";
-                sidebarOverlay.style.display = "none";
-                document.body.style.overflow = "auto";
-            }
-        } else {
-            // Desktop behavior
-            const savedState = localStorage.getItem("sidebarState_ClassMate");
-            if (savedState === "collapsed") {
-                sidebar.classList.add("collapsed");
-                appContainer.classList.add("sidebar-hidden");
-            } else {
-                sidebar.classList.remove("collapsed");
-                appContainer.classList.remove("sidebar-hidden");
-            }
-            sidebar.style.left = "";
-            sidebarOverlay.style.display = "none";
-            document.body.style.overflow = "auto";
-        }
-        updateToggleButtonVisibility();
-    }, 250);
-});
-
-    initializeApp();
 
     function isToDoListFormat(text) {
         const goalPattern = /goal\s*:/i;
@@ -2562,98 +2557,78 @@ window.addEventListener("resize", () => {
         }
     }
 
-    // Settings button functionality
     document.getElementById('header-settings-btn').addEventListener('click', function() {
-      window.location.href = 'settings.html';
+        window.location.href = 'settings.html';
     });
 
-    // Logout button functionality
-    // DELETE the line: document.getElementById('header-logout-btn').addEventListener('click', function() { ... });
-    // DELETE the entire function handleLogout() { ... }
-    // DELETE the entire function addLogoutButton() { ... }
-    // ... existing code ...
+    async function initializeApp() {
+        if(pageLoader) pageLoader.style.display = 'flex';
+        
+        applyThemeSynchronized();
+        
+        await fetchUserSettings();
 
-    // Theme toggle functionality
+        if(pageLoader) {
+            pageLoader.style.opacity = '0';
+            setTimeout(() => { pageLoader.style.display = 'none'; }, 300);
+        }
+        
+        loadChats(); 
+        const savedState = localStorage.getItem("sidebarState_ClassMate");
+        const mobileView = isMobileView();
 
-    const ragUploadBtn = document.getElementById("rag-upload-btn");
-    const ragFileInput = document.getElementById("rag-file-input");
-    const ragStatus = document.getElementById("rag-status");
-    let ragFileUploaded = false;
-
-    ragUploadBtn.addEventListener("click", () => {
-      ragFileInput.click();
-    });
-
-    ragFileInput.addEventListener("change", async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      ragStatus.textContent = "Uploading...";
-      const formData = new FormData();
-      formData.append("file", file);
-      try {
-        const resp = await fetch("/api/upload", {
-          method: "POST",
-          body: formData
-        });
-        const data = await resp.json();
-        if (resp.ok) {
-          ragStatus.textContent = `Uploaded: ${file.name} (${data.chunks} chunks)`;
-          ragFileUploaded = true;
+        if (mobileView) {
+            sidebar.classList.remove("open");
+            sidebar.classList.remove("collapsed"); 
+            appContainer.classList.remove("sidebar-hidden");
+            sidebarOverlay.style.display = "none";
         } else {
-          ragStatus.textContent = data.error || "Upload failed.";
-          ragFileUploaded = false;
+            if (savedState === "open") {
+                sidebar.classList.remove("collapsed");
+                appContainer.classList.remove("sidebar-hidden");
+            } else {
+                sidebar.classList.add("collapsed");
+                appContainer.classList.add("sidebar-hidden");
+            }
+            sidebar.classList.remove("open"); 
+            sidebarOverlay.style.display = "none";
         }
-      } catch (err) {
-        ragStatus.textContent = "Upload error.";
-        ragFileUploaded = false;
-      }
+        
+        updateToggleButtonVisibility(); 
+        userInput.dispatchEvent(new Event("input")); 
+        sendButton.disabled = true; 
+        isInitialLoad = false; 
+
+        checkForQueryParameters();
+    }
+
+    window.addEventListener("resize", () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            const mobileView = isMobileView();
+            if (mobileView) {
+                if (!sidebar.classList.contains("open")) {
+                    sidebar.style.left = "-100%";
+                    sidebarOverlay.style.display = "none";
+                    document.body.style.overflow = "auto";
+                }
+            } else {
+                const savedState = localStorage.getItem("sidebarState_ClassMate");
+                if (savedState === "collapsed") {
+                    sidebar.classList.add("collapsed");
+                    appContainer.classList.add("sidebar-hidden");
+                } else {
+                    sidebar.classList.remove("collapsed");
+                    appContainer.classList.remove("sidebar-hidden");
+                }
+                sidebar.style.left = "";
+                sidebarOverlay.style.display = "none";
+                document.body.style.overflow = "auto";
+            }
+            updateToggleButtonVisibility();
+        }, 250);
     });
 
-    // Patch sendMessage to use RAG if a file is uploaded
-    const origSendMessage = sendMessage;
-    sendMessage = async function() {
-      if (ragFileUploaded) {
-        const messageText = userInput.value.trim();
-        if (!messageText || messageBeingSent) return;
-        messageBeingSent = true;
-        sendButton.disabled = true;
-        loadingIndicator.style.display = "flex";
-        userInput.value = "";
-        userInput.dispatchEvent(new Event("input"));
-        userInput.placeholder = "ClassMate is thinking...";
-        userInput.disabled = true;
-        addMessageToUI("user", messageText);
-        saveMessage("user", messageText);
-        try {
-          const resp = await fetch("/api/rag_chat", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ query: messageText })
-          });
-          const data = await resp.json();
-          if (resp.ok) {
-            addMessageToUI("bot", data.answer || "No answer.");
-            saveMessage("bot", data.answer || "No answer.");
-          } else {
-            addMessageToUI("bot", data.error || "RAG error.");
-            saveMessage("bot", data.error || "RAG error.");
-          }
-        } catch (err) {
-          addMessageToUI("bot", "RAG request failed.");
-          saveMessage("bot", "RAG request failed.");
-        } finally {
-          messageBeingSent = false;
-          userInput.disabled = false;
-          userInput.placeholder = "Ask ClassMate";
-          sendButton.disabled = userInput.value.trim() === "";
-          userInput.focus();
-          loadingIndicator.style.display = "none";
-        }
-        return;
-      }
-      // fallback to original
-      origSendMessage();
-    }
-</script>
-</body>
+    initializeApp();
+</script></body>
 </html>
