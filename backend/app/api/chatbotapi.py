@@ -45,6 +45,9 @@ router = APIRouter()
 class ChatRequest(BaseModel):
     prompt: str
 
+class RAGRequest(BaseModel):
+    query: str
+
 class GoalItem(BaseModel):
     goal: str
     checked: bool
