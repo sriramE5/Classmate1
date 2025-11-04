@@ -9,14 +9,14 @@ from typing import List
 import shutil
 import tempfile
 from langchain_community.document_loaders import PyPDFLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
-from langchain.vectorstores import Chroma
+from langchain_community.vectorstores import Chroma
 from langchain.chains import RetrievalQA
 import docx
 import json # Import for JSON processing
 from app.api.userapi import get_current_user
-from langchain.docstore.document import Document # Import for creating LangChain Document objects
+from langchain_core.documents import Document  # Import for creating LangChain Document objects
 
 # Load environment variables
 load_dotenv()
